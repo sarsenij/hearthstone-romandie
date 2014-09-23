@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Messages | {{block.super}}{% endblock %}
+{% block content %}
+<h2>Mes messages</h2>
+<a href="/notification/new_message/">Créer un nouveau message</a>
+<br />
+<br />
+<b>Messages non lus</b>
+{% if not non_lu %}
+<p>Vous n'avez aucun message non lu.</p>
+{% else %}
+<table class="forum_page">
+<thead>
+<tr>
+    <th>Titre</th>
+    <th>Destinataires</th>
+</tr>
+</thead>
+<tbody>
+{% for message in non_lu %}
+{% if forloop.counter|divisibleby:2 %}
+<tr style="background-color: rgba(230,184,138,0.1);">
+{% else %}
+<tr style="background-color: rgba(230,184,138,0.15);">            
+{% endif %}
+<td><a href="/notification/message/{{message.id}}/">{{message.titre}}</a></td>
+<td>
+{% for d in dest %}
+{% if d.titre == message and d.dest != request.user %}
+{{d.dest.profil_set.all.0.pseudo}} ; 
+{% endif %}
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+<br />
+<b>Messages lus</b>
+{% if not lu %}
+<p>Vous n'avez aucun message lu.</p>
+{% else %}
+<table class="forum_page">
+<thead>
+<tr>
+    <th>Titre</th>
+    <th>Destinataires</th>
+</tr>
+</thead>
+<tbody>
+{% for message in lu %}
+{% if forloop.counter|divisibleby:2 %}
+<tr style="background-color: rgba(230,184,138,0.1);">
+{% else %}
+<tr style="background-color: rgba(230,184,138,0.15);">            
+{% endif %}
+<td><a href="/notification/message/{{message.id}}/">{{message.titre}}</a></td>
+<td>
+{% for d in dest %}
+{% if d.titre == message and d.dest != request.user %}
+{{d.dest.profil_set.all.0.pseudo}} ; 
+{% endif %}
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

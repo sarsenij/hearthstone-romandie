@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Inscription | {{block.super}}{% endblock %}
+{% block content %}
+{% if msg_error %}
+<div id="messages_erreur">
+<img src="/static/images/icones/warning-icon.png" /><br />{{msg_error}}
+</div>
+{% endif %}
+<!--
+<form METHOD="POST" ACTION="/profil/">
+<table id="table_log">
+<tr><td colspan="3">
+<h2 style="text-align: center;">Connexion</h2>
+</td></tr>
+<tr><td>
+Nom de profil </td><td>{% csrf_token %}<input name="username" />
+</td></tr>
+<tr><td>
+Mot de passe </td><td><input name="password" type="password" />
+</td><td>
+<input type="submit" value="Login" />
+</td></tr>
+</table>
+</form>
+
+<br />
+-->
+<form METHOD="POST" ACTION="/profil/nouveau/">
+<table id="table_subscribe">
+<tr><td colspan="2">
+<h2 style="text-align: center;">Inscriptions</h2>
+</td></tr>
+<tr><td align="right" style="width: 50%;">
+Pseudo</td><td>{% csrf_token %}<input name="pseudo" />
+</td></tr>
+<tr><td align="right" style="width: 50%;">
+Mot de passe </td><td><input type="password" name="pwd1" />
+</td></tr>
+<tr><td align="right" style="width: 50%;">
+Confirmation </td><td><input type="password" name="pwd2" />
+</td></tr>
+<tr><td colspan="2" align="center">
+            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6LfDrPESAAAAAAZVe93Cz1dnd5EhO1ik-lgeRejW">  
+            </script>  
+              
+</td></tr>
+<tr><td colspan="2" align="center">
+<input type="submit" value="S'inscrire" />
+</td></tr>
+</table>
+</form>
+{% endblock %}

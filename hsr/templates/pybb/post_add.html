@@ -1,0 +1,15 @@
+{% extends 'pybb/base.html' %}
+
+{% block pybb_crumbs %}
+<li><a href="{{ topic.forum.get_absolute_url }}">{{ topic.forum }}</a> <span class="divider">/</span></li>
+<li><a href="{{ topic.get_absolute_url }}">{{ topic }}</a></li>
+{% endblock %}
+
+{% block pybb_content %}
+<h1>Ajouter un post à {{ topic }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><input type="submit" value="Envoyer" /></p>
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Inscription | {{block.super}}{% endblock %}
+{% block content %}
+{% if msg_error %}
+<div id="messages_erreur">
+<img src="/static/images/icones/warning-icon.png" /><br />{{msg_error}}
+</div>
+{% endif %}
+<form METHOD=POST ACTION="/profil/terminate/">
+<table id="table_validation">
+<tr><td>
+Nom du profil </td><td>{% csrf_token %}<input name="username" />
+</td></tr>
+<tr><td>
+Mot de passe </td><td><input name="pwd1" type="password" />
+</td></tr>
+<tr><td>
+Confirmation du mot de passe </td><td><input name="pwd2" type="password" />
+</td></tr>
+<tr><td colspan="2" style="text-align: center;">
+<br />
+<input type="hidden" name="code" value="{{code}}" />
+<input type="submit" value="Valider" />
+</td></tr>
+</table>
+</form>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Messages | {{block.super}}{% endblock %}
+{% block content %}
+<form method="POST" action="/notification/new_message/">
+<table class="forum_page">
+<thead>
+<tr>
+{% if contacts %}
+<th>Contacts</th>
+{% endif %}
+<th>Membres</th>
+<th>Destinataires</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background-color: rgba(230,184,138,0.1);">
+{% if contacts %}
+<td>
+<select name="contact" id="contact" onchange="getSelect('contact')">
+<option value="">-----</option>
+{% for contact in contacts %}
+<option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
+{% endfor %}
+</select>
+</td>
+{% endif %}
+<td>
+<select name="membre" id="membre" onchange="getSelect('membre')">
+<option value="">-----</option>
+{% for membre in membres %}
+<option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
+{% endfor %}
+</select>
+</td>
+<td>
+<textarea name="destinataires" id="destinataires" rows="2" cols="80%"></textarea>
+</td>
+</tr>
+<tr style="background-color: rgba(230,184,138,0.15);">            
+<th>
+Titre
+</th>
+<td{% if contacts %} colspan="2"{% endif %}>
+<input name="titre" size="90%"/>
+</td>
+</tr>
+<tr>
+<td colspan="{% if contacts %}3{% else %}2{% endif %}">
+{% include "pybb/bbcode.html" %}
+{% csrf_token %}
+</td>
+</tr>
+</tbody>
+</table>
+</form>
+<script language="JavaScript">
+function getSelect(selectId)
+{
+    var selectElmt = document.getElementById(selectId);
+    document.getElementById('destinataires').value = document.getElementById('destinataires').value+selectElmt.options[selectElmt.selectedIndex].value+" ";
+}
+</script>
+{% endblock %}

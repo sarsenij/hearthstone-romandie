@@ -1,0 +1,107 @@
+<br />
+{% if notif_messages %}
+<b>NEW</b> - <a href="/notification/messages/">{{notif_messages}} nouveau{% if notif_messages != 1 %}x{% endif %} message{% if notif_messages != 1 %}s{% endif %}</a>
+{% else %}
+<a href="/notification/messages/">Mes messages</a>
+{% endif %}
+<br />
+<br />
+{% if notif_suivis %}
+<b>NEW</b> - Forum - Messages suivis<br />
+{%for suivi in notif_suivis%}
+<a href="{{suivi.0.get_absolute_url}}#Post{{suivi.1}}"><img src="/static/images/forum/nouveau_post.png" /> {{suivi.0.name|slice:":40"}}{% if suivi.0.name|length > 40 %}...{%endif%}</a></br />
+{% endfor %}
+<br />
+<br />
+{%endif%}
+{% if notif_contacts %}
+<br />
+<b>Nouveaux contacts</b>
+<br />
+<ul>
+{% for contact in notif_contacts %}
+<li>
+<table>
+<tr>
+<td>
+<a href="/profil/detail/{{contact.contact.owner.id}}/">{{contact.contact.owner.pseudo}}</a><br />
+</td>
+{% if contact.contact_already %}
+<td>
+Déjà dans vos contacts
+</td>
+<td>
+    <script language="JavaScript">
+    $(document).ready(function() {
+        $('#vu{{contact.id}}').submit(function() { // catch the form's submit event
+            $.ajax({ // create an AJAX call...
+                data: $(this).serialize(), // get the form data
+                type: $(this).attr('method'), // GET or POST
+                url: $(this).attr('action'), // the file to call
+                success: function(response) { // on success..
+                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+<form method="POST" action="/" id="vu{{contact.id}}">{% csrf_token %}<input type="hidden" name="vu" value="{{contact.id}}" /><input type="submit" value="Vu" /></form>
+</td>
+{% else %}
+<td>
+    <script language="JavaScript">
+    $(document).ready(function() {
+        $('#add{{contact.id}}').submit(function() { // catch the form's submit event
+            $.ajax({ // create an AJAX call...
+                data: $(this).serialize(), // get the form data
+                type: $(this).attr('method'), // GET or POST
+                url: $(this).attr('action'), // the file to call
+                success: function(response) { // on success..
+                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+<form method="POST" action="/" id="add{{contact.id}}">{% csrf_token %}<input type="hidden" name="add" value="{{contact.contact.owner.id}}" /><input type="hidden" name="id" value="{{contact.id}}" /><input type="submit" value="Ajouter" /></form>
+</td>
+<td>
+    <script language="JavaScript">
+    $(document).ready(function() {
+        $('#vu{{contact.id}}').submit(function() { // catch the form's submit event
+            $.ajax({ // create an AJAX call...
+                data: $(this).serialize(), // get the form data
+                type: $(this).attr('method'), // GET or POST
+                url: $(this).attr('action'), // the file to call
+                success: function(response) { // on success..
+                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+<form method="POST" action="/" id="vu{{contact.id}}">{% csrf_token %}<input type="hidden" name="vu" value="{{contact.id}}" /><input type="submit" value="Refuser" /></form>
+</td>
+{% endif %}
+</table>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+<table>
+    {% for c in notif_chat  %}
+        {% if forloop.counter|divisibleby:2 %}
+        <tr class="forum_row" style="background-color: rgba(230,184,138,0.1);">
+        {% else %}
+        <tr class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
+        {% endif %}
+        <td>{{c.created|date:"d/m" }}<br />
+        {% load bbcode_tags %}
+        {{c.created|date:"H:i" }}</td><td><a href="/profil/detail/{{c.user.profil_set.all.0.id}}/">{{c.user.profil_set.all.0.pseudo}}</a></td><td>{% bbcode c.message %}
+        </td>
+        </tr>
+    {% endfor %}
+</table>

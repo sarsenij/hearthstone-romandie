@@ -1,0 +1,25 @@
+{% extends 'pybb/base.html' %}
+
+{% block pybb_crumbs %}
+<a href="/forum/forum/{{topic.forum.id}}">{{topic.forum.name}}</a> <span class="divider">/</span> <a href="/forum/topic/{{topic.id}}">{{topic.name}}</a>
+{% endblock %}
+
+{% block pybb_content %}
+<h1>Modifier un post</h1>
+<form method="post" action="/forum/post/modify/{{post.id}}?topic={{topic.id}}">
+<table class="forum_page">
+<tbody>
+<tr style="background-color: rgba(230,184,138,0.1);">
+    {% csrf_token %}
+    {% if first_post %}
+    <th>Titre</th>
+    <td><input name="topic_name" value="{{topic.name}}" size="90%" /></td>
+</tr>
+<tr style="background-color: rgba(230,184,138,0.15);">            
+{% endif %} 
+    <td colspan="2">{% include "pybb/bbcode.html" with content=post.content%}</td>
+</tr>
+</tbody>
+</table>
+</form>
+{% endblock %}

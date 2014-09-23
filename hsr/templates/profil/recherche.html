@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Membres | {{block.super}}{% endblock %}
+{% block content %}
+
+<form method="POST" action="/profil/recherche/">
+{% csrf_token %}
+<table id="table_recherche">
+<input type="hidden" name="method" value="localisation" />
+<tr><td style="width: 160px;">
+Pays : </td><td><select style="width: 50%;" name="pays">{% for p in pays %}><option value="{{p.id}}">{{p.pays}}</option>{% endfor %}</select>
+</td></tr>
+<tr><td style="width: 160px;">
+Ville proche : </td><td><select style="width: 50%;" name="ville_proche">{% for ville in ville_proche %}<option value="{{ville.id}}">{{ville.ville_proche}}</option>{% endfor %}</select>
+</td></tr>
+<tr><td style="width: 160px;">
+Localité : </td><td><select style="width: 50%;" name="localite">{% for loc in localite %}<option value="{{loc.id}}">{{loc.localite}}</option>{% endfor %}</select>
+</td><td>
+&nbsp;<input type="submit" value="Rechercher" />
+</td></tr>
+</form>
+<form method="POST" action="/profil/recherche/">
+{% csrf_token %}
+<input type="hidden" name="method" value="pseudo" />
+<tr><td colspan="3"><hr /></td></tr>
+<tr><td>
+Pseudo : </td><td><input name="pseudo" />
+</td><td style="width: 100px;">
+&nbsp;<input type="submit" value="Rechercher" />
+</td></tr>
+</table>
+</form>
+{% if request.user.is_active %}
+<form method="POST" action="/profil/recherche/">
+{% csrf_token %}
+<input type="hidden" name="method" value="contact" /><br />
+<center><input type="submit" value="Afficher mes contacts" /></center>
+</form>
+{% endif %}
+<br />
+{% if result %}
+<table class="table_membres">
+	<tr>
+	{% for res in result %}
+	{% if forloop.counter0|divisibleby:3 %}
+	</tr>
+	<tr>
+	{% endif %}
+	<td>
+	<center><a href="/profil/detail/{{res.id}}/"><img src="{{res.avatar}}" width="200" class="recherche_avatar" /><br />
+	<span id="recherche_pseudo">{{res.pseudo}}</span></a></center>
+	</td>
+	{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

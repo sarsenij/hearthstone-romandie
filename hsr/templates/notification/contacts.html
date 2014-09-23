@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Nouveaux contacts | {{block.super}}{% endblock %}
+{% block content %}
+{% if contacts %}
+{% for contact in contacts %}
+<a href="/profil/detail/{{ contact.owner.id }}/">{{ contact.owner.pseudo }}</a><br />
+{% endfor %}
+{% else %}
+Vous n'avez pas de contact en attente
+{% endif %}
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'pybb/base.html' %}
+
+{% block pybb_crumbs %}{{ forum }}{% endblock %}
+
+{% block pybb_content %}
+<h1>{{ forum }}</h1>
+<table class="forum_page">
+    <thead>
+        <tr>
+            <th>Visité</th> 
+            <th style="text-align: left;">Topic</th>
+            <th>Posts</th>
+            <th>Auteur</th>
+            <th>Dernier</th>
+            {% if request.user.is_staff %}
+            <th>Mod</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for topics in forums %}
+        {% for topic in topics %}
+    	{% if forloop.counter|divisibleby:2 %}
+        <tr style="background-color: rgba(230,184,138,0.1);">
+        {% else %}
+        <tr style="background-color: rgba(230,184,138,0.15);">            
+        {% endif %}
+            <td>
+            {% for key,value in dejavu.items %}
+                {% if key == topic %}
+                    {% if value.0 == 0 %}
+                    <img src="/static/images/forum/nouveau_topic.png" />
+                    {% elif value.0 == 1 %}
+                    {% if value.2 != 0 %}<a href="{{ topic.get_absolute_url }}/{{value.1}}#Post{{value.2}}">{% endif %}<img src="/static/images/forum/vu.png" />{% if value.2 != 0 %}</a>{% endif %}
+                    {% else %}
+                    <a href="{{ topic.get_absolute_url }}/{{value.1}}#Post{{value.2}}"><img src="/static/images/forum/nouveau_post.png" /></a>
+                    {% endif %} 
+                {% endif %}
+            {% endfor %}
+            </td>
+            <td style="text-align: left;">{% if topic.postit %}[Post-It] {% endif %}{% if topic.close %}[Fermé] {% endif %}<a href="{{ topic.get_absolute_url }}">{{ topic }}</a></td>
+            <td>{{ topic.post_count }}</td>
+        <td><a href="/profil/detail/{{topic.posts.all.0.user.profil_set.all.0.id}}/">{{ topic.posts.all.0.user}}</a><br /><span style="font-size:80%;">{{ topic.created|date:"d/m/Y - H:i" }}</span></td>
+        <td>{% if topic.posts.all|length != 1 %}<a href="/profil/detail/{{topic.posts.all.last.user.profil_set.all.0.id}}/">{{ topic.posts.all.last.user}}</a><br /><span style="font-size:80%;">{{ topic.posts.all.last.created|date:"d/m/Y - H:i" }}</span>{% endif %}</td>
+        {% if request.user.is_staff %}
+        <td><a href="/forum/topic/postit/{{topic.id}}?forum={{forum.id}}">{% if topic.postit %}<strike>{% endif %}[Post-It]{% if topic.postit %}</strike>{% endif %}</a><br />
+        <a href="/forum/topic/close/{{topic.id}}?forum={{forum.id}}">{% if topic.close %}Ouvrir{% else %}Fermer{% endif %}</a><br />
+        <a onClick="SuppressTopic('{{topic.id}}')">Delete</a></td>
+        {% endif %}
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+<p>
+{% if user.is_authenticated %}
+{% if forum.id != 1 or user.is_superuser%}
+    <a class="btn btn-info" href="{% url "pybb:topic_add" %}?forum={{ forum.pk }}"><h2>Ajouter un topic</h2></a>
+{% endif %}
+{% endif %}
+{% if forum.id == 1 and not user.is_superuser %}
+    <p>La section Actualités ne peut être remplie que par un admin.</p>
+{% endif %}
+</p>
+{% if user.is_authenticated %}
+<table>
+<tr>
+<td width="33%" align="center">Nouveau topic</td>
+<td width="33%" align="center">Nouveau post</td>
+<td width="33%" align="center">Vu</td>
+</tr>
+<tr>
+<td align="center"><img src="/static/images/forum/nouveau_topic.png" /></td>
+<td align="center"><img src="/static/images/forum/nouveau_post.png" /></td>
+<td align="center"><img src="/static/images/forum/vu.png" /></td>
+</tr>
+</table>
+{% endif %}
+{% if request.user.is_staff %}
+<script language="javascript">
+    function SuppressTopic(topic) {
+        if (confirm("Déplacer le topic et tous ses messages dans la section des discussions supprimées, accessibles uniquement par le staff ? (Une restauration est possible, mais compliquée, ne prenez pas cette décision à la légère)")) {
+                location.href='/forum/topic/delete/'+topic+'?forum={{forum.id}}';
+        }
+    }
+</script>
+
+{% endif %}
+{% endblock %}

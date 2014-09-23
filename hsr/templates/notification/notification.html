@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Notifications | {{block.super}}{% endblock %}
+{% block content %}
+{% if notifications %}
+{% for notif in notifications %}
+<a href="/notification/{{ notif.not_type }}/">{{ notif.not_nombre }} nouveau{% if notif.not_nombre >= 2 %}x{% endif %} {{ notif.not_type }}{% if notif.not_nombre >= 2 %}s{% endif %}</a><br />
+{% endfor %}
+{% else %}
+Vous n'avez pas de notification
+{% endif %}
+<br />
+<a href="/notification/contact/">Contacts proposés non acceptés</a>
+<br />
+<a href="/notification/message/">Anciens messages</a>
+{% endblock %}

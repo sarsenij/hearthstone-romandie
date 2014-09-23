@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block meta_description%}{% block pybb_meta_description %}{% endblock %}{% endblock %}
+{% block meta_keywords %}{% block pybb_meta_keywords %}{% endblock %}{% endblock %}
+{% block title %}Forum | {{block.super}}{% endblock %}
+
+{% block extra_js %}
+    {% block pybb_extra_js %}{% endblock %}
+{% endblock %}
+
+
+{% block content %}
+{% block crumbs %}
+    <a href="{% url "pybb:home_page" %}">Forum</a> <span class="divider">/</span>
+    {% block pybb_crumbs %}{% endblock %}
+{% endblock %}
+    {% block pybb_content %}{% endblock %}
+{% endblock %}

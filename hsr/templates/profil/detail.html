@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{info.0}} | {{block.super}}{% endblock %}
+{% block content %}
+{% if msg %}
+{{msg}}
+{% endif %}
+{% if msg_error %}
+<div id="messages_erreur">
+<img src="/static/images/icones/warning-icon.png" /><br />{{msg_error}}
+</div>
+{% endif %}
+<table id="profil">
+	<tr>
+	<td style="text-align: center;" colspan="2">
+	{% if info.1 != "None" %}<img src="{{info.1}}" height="314" width="240" />{% else %}Aucun{% endif %}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Pseudo :
+	</td>
+	<td class="profil_droite">
+		{{info.0}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Nom :
+	</td>
+	<td class="profil_droite">
+		{{info.2}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Prénom :
+	</td>
+	<td class="profil_droite">
+		{{ info.3 }}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		E-mail :
+	</td>
+	<td class="profil_droite">
+		{{info.4}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Rue :
+	</td>
+	<td class="profil_droite">
+		{{info.5}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Localité :
+	</td>
+	<td class="profil_droite">
+		
+		{{info.6}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Ville proche :
+	</td>
+	<td class="profil_droite">
+		
+		{{info.7}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Pays :
+	</td>
+	<td class="profil_droite">
+		
+		{{info.8}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		BattleTag :
+	</td>
+	<td class="profil_droite">
+		
+		{{info.9}}
+	</td>
+	</tr>
+	
+	<tr>
+	<td class="profil_gauche">
+		Téléphone :
+	</td>
+	<td class="profil_droite">
+		
+		{{info.10}}
+	</td>
+	</tr>
+	
+	<tr><td style="text-align: center;" colspan="2">
+		<br />		
+		{% if request.user.is_active %}
+		{% if not contact %}
+		<form method="POST" action="">
+		{% csrf_token %}
+		<input type="submit" value="Ajouter dans mes contacts" />
+		</form>
+		{% elif contact != 1 %}
+		Cette personne est dans vos contacts
+		{% endif %}
+		{% endif %}
+	</td></tr>
+</table>
+{% endblock %}

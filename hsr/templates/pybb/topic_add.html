@@ -1,0 +1,20 @@
+{% extends 'pybb/base.html' %}
+
+{% block pybb_crumbs %}
+<a href="{{ forum.get_absolute_url }}">{{ forum }}</a>
+{% endblock %}
+
+{% block pybb_content %}
+<h1>Ajouter un topic à {{ forum }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <table class="forum">
+    		{% include "pybb/form_field.html" with field=form.name %}
+            <tr>
+            <td colspan=2>
+            {% include "pybb/bbcode.html" %}
+            </td>
+            </tr>
+    </table>
+</form>
+{% endblock %}

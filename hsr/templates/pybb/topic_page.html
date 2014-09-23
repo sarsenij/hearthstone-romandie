@@ -1,0 +1,127 @@
+{% extends 'pybb/base.html' %}
+
+{% block pybb_crumbs %}
+<a href="{{ topic.forum.get_absolute_url }}">{{ topic.forum }}</a>
+{% endblock %}
+
+{% block pybb_content %}
+<h1>{{ topic }}</h1>
+{% load pybb_extras %}
+<center>
+Page : 
+{% for i in pages %}
+{%if page != i %}<a href="/forum/topic/{{topic.id}}/{{i}}">{% endif %}{{i|add:"1"}}{% if page != i %}</a>{% endif %}&nbsp;
+{% endfor %}
+</center>
+<br />
+{% if request.user.is_staff %}
+<form action="/forum/topic/move/{{topic.id}}" method="GET">
+Déplacer le topic : <select name="destination">
+<option value="">---</option>
+{% for forum in forums %}
+{% if forum.id != 1 or request.user.is_superuser %}
+{% if topic.forum != forum %}
+<option value="{{forum.id}}">{{forum}}{% if forum.id == 1 %} -- !! Modifiera la date de création à maintenant !!{% endif %}</option>
+{% endif %}
+{% endif %}
+{% endfor %}
+</select> <input type="submit" value="Déplacer" /><input type="hidden" name="forum" value="{{topic.forum.id}}" />
+</form>
+<br />
+{% endif %}
+{% if request.user.is_active %}
+<form action="/forum/suivi" method="POST" id="suivi_form">
+Suivre <input type="checkbox" name="add" id="suivi_add" {% if suivi %}CHECKED {% endif %}/>
+<input type="hidden" name="topic" value="{{topic.id}}" />
+{% csrf_token %}
+</form>
+<script language="JavaScript">
+$(document).ready(function() {
+    $('#suivi_add').click(function() {
+        $.ajax({
+            data: $('#suivi_form').serialize(),
+            type: $('#suivi_form').attr('method'),
+            url: $('#suivi_form').attr('action'),
+            success: function(response) {
+            },
+        });
+    });
+});
+</script>
+<br />
+{% endif %}
+<div class="forum">
+        {% for post in posts %}
+        <a name="Post{{post.id}}">
+        {% if forloop.counter|divisibleby:2 %}
+        <div class="forum_row" style="background-color: rgba(230,184,138,0.1);">
+        {% else %}
+        <div class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
+        {% endif %}
+            <div class="forum_col_1">
+                <center><a href="/profil/detail/{{post.user.profil_set.all.0.id}}/"><i class="icon-user"><img class="recherche_avatar" src="{{post.user.profil_set.all.0.avatar}}" width="100%" /></i><br /> {{ post.user }}</a>
+                <div class="muted"><i class="icon-time"></i> {{ post.created|date:"d/m/Y H:i" }}</div>
+                </center>
+            </div>
+            <div class="forum_col_2">
+            	{% load bbcode_tags %}
+                {% if not post.deleted %}
+            	{% bbcode post.content %}
+                {% endif %}
+                {% if post.deleted %}
+                <center><i>Message supprimé par {{post.deleted_by.profil_set.all.0.pseudo}}</i></center>
+                {% if request.user.is_staff %}
+                <center><a onClick="$('#del{{post.id}}').toggle();">Montrer/cacher</a></center>
+            	<div style="display:none" id="del{{post.id}}">{% bbcode post.content %}</div>
+                {% endif %}
+                {% elif post.modif_user %}
+                <center><i>Modifié par {{post.modif_user.profil_set.all.0.pseudo}} ({{post.modif_date|date:"d/m/Y H:i"}})</i></center>
+                {% endif %}
+            	<div style="text-align: right;">
+            	{% if request.user == post.user or request.user.is_staff %}{% if not post.locked and not topic.close or request.user.is_staff%}
+            	<a href="/forum/post/modify/{{post.id}}?topic={{topic.id}}">Modifier</a>
+            	 |{% if not post.deleted %}
+            	 <a onClick="SuppressPost('{{post.id}}')">Supprimer</a>
+                {% endif %}
+                {% elif post.locked %}
+                Message bloqué
+                {% elif topic.close %}
+                Topic fermé
+            	{% endif %}
+            	{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+<center>
+<br />
+Page : 
+{% for i in pages %}
+{%if page != i %}<a href="/forum/topic/{{topic.id}}/{{i}}">{% endif %}{{i|add:"1"}}{% if page != i %}</a>{% endif %}&nbsp;
+{% endfor %}
+</center>
+<p>
+    {% if topic.close %}
+    <center><b>Topic fermé</b></center>
+    {% elif user.is_authenticated %}
+    <center>
+    <form onsubmit="doCheck();" method="post" action="{% url "pybb:post_add" %}?topic={{ topic.pk }}">
+        {% csrf_token %}
+        {% include "pybb/bbcode.html" %}
+    </form>
+    </center>
+    {% endif %}
+</p>
+<script language="javascript">
+    function SuppressPost(post) {
+        if (confirm("Voulez-vous vraiment supprimer ce message ? Vous pourrez encore le récupérer via la fonction Modifier.")) {
+                location.href='/forum/post/delete/'+post+'?topic={{topic.id}}';
+        }
+    }
+    function Toggle(div) {
+        $('#del'+div+'').show();
+    }
+</script>
+{% endblock %}
