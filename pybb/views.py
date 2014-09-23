@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404, HttpResponse
 
+from django.contrib.auth.models import User
+
 from common.pagination import paginate
 from datetime import datetime
 
@@ -87,8 +89,12 @@ def forum_page(request, pk):
                 if not dv :
                     dejavu[topic] = [0,0,0] #Pas visité
                 else :
-                    post_page = list(Post.objects.filter(topic=topic).order_by('created').values_list('id',flat=True)).index(dv[0].post)/10
-                    if dv[0].post == Post.objects.filter(topic=topic).order_by('-created')[0].id:
+                    posts = Post.objects.filter(topic=topic).order_by('created')
+                    if dv[0].post in list(posts.values_list('id',flat=True)):
+                        post_page = list(Post.objects.filter(topic=topic).order_by('created').values_list('id',flat=True)).index(dv[0].post)/10
+                    else :
+                        post_page = 0
+                    if dv[0].post == posts.order_by('-created')[0].id:
                         dejavu[topic] = [1,post_page,dv[0].post] #Tout vu
                     else :
                         dejavu[topic] = [2,post_page,dv[0].post] #Nouveau post
@@ -158,6 +164,9 @@ def post_add(request):
         topic.edit=datetime.now()
         topic.save()
         form.save()
+        if not Suivi.objects.filter(topic=topic,user=User.objects.get(id=9)) :
+            suivi = Suivi.objects.create(user=User.objects.get(id=9),topic=topic)
+            suivi.save()
         posts = Post.objects.filter(topic=topic).order_by('-created')
         page = (len(posts)-1)/10
         post = posts[0].id
@@ -222,6 +231,8 @@ def topic_add(request):
             user=request.user,
             content=form.cleaned_data['content'],
         )
+        suivi = Suivi.objects.create(user=User.objects.get(id=9),topic=topic)
+        dv = Dejavu.objects.create(compte=User.objects.get(id=9),forum=forum,topic=topic,post=0)
         messages.success(request, u'Topic ajouté')
         return redirect(topic)
     context = {'form': form,
