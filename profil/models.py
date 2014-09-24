@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -54,6 +57,8 @@ class Profil(models.Model) :
 
     telephone = models.CharField(max_length=125,blank=True,null=True,default="")
     telephone_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
+
+    lastseen = models.DateTimeField(null=True,default=datetime.now)
 
 class Contact(models.Model) :
 

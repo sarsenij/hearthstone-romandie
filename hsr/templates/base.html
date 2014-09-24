@@ -75,6 +75,11 @@
         <input type="submit" value="Chat" />
         {% csrf_token %}
         </form>
+	{% if notif_lastseen %}
+	<p>Vus récemment :{% for ls in notif_lastseen %} <a href="/profil/detail/{{ls.id}}/"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}<br />
+	<a style="color:red;">Admins</a> <a style="color:blue;">Staffs</a> <a>Membres</a>
+	</p>
+	{% endif %}
 		</div>
 		{% endif %}
 	
