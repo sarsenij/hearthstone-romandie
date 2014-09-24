@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Créer un tournoi | {{block.super}}{% endblock %}
+{% block script %}
+	<link rel="stylesheet" href="/static/calendar/css/datepicker.css" type="text/css" />
+	<script type="text/javascript" src="/static/calendar/js/jquery.js"></script>
+	<script type="text/javascript" src="/static/calendar/js/datepicker.js"></script>
+    <script type="text/javascript" src="/static/calendar/js/eye.js"></script>
+    <script type="text/javascript" src="/static/calendar/js/utils.js"></script>
+    <script type="text/javascript" src="/static/calendar/js/layout.js"></script>
+{% endblock %}
+
+
+{% block content %}
+{% for error in tournoi.errors %}
+{% if error == "regles" %}
+<p style="color:red;">
+Vous devez spécifier des règles pour le tournoi.
+</p>
+{% endif %}
+{% if error == "debut" %}
+<p style="color:red;">
+Vous devez spécifier une date correcte au début du tournoi.
+</p>
+{% endif %}
+{% if error == "name" %}
+<p style="color:red;">
+Vous devez spécifier un nom pour le tournoi.
+</p>
+{% endif %}
+{% if error == "descr" %}
+<p style="color:red;">
+Vous devez spécifier une description pour le tournoi.
+</p>
+{% endif %}
+{% endfor %}
+<form action="" method="POST">
+<table class="forum_page">
+<tbody>
+{% for key in tournoi %}
+    {% if forloop.counter|divisibleby:2 %}
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    {% else %}
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    {% endif %}
+    <th>{{key.label}}</th>
+    <td>{% if key.name == "date" %}<input class="inputDate" id="inputDate" name="date" value="{{key.value|date:"Y-m-d"}}" />{% else %}{{key}}{% endif %}</td>
+    </tr>
+{% endfor %}
+<tr><td colspan="2"><input type="submit" value="Créer le tournoi" />{% csrf_token %}</td></tr>
+</tbody>
+</table>
+</form>
+{% endblock %}

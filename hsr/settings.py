@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'pybb',
     'widget_tweaks',
     'precise_bbcode',
+    'tournoi',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

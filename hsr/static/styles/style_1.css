@@ -140,6 +140,24 @@ a:hover {
 	top: 293px;
 }
 
+#menu_tournoi_h {
+	position: absolute;
+	background: url('/static/images/menu/Hover/actualite.png');
+    width: 203px;
+    height: 37px;
+    left: 50%;
+    margin-left: -98px;
+    top: 342px;
+    z-index: 14;
+}
+
+#menu_tournoi_h:hover {
+	background: url('/static/images/menu/Hover/actualite_h.png');
+}
+#menu_tournoi_h:active {
+	top: 343px;
+}
+
 /* FIN MENU */
 
 #content {

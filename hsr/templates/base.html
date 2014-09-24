@@ -13,6 +13,8 @@
         <link href="/static/bbcode/editor.css" rel="Stylesheet" type="text/css" />
         <script src="/static/bbcode/editor.js" type="text/javascript"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+        {% block script %}
+        {% endblock %}
         {% if request.user.is_active %}
         <script type="text/javascript"> 
         $(document).ready(function(){
@@ -50,6 +52,7 @@
 		<a href="/"><div id="menu_actualite_h"></div></a>
 		<a href="/forum/"><div id="menu_forum_h"></div></a>
 		<a href="/profil/recherche/"><div id="menu_membres_h"></div></a>
+		<a href="/tournoi/"><div id="menu_tournoi_h"></div></a>
 		
 		<div id="liens">
 			<div class="liens-titre"><h3>Liens utiles</h3></div>

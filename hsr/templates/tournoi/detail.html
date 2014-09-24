@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Tournois | {{block.super}}{% endblock %}
+
+
+{% block content %}
+<h3>Tournoi {{tournoi.name}}</h3>
+<table class="forum_page">
+<tbody>
+    {% if request.user == tournoi.admin %}
+    Nommer admin
+    {% endif %}
+    {% if tournoi.prive %}
+    {% if request.user == tournoi.admin %}
+    Nommer invits
+    {% endif %}
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    <th colspan="2" style="color:red;">Ce tournoi est privé</th>
+    </tr>
+    {% endif %}
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    <td><img src="{{tournoi.admin.profil_set.all.0.avatar}}" /></td>
+    <td>{{tournoi.admin.profil_set.all.0.pseudo}}</td>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    <td>{{tournoi.date|date:"d-m-Y"}}</td>
+    <td>{{tournoi.heure|date:"H:i"}}</td>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    <th colspan="2">Description</th>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    <td colspan="2">{{tournoi.descr}}</td>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    <th colspan="2">Règles</th>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    <td colspan="2">{{tournoi.regles}}</td>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    <th>Participants</th>
+    <td>{{tournoi.inscrit}} / {{tournoi.max_participants}}</td>
+    </tr>
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    <th>Formats</th>
+    <td>
+    {% if tournoi.poules %}Poules : {{tournoi.get_poules_display}}<br />{% endif %}
+    {% if tournoi.loser_bracket %} Loser bracket : {{tournoi.get_loser_bracket_display}}<br />{% endif %}
+    Matchs : {{tournoi.get_match_display}}<br />
+    Finale : {{tournoi.get_finale_display}}<br />
+    </td>
+    </tr>
+</tbody>
+</table>
+{% endblock %}

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 
     ('^profil/', include('profil.urls')),
     ('^notification/', include('notification.urls')),
+    ('^tournoi/', include('tournoi.urls')),
     ('^forum/', include('pybb.urls', namespace='pybb')),
     (r'^$', actualites.actualites),
 )
