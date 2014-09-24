@@ -1,18 +1,61 @@
 {% extends 'base.html' %}
 {% block title %}Tournois | {{block.super}}{% endblock %}
 
-
 {% block content %}
+<script language="JavaScript">
+function getSelect(selectId,destId)
+{
+    var selectElmt = document.getElementById(selectId);
+    document.getElementById(destId).value = document.getElementById(destId).value+selectElmt.options[selectElmt.selectedIndex].value+" ";
+}
+</script>
 <h3>Tournoi {{tournoi.name}}</h3>
+    <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>)</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
+    {% if membres %}
+    <table class="forum_page">
+    <tr>
+    <th colspan="2">Staff du tournoi</th>
+    <th colspan="2">Invités au tournoi</th>
+    </tr>
+    <tr>
+    <td>Contacts : <select id="staff_contact" onchange="getSelect('staff_contact','staff')">
+    <option value="">-----</option>
+    {% for contact in contacts %}
+    <option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
+    {% endfor %}
+    </select>
+    </td>
+    <td>Membres : <select id="staff_membre" onchange="getSelect('staff_membre','staff')">
+    <option value="">-----</option>
+    {% for membre in membres %}
+    <option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
+    {% endfor %}
+    </select>
+    </td>
+    <td>Contacts : <select id="invit_contact" onchange="getSelect('invit_contact','invit')">
+    <option value="">-----</option>
+    {% for contact in contacts %}
+    <option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
+    {% endfor %}
+    </select>
+    </td>
+    <td>Membres : <select id="invit_membre" onchange="getSelect('invit_membre','invit')">
+    <option value="">-----</option>
+    {% for membre in membres %}
+    <option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
+    {% endfor %}
+    </select>
+    </td>
+    </tr>
+    <tr>
+    <td colspan="2"><form action="/tournoi/detail/{{tournoi.id}}" method="POST">{% csrf_token %}<input type="hidden" name="action" value="staff" /><textarea cols="45%" rows="3" name="staff" id="staff">{% for staff in staffs %}{{staff.admin.username}} {% endfor %}</textarea><br /><input type="submit" value="Editer le staff" /></form></td>
+    <td colspan="2"><form action="/tournoi/detail/{{tournoi.id}}" method="POST">{% csrf_token %}<input type="hidden" name="action" value="invite" /><textarea cols="45%" rows="3" name="invit" id="invit">{% for invite in invites %}{{invite.invite.username}} {% endfor %}</textarea><br /><input type="submit" value="Editer les invitations" /></form></td>
+    </tr>
+    </table>
+    {% endif %}
 <table class="forum_page">
 <tbody>
-    {% if request.user == tournoi.admin %}
-    Nommer admin
-    {% endif %}
     {% if tournoi.prive %}
-    {% if request.user == tournoi.admin %}
-    Nommer invits
-    {% endif %}
     <tr style="background-color: rgba(230,184,138,0.15);">            
     <th colspan="2" style="color:red;">Ce tournoi est privé</th>
     </tr>

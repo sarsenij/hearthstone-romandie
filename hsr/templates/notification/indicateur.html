@@ -14,6 +14,22 @@
 <br />
 <br />
 {%endif%}
+{% if notif_invtournois %}
+<b>NEW</b> - Tournois - Invitations<br />
+{% for tournoi in notif_invtournois %}
+<a href="/tournoi/detail/{{tournoi.tournoi.id}}?seen={{tournoi.id}}">{{tournoi.tournoi.name}} - {{tournoi.tournoi.date|date:"d-m-Y"}} {{tournoi.tournoi.heure|date:"H:i"}}</a><br />
+{% endfor %}
+<br />
+<br />
+{% endif %}
+{% if notif_stafftournois %}
+<b>NEW</b> - Tournois - Membre du staff<br />
+{% for tournoi in notif_stafftournois %}
+<a href="/tournoi/detail/{{tournoi.tournoi.id}}?seen={{tournoi.id}}">{{tournoi.tournoi.name}} - {{tournoi.tournoi.date|date:"d-m-Y"}} {{tournoi.tournoi.heure|date:"H:i"}}</a><br />
+{% endfor %}
+<br />
+<br />
+{% endif %}
 {% if notif_contacts %}
 <br />
 <b>Nouveaux contacts</b>
@@ -105,3 +121,8 @@ Déjà dans vos contacts
         </tr>
     {% endfor %}
 </table>
+<script type="text/javascript">
+$(document).ready(function(){
+    document.getElementById("menu_droite_bas").innerHTML = 'Vus récemment :{% for ls in notif_lastseen %} <a href="/profil/detail/{{ls.id}}/"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}<br /><a style="color:red;">Admins</a> <a style="color:blue;">Staffs</a> <a>Membres</a>';
+});
+</script>

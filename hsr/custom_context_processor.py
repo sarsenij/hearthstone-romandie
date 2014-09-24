@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from profil.models import Profil
-from notification.models import Notification, Dest, Dejavu, ChatMsg
+from notification.models import Notification, Dest, Dejavu, ChatMsg, InviteTournoi
 from pybb.models import Dejavu as PostDv, Post, Suivi, Topic
 
 def notif(request):
@@ -24,19 +24,25 @@ def notif(request):
                 suivis.append([Topic.objects.get(id=suivi.topic.id),postdv])
         lastseen = Profil.objects.filter(lastseen__gte=datetime.now()-timedelta(minutes=5)).order_by('pseudo')
         profil = Profil.objects.get(u=request.user)
-	profil.lastseen = datetime.now()
-	profil.save()
+        profil.lastseen = datetime.now()
+        profil.save()
+        invtournois = InviteTournoi.objects.filter(user=request.user,staff=False,seen=False)
+        stafftournois = InviteTournoi.objects.filter(user=request.user,staff=True,seen=False)
     else :
         contacts = list()
         messages = 0
         chat = list()
         suivis = list()
         lastseen = list()
+        invtournois = list()
+        stafftournois = list()
     contenu = {
         'notif_contacts':contacts,
         'notif_messages':messages,
         'notif_chat':chat,
         'notif_suivis':suivis,
         'notif_lastseen':lastseen,
+        'notif_invtournois':invtournois,
+        'notif_stafftournois':stafftournois,
     }
     return contenu

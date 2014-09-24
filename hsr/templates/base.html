@@ -73,16 +73,15 @@
 	    <div id="menu_droite_in">	
         {% include 'notification/indicateur.html' %} 
 		</div>
+        <br />
         <form action="/notification/indicator/" method="POST" id="chat">
         {{request.user.profil_set.all.0.pseudo}} - <input name="message" id="chat_message" />
         <input type="submit" value="Chat" />
         {% csrf_token %}
         </form>
-	{% if notif_lastseen %}
-	<p>Vus récemment :{% for ls in notif_lastseen %} <a href="/profil/detail/{{ls.id}}/"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}<br />
-	<a style="color:red;">Admins</a> <a style="color:blue;">Staffs</a> <a>Membres</a>
-	</p>
-	{% endif %}
+        <br />
+        <div id="menu_droite_bas">
+        </div>
 		</div>
 		{% endif %}
 	

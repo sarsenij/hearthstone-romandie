@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from profil.models import Profil, Contact
+from tournoi.models import Tournoi
 
 # Create your models here.
 
@@ -37,3 +38,9 @@ class ChatMsg(models.Model) :
     user = models.ForeignKey('auth.User')
     message = models.TextField()
     created = models.DateTimeField(default=datetime.now)
+
+class InviteTournoi(models.Model) :
+    user = models.ForeignKey('auth.User')
+    tournoi = models.ForeignKey('tournoi.Tournoi')
+    staff = models.BooleanField(default=False)
+    seen = models.BooleanField(default=False)

@@ -54,3 +54,7 @@ class TournoiForm(ModelForm):
     class Meta:
         model = Tournoi
         fields = ['name','descr','regles','prive','date','heure','max_participants','match','finale','poules','loser_bracket']
+
+class Inscrit(models.Model):
+    tournoi = models.ForeignKey('Tournoi',related_name="tournoi_inscrit")
+    user = models.ForeignKey('auth.User')
