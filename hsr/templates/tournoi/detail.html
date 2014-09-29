@@ -10,7 +10,8 @@ function getSelect(selectId,destId)
 }
 </script>
 <h3>Tournoi {{tournoi.name}}</h3>
-    <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>)</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
+<p><a href="/tournoi/arbre/{{tournoi.id}}">Arbre</a></p>
+    <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
     {% if membres %}
     <table class="forum_page">
     <tr>
@@ -95,4 +96,10 @@ function getSelect(selectId,destId)
     </tr>
 </tbody>
 </table>
+<h3>Inscrits</h3>
+<ul>
+{% for i in inscrits %}
+<li><a href="/profil/detail/{{i.user.profil_set.all.0.id}}/">{{i.user.profil_set.all.0.pseudo}}</a></li>
+{% endfor %}
+</ul>
 {% endblock %}
