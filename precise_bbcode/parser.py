@@ -86,7 +86,7 @@ class BBCodeToken(object):
 
 class BBCodeParser(object):
     # A list of the default BBCode tags handled by the parser
-    DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img')
+    DEFAULT_TAGS = ('b', 'i', 'u', 's', 'list', '*', 'code', 'quote', 'center', 'color', 'url', 'img', 'iframe')
 
     # A list of all placeholder types supported by the parser and their corresponding regex
     PLACEHOLDERS_RE = {
@@ -200,6 +200,7 @@ class BBCodeParser(object):
         self.add_default_renderer('color', '[color={COLOR}]{TEXT}[/color]', '<span style="color:{COLOR};">{TEXT}</span>')
         self.add_renderer('url', _render_url, replace_links=False)
         self.add_default_renderer('img', '[img]{URL}[/img]', '<img class="image_forum" src="{URL}" alt="" />', replace_links=False)
+        self.add_default_renderer('iframe', '[iframe]{URL}[/iframe]', '<iframe src="{URL}" frameborder="0" scrolling="no" height="400" width="90%" allowfullscreen></iframe>', replace_links=False)
 
     def _validate_format(self, format_dict):
         """
