@@ -181,10 +181,85 @@ def arbre(request, tournoi_id):
             next_match = Match.objects.get(tournoi=tournoi,second=request.user,valide=False)
         except :
             next_match = False
+    if request.GET.get('error') :
+        error_msg = request.GET.get('error')
+    else :
+        error_msg = str()
             
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match})
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
+
+def u_s(match,score):
+    match.score = int(score)
+    match.valide = True
+    match.save()
+    if int(score[0]) > int(score[1]) :
+        vainqueur = match.first
+        perdant = match.second
+    else :
+        vainqueur = match.second
+        perdant = match.first
+    if match.col == 0 and match.row == 0 :
+        tournoi = match.tournoi
+        tournoi.vainqueur = vainqueur
+        tournoi.save()
+    if match.next_gagnant :
+        n_g = match.next_gagnant
+        if n_g.first :
+            n_g.second = vainqueur
+        else :
+            n_g.first = vainqueur
+        n_g.save()
+    if match.next_perdant :
+        n_p = match.next_perdant
+        if n_p.first :
+            n_p.second = perdant
+        else :
+            n_p.first = perdant
+        n_p.save()
+    return match
                 
+def update_score(request,match_id):
+    match = get_object_or_404(Match,pk=match_id)
+    error_msg = u''
+    if not match.valide and request.method == "POST" :
+        score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
+        if match.col == 0 :
+            result = match.tournoi.finale
+        else :
+            result = match.tournoi.match
+        try :
+            int(score)
+        except :
+            score = ""
+        if not score or score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result) :
+            error_msg = "invalide"
+        else :
+            admins = Staff.objects.filter(tournoi=match.tournoi)
+            if request.user == match.tournoi.admin or request.user in admins :
+                confirmed = u_s(match,score)
+            elif request.user in [match.first,match.second] :
+                if request.user == match.first :
+                    first = True
+                else :
+                    first = False
+                if (first and match.score_second == int(score)) or (not first and match.score_first == int(score)) :
+                    confirmed = u_s(match,score)
+                elif first and not match.score_second :
+                    match.score_first = int(score)
+                    match.save()
+                elif not first and not match.score_first :
+                    match.score_second = int(score)
+                    match.save()
+                elif first :
+                    match.score_first = int(score)
+                    match.save()
+                    error_msg="dismatch"
+                else :
+                    match.score_second = int(score)
+                    match.save()
+                    error_msg="dismatch"
                     
+    return  redirect(u'/tournoi/arbre/%d?error=%s'%(match.tournoi.id,error_msg))
                     
 
 def inscription(request,tournoi_id):
