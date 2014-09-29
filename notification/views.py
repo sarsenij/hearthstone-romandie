@@ -95,4 +95,8 @@ def new_message(request):
         else :
             contacts = list()
         membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
-        return render_to_response('notification/new_message.html',{'contacts':contacts,'membres':membres},RequestContext(request))
+        if request.GET.get('dest'):
+            dest = request.GET.get('dest')
+        else :
+            dest = ""
+        return render_to_response('notification/new_message.html',{'contacts':contacts,'membres':membres,'dest':dest},RequestContext(request))
