@@ -2,99 +2,22 @@
 {% block title %}Tournoi {{tournoi.name}} | {{block.super}}{% endblock %}
 
 {% block content %}
+<a href="/tournoi/">Tournois</a>
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><a href="/tournoi/detail/{{tournoi.id}}">Détails</a></p>
-{% if not arbre %}
+{% if tournoi.termine %}
+<p>Le tournoi est terminé</p>
+{% if tournoi.vainqueur %}
+<p><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></p>
+{% endif %}
+{% endif %}
+{% if not arbre and not tournoi.termine %}
 <p>L'arbre n'a pas encore été généré</p>
+{% elif tournoi.termine %}
+<p>Aucun match n'a eu lieu</p>
 {% else %}
-
-{% if arbre.trentedeuxieme %}
-<div id="trentedeuxieme">
-<div class="match">{{ arbre.trentedeuxieme.match1.first.username }} - {{ arbre.trentedeuxieme.match1.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match2.first.username }} - {{ arbre.trentedeuxieme.match2.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match3.first.username }} - {{ arbre.trentedeuxieme.match3.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match4.first.username }} - {{ arbre.trentedeuxieme.match4.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match5.first.username }} - {{ arbre.trentedeuxieme.match5.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match6.first.username }} - {{ arbre.trentedeuxieme.match6.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match7.first.username }} - {{ arbre.trentedeuxieme.match7.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match8.first.username }} - {{ arbre.trentedeuxieme.match8.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match9.first.username }} - {{ arbre.trentedeuxieme.match9.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match10.first.username }} - {{ arbre.trentedeuxieme.match10.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match11.first.username }} - {{ arbre.trentedeuxieme.match11.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match12.first.username }} - {{ arbre.trentedeuxieme.match12.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match13.first.username }} - {{ arbre.trentedeuxieme.match13.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match14.first.username }} - {{ arbre.trentedeuxieme.match14.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match15.first.username }} - {{ arbre.trentedeuxieme.match15.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match16.first.username }} - {{ arbre.trentedeuxieme.match16.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match17.first.username }} - {{ arbre.trentedeuxieme.match17.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match18.first.username }} - {{ arbre.trentedeuxieme.match18.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match19.first.username }} - {{ arbre.trentedeuxieme.match19.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match20.first.username }} - {{ arbre.trentedeuxieme.match20.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match21.first.username }} - {{ arbre.trentedeuxieme.match21.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match22.first.username }} - {{ arbre.trentedeuxieme.match22.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match23.first.username }} - {{ arbre.trentedeuxieme.match23.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match24.first.username }} - {{ arbre.trentedeuxieme.match24.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match25.first.username }} - {{ arbre.trentedeuxieme.match25.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match26.first.username }} - {{ arbre.trentedeuxieme.match26.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match27.first.username }} - {{ arbre.trentedeuxieme.match27.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match28.first.username }} - {{ arbre.trentedeuxieme.match28.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match29.first.username }} - {{ arbre.trentedeuxieme.match29.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match30.first.username }} - {{ arbre.trentedeuxieme.match30.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match31.first.username }} - {{ arbre.trentedeuxieme.match31.second.username }}</div>
-<div class="match">{{ arbre.trentedeuxieme.match32.first.username }} - {{ arbre.trentedeuxieme.match32.second.username }}</div>
-</div>
-{% endif %}
-{% if arbre.seizieme %}
-<div id="seizieme">
-<div class="match">{{arbre.seizieme.match1.first.username }} - {{arbre.seizieme.match1.second.username }}</div>
-<div class="match">{{arbre.seizieme.match2.first.username }} - {{arbre.seizieme.match2.second.username }}</div>
-<div class="match">{{arbre.seizieme.match3.first.username }} - {{arbre.seizieme.match3.second.username }}</div>
-<div class="match">{{arbre.seizieme.match4.first.username }} - {{arbre.seizieme.match4.second.username }}</div>
-<div class="match">{{arbre.seizieme.match5.first.username }} - {{arbre.seizieme.match5.second.username }}</div>
-<div class="match">{{arbre.seizieme.match6.first.username }} - {{arbre.seizieme.match6.second.username }}</div>
-<div class="match">{{arbre.seizieme.match7.first.username }} - {{arbre.seizieme.match7.second.username }}</div>
-<div class="match">{{arbre.seizieme.match8.first.username }} - {{arbre.seizieme.match8.second.username }}</div>
-<div class="match">{{arbre.seizieme.match9.first.username }} - {{arbre.seizieme.match9.second.username }}</div>
-<div class="match">{{arbre.seizieme.match10.first.username }} - {{arbre.seizieme.match10.second.username }}</div>
-<div class="match">{{arbre.seizieme.match11.first.username }} - {{arbre.seizieme.match11.second.username }}</div>
-<div class="match">{{arbre.seizieme.match12.first.username }} - {{arbre.seizieme.match12.second.username }}</div>
-<div class="match">{{arbre.seizieme.match13.first.username }} - {{arbre.seizieme.match13.second.username }}</div>
-<div class="match">{{arbre.seizieme.match14.first.username }} - {{arbre.seizieme.match14.second.username }}</div>
-<div class="match">{{arbre.seizieme.match15.first.username }} - {{arbre.seizieme.match15.second.username }}</div>
-<div class="match">{{arbre.seizieme.match16.first.username }} - {{arbre.seizieme.match16.second.username }}</div>
-</div>
-{% endif %}
-{% if arbre.huitieme %}
-<div id="huitieme">
-<div class="match">{{arbre.huitieme.match1.first.username }} - {{arbre.huitieme.match1.second.username }}</div>
-<div class="match">{{arbre.huitieme.match2.first.username }} - {{arbre.huitieme.match2.second.username }}</div>
-<div class="match">{{arbre.huitieme.match3.first.username }} - {{arbre.huitieme.match3.second.username }}</div>
-<div class="match">{{arbre.huitieme.match4.first.username }} - {{arbre.huitieme.match4.second.username }}</div>
-<div class="match">{{arbre.huitieme.match5.first.username }} - {{arbre.huitieme.match5.second.username }}</div>
-<div class="match">{{arbre.huitieme.match6.first.username }} - {{arbre.huitieme.match6.second.username }}</div>
-<div class="match">{{arbre.huitieme.match7.first.username }} - {{arbre.huitieme.match7.second.username }}</div>
-<div class="match">{{arbre.huitieme.match8.first.username }} - {{arbre.huitieme.match8.second.username }}</div>
-</div>
-{% endif %}
-{% if arbre.quart %}
-<div id="quart">
-<div class="match">{{arbre.quart.match1.first.username }} - {{arbre.quart.match1.second.username }}</div>
-<div class="match">{{arbre.quart.match2.first.username }} - {{arbre.quart.match2.second.username }}</div>
-<div class="match">{{arbre.quart.match3.first.username }} - {{arbre.quart.match3.second.username }}</div>
-<div class="match">{{arbre.quart.match4.first.username }} - {{arbre.quart.match4.second.username }}</div>
-</div>
-{% endif %}
-{% if arbre.demifinale %}
-<div id="demifinale">
-<div class="match">{{arbre.demifinale.match1.first.username }} - {{ arbre.demifinale.match1.second.username }}</div>
-<div class="match">{{arbre.demifinale.match2.first.username }} - {{ arbre.demifinale.match2.second.username }}</div>
-</div>
-{% endif %}
-<div id="finale">
-<div class="match">{{arbre.finale.first.username }} - {{arbre.finale.second.username }}</div>
-{% if arbre.petitefinale %}
-<div class="match">{{arbre.petitefinale.first.username }} - {{arbre.petitefinale.second.username }}</div>
-{% endif %}
-</div>
+{% for match in arbre %}
+<div class="col{{match.col}} row{{match.row}}">{{match.first.profil_set.all.0.pseudo}} - {% if match.freewin %}<i>Freewin</i>{% else %}{{match.second.profil_set.all.0.pseudo}}{% endif %}</div>
+{% endfor %}
 {% endif %}
 {% endblock %}

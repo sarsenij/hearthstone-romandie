@@ -1,9 +1,10 @@
+# -*- encoding:utf-8 -*-
 from datetime import datetime
 from random import randint
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from tournoi.models import Tournoi, Invit, TournoiForm, Staff, Inscrit, Match, Arbre, DemiFinale, Quart, Huitieme, Seizieme, Trentedeuxieme, Poule
+from tournoi.models import Tournoi, Invit, TournoiForm, Staff, Inscrit, Match
 from profil.models import Profil, Contact
 from notification.models import InviteTournoi
 
@@ -13,21 +14,21 @@ from django.contrib.auth.models import User
 
 def home_page(request):
     tournoi_open = list()
-    for ot in Tournoi.objects.filter(date__gte=datetime.now().date()).order_by('date').order_by('heure') :
+    for ot in Tournoi.objects.filter(date__gte=datetime.now().date()).order_by('heure').order_by('date') :
         if (ot.date == datetime.now().date() and ot.heure >= datetime.now().time()) or ot.date > datetime.now().date() :
             if (ot.prive and request.user.is_active and Invit.objects.filter(tournoi=ot,invite=request.user)) or not ot.prive :
                 tournoi_open.append(ot)
-    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('date').order_by('heure')
-    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('date').order_by('heure')        
+    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('heure').order_by('date')
+    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('heure').order_by('-date')        
     context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini}
     return render(request,'tournoi/home_page.html', context)
 
 def create(request):
     if request.method == "POST" :
         tournoi = TournoiForm(request.POST)
-        if tournoi.is_valid():
+        if tournoi.is_valid() and not (tournoi.instance.date < datetime.now().date() or (tournoi.instance.date == datetime.now().date() and tournoi.instance.heure <= datetime.now().time())) : 
             tournoi.save()
-            thistournoi = Tournoi.objects.all().order_by('-id')[0]
+            thistournoi = Tournoi.objects.get(id=tournoi.instance.id)
             thistournoi.admin = request.user
             thistournoi.save()
             if thistournoi.prive :
@@ -73,7 +74,8 @@ def detail(request,tournoi_id):
     invites = list()
     staffs = list()
     inscrit = False
-    inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')
+    inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
+    attente = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[tournoi.max_participants:]
     if request.user == tournoi.admin or Staff.objects.filter(tournoi=tournoi,admin=request.user) :
         contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
         membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
@@ -81,418 +83,97 @@ def detail(request,tournoi_id):
         staffs = Staff.objects.filter(tournoi=tournoi).order_by('admin__username')
     if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
         inscrit = True
-    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs})
+    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs,'attente':attente})
+
+def feed_match(tournoi,inscrits=list(),indice=0,total=0,next_gagnant=False,next_perdant=False):
+    match = Match.objects.create(tournoi=tournoi,col=total,row=indice)
+    if len(inscrits) :
+        match.first = inscrits[indice].user
+        if len(inscrits) > indice + total :
+            match.second = inscrits[indice+total].user
+        else :
+            match.freewin = True
+    if next_gagnant :
+        match.next_gagnant = next_gagnant
+    if next_perdant :
+        match.next_perdant = next_perdant
+    match.save()
+    return match
 
 def arbre(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
-    arbre = list()
-    if not Arbre.objects.filter(tournoi=tournoi) and (tournoi.date < datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure <= datetime.now().time())) :
-        if Inscrit.objects.filter(tournoi=tournoi) :
-            inscrits = Inscrit.objects.filter(tournoi=tournoi)
-            for inscrit in inscrits :
-                inscrit.order = randint(0,1000000)
-                inscrit.save()
-            inscrits = list()
-            inscritstmp = Inscrit.objects.filter(tournoi=tournoi).order_by('order')
-            for insc in inscritstmp :
-                inscrits.append(insc.user)
-            endinscrits = reversed(inscrits)
-            arbre = Arbre.objects.create(tournoi=tournoi)
-            if len(inscrits) > 32 :
-                trentedeuxieme = Trentedeuxieme.objects.create()
-                match1 = Match.objects.create(first=inscrits[0],second=endinscrits[0])
-                trentedeuxieme.match1 = match1
-                match2 = Match.objects.create(first=inscrits[1])
-                if len(inscrits) > 33 :
-                    match2.second = endinscrits[1]
-                    match2.save()
-                trentedeuxieme.match2 = match2
-                match3 = Match.objects.create(first=inscrits[2])
-                if len(inscrits) > 34 :
-                    match3.second = endinscrits[2]
-                    match3.save()
-                trentedeuxieme.match3 = match3
-                match4 = Match.objects.create(first=inscrits[3])
-                if len(inscrits) > 35 :
-                    match4.second = endinscrits[3]
-                    match4.save()
-                trentedeuxieme.match4 = match4
-                match5 = Match.objects.create(first=inscrits[4])
-                if len(inscrits) > 36 :
-                    match5.second = endinscrits[4]
-                    match5.save()
-                trentedeuxieme.match5 = match5
-                match6 = Match.objects.create(first=inscrits[5])
-                if len(inscrits) > 37 :
-                    match6.second = endinscrits[5]
-                    match6.save()
-                trentedeuxieme.match6 = match6
-                match7 = Match.objects.create(first=inscrits[6])
-                if len(inscrits) > 38 :
-                    match7.second = endinscrits[6]
-                    match7.save()
-                trentedeuxieme.match7 = match7
-                match8 = Match.objects.create(first=inscrits[7])
-                if len(inscrits) > 39 :
-                    match8.second = endinscrits[7]
-                    match8.save()
-                trentedeuxieme.match8 = match8
-                match9 = Match.objects.create(first=inscrits[8])
-                if len(inscrits) > 40 :
-                    match9.second = endinscrits[8]
-                    match9.save()
-                trentedeuxieme.match9 = match9
-                match10 = Match.objects.create(first=inscrits[9])
-                if len(inscrits) > 41 :
-                    match10.second = endinscrits[9]
-                    match10.save()
-                trentedeuxieme.match10 = match10
-                match11 = Match.objects.create(first=inscrits[10])
-                if len(inscrits) > 42 :
-                    match11.second = endinscrits[10]
-                    match11.save()
-                trentedeuxieme.match11 = match11
-                match12 = Match.objects.create(first=inscrits[11])
-                if len(inscrits) > 43 :
-                    match12.second = endinscrits[11]
-                    match12.save()
-                trentedeuxieme.match12 = match12
-                match13 = Match.objects.create(first=inscrits[12])
-                if len(inscrits) > 44 :
-                    match13.second = endinscrits[12]
-                    match13.save()
-                trentedeuxieme.match13 = match13
-                match14 = Match.objects.create(first=inscrits[13])
-                if len(inscrits) > 45 :
-                    match14.second = endinscrits[13]
-                    match14.save()
-                trentedeuxieme.match14 = match14
-                match15 = Match.objects.create(first=inscrits[14])
-                if len(inscrits) > 46 :
-                    match15.second = endinscrits[14]
-                    match15.save()
-                trentedeuxieme.match15 = match15
-                match16 = Match.objects.create(first=inscrits[15])
-                if len(inscrits) > 47 :
-                    match16.second = endinscrits[15]
-                    match16.save()
-                trentedeuxieme.match16 = match16
-                match17 = Match.objects.create(first=inscrits[16])
-                if len(inscrits) > 48 :
-                    match17.second = endinscrits[16]
-                    match17.save()
-                trentedeuxieme.match17 = match17
-                match18 = Match.objects.create(first=inscrits[17])
-                if len(inscrits) > 49 :
-                    match18.second = endinscrits[17]
-                    match18.save()
-                trentedeuxieme.match18 = match18
-                match19 = Match.objects.create(first=inscrits[18])
-                if len(inscrits) > 50 :
-                    match19.second = endinscrits[18]
-                    match19.save()
-                trentedeuxieme.match19 = match19
-                match20 = Match.objects.create(first=inscrits[19])
-                if len(inscrits) > 51 :
-                    match20.second = endinscrits[19]
-                    match20.save()
-                trentedeuxieme.match20 = match20
-                match21 = Match.objects.create(first=inscrits[20])
-                if len(inscrits) > 52 :
-                    match21.second = endinscrits[20]
-                    match21.save()
-                trentedeuxieme.match21 = match21
-                match22 = Match.objects.create(first=inscrits[21])
-                if len(inscrits) > 53 :
-                    match22.second = endinscrits[21]
-                    match22.save()
-                trentedeuxieme.match22 = match22
-                match23 = Match.objects.create(first=inscrits[22])
-                if len(inscrits) > 54 :
-                    match23.second = endinscrits[22]
-                    match23.save()
-                trentedeuxieme.match23 = match23
-                match24 = Match.objects.create(first=inscrits[23])
-                if len(inscrits) > 55 :
-                    match24.second = endinscrits[23]
-                    match24.save()
-                trentedeuxieme.match24 = match24
-                match25 = Match.objects.create(first=inscrits[24])
-                if len(inscrits) > 56 :
-                    match25.second = endinscrits[24]
-                    match25.save()
-                trentedeuxieme.match25 = match25
-                match26 = Match.objects.create(first=inscrits[25])
-                if len(inscrits) > 57 :
-                    match26.second = endinscrits[25]
-                    match26.save()
-                trentedeuxieme.match26 = match26
-                match27 = Match.objects.create(first=inscrits[26])
-                if len(inscrits) > 58 :
-                    match27.second = endinscrits[26]
-                    match27.save()
-                trentedeuxieme.match27 = match27
-                match28 = Match.objects.create(first=inscrits[27])
-                if len(inscrits) > 59 :
-                    match28.second = endinscrits[27]
-                    match28.save()
-                trentedeuxieme.match28 = match28
-                match29 = Match.objects.create(first=inscrits[28])
-                if len(inscrits) > 60 :
-                    match29.second = endinscrits[28]
-                    match29.save()
-                trentedeuxieme.match29 = match29
-                match30 = Match.objects.create(first=inscrits[29])
-                if len(inscrits) > 61 :
-                    match30.second = endinscrits[29]
-                    match30.save()
-                trentedeuxieme.match30 = match30
-                match31 = Match.objects.create(first=inscrits[30])
-                if len(inscrits) > 62 :
-                    match31.second = endinscrits[30]
-                    match31.save()
-                trentedeuxieme.match31 = match31
-                match32 = Match.objects.create(first=inscrits[31])
-                if len(inscrits) > 63 :
-                    match32.second = endinscrits[31]
-                    match32.save()
-                trentedeuxieme.match32 = match32
-                trentedeuxieme.save()
-                arbre.trentedeuxieme = trentedeuxieme
-            if len(inscrits) > 16 :
-                seizieme = Seizieme.objects.create()
-                if len(inscrits) > 32 :
-                    match1 = Match.objects.create()
-                    seizieme.match1 = match1
-                    match2 = Match.objects.create()
-                    seizieme.match2 = match2
-                    match3 = Match.objects.create()
-                    seizieme.match3 = match3
-                    match4 = Match.objects.create()
-                    seizieme.match4 = match4
-                    match5 = Match.objects.create()
-                    seizieme.match5 = match5
-                    match6 = Match.objects.create()
-                    seizieme.match6 = match6
-                    match7 = Match.objects.create()
-                    seizieme.match7 = match7
-                    match8 = Match.objects.create()
-                    seizieme.match8 = match8
-                    match9 = Match.objects.create()
-                    seizieme.match9 = match9
-                    match10 = Match.objects.create()
-                    seizieme.match10 = match10
-                    match11 = Match.objects.create()
-                    seizieme.match11 = match11
-                    match12 = Match.objects.create()
-                    seizieme.match12 = match12
-                    match13 = Match.objects.create()
-                    seizieme.match13 = match13
-                    match14 = Match.objects.create()
-                    seizieme.match14 = match14
-                    match15 = Match.objects.create()
-                    seizieme.match15 = match15
-                    match16 = Match.objects.create()
-                    seizieme.match16 = match16
-                else :
-                    match1 = Match.objects.create(first=inscrits[0],second=endinscrits[0])
-                    seizieme.match1 = match1
-                    match2 = Match.objects.create(first=inscrits[1])
-                    if len(inscrits) > 17 :
-                        match2.second = endinscrits[1]
-                        match2.save()
-                    seizieme.match2 = match2
-                    match3 = Match.objects.create(first=inscrits[2])
-                    if len(inscrits) > 18 :
-                        match3.second = endinscrits[2]
-                        match3.save()
-                    seizieme.match3 = match3
-                    match4 = Match.objects.create(first=inscrits[3])
-                    if len(inscrits) > 19 :
-                        match4.second = endinscrits[3]
-                        match4.save()
-                    seizieme.match4 = match4
-                    match5 = Match.objects.create(first=inscrits[4])
-                    if len(inscrits) > 20 :
-                        match5.second = endinscrits[4]
-                        match5.save()
-                    seizieme.match5 = match5
-                    match6 = Match.objects.create(first=inscrits[5])
-                    if len(inscrits) > 21 :
-                        match6.second = endinscrits[5]
-                        match6.save()
-                    seizieme.match6 = match6
-                    match7 = Match.objects.create(first=inscrits[6])
-                    if len(inscrits) > 22 :
-                        match7.second = endinscrits[6]
-                        match7.save()
-                    seizieme.match7 = match7
-                    match8 = Match.objects.create(first=inscrits[7])
-                    if len(inscrits) > 23 :
-                        match8.second = endinscrits[7]
-                        match8.save()
-                    seizieme.match8 = match8
-                    match9 = Match.objects.create(first=inscrits[8])
-                    if len(inscrits) > 24 :
-                        match9.second = endinscrits[8]
-                        match9.save()
-                    seizieme.match9 = match9
-                    match10 = Match.objects.create(first=inscrits[9])
-                    if len(inscrits) > 25 :
-                        match10.second = endinscrits[9]
-                        match10.save()
-                    seizieme.match10 = match10
-                    match11 = Match.objects.create(first=inscrits[10])
-                    if len(inscrits) > 26 :
-                        match11.second = endinscrits[10]
-                        match11.save()
-                    seizieme.match11 = match11
-                    match12 = Match.objects.create(first=inscrits[11])
-                    if len(inscrits) > 27 :
-                        match12.second = endinscrits[11]
-                        match12.save()
-                    seizieme.match12 = match12
-                    match13 = Match.objects.create(first=inscrits[12])
-                    if len(inscrits) > 28 :
-                        match13.second = endinscrits[12]
-                        match13.save()
-                    seizieme.match13 = match13
-                    match14 = Match.objects.create(first=inscrits[13])
-                    if len(inscrits) > 29 :
-                        match14.second = endinscrits[13]
-                        match14.save()
-                    seizieme.match14 = match14
-                    match15 = Match.objects.create(first=inscrits[14])
-                    if len(inscrits) > 30 :
-                        match15.second = endinscrits[14]
-                        match15.save()
-                    seizieme.match15 = match15
-                    match16 = Match.objects.create(first=inscrits[15])
-                    if len(inscrits) > 31 :
-                        match16.second = endinscrits[15]
-                        match16.save()
-                    seizieme.match16 = match16
-                seizieme.save()
-                arbre.seizieme = seizieme
-            if len(inscrits) > 8 :
-                quart = Huitieme.objects.create()
-                if len(inscrits) > 16 :
-                    match1 = Match.objects.create()
-                    quart.match1 = match1
-                    match2 = Match.objects.create()
-                    quart.match2 = match2
-                    match3 = Match.objects.create()
-                    quart.match3 = match3
-                    match4 = Match.objects.create()
-                    quart.match4 = match4
-                    match5 = Match.objects.create()
-                    quart.match5 = match5
-                    match6 = Match.objects.create()
-                    quart.match6 = match6
-                    match7 = Match.objects.create()
-                    quart.match7 = match7
-                    match8 = Match.objects.create()
-                    quart.match8 = match8
-                else :
-                    match1 = Match.objects.create(first=inscrits[0],second=endinscrits[0])
-                    quart.match1 = match1
-                    match2 = Match.objects.create(first=inscrits[1])
-                    if len(inscrits) > 9 :
-                        match2.second = endinscrits[1]
-                        match2.save()
-                    quart.match2 = match2
-                    match3 = Match.objects.create(first=inscrits[2])
-                    if len(inscrits) > 10 :
-                        match3.second = endinscrits[2]
-                        match3.save()
-                    quart.match3 = match3
-                    match4 = Match.objects.create(first=inscrits[3])
-                    if len(inscrits) > 11 :
-                        match4.second = endinscrits[3]
-                        match4.save()
-                    quart.match4 = match4
-                    match5 = Match.objects.create(first=inscrits[4])
-                    if len(inscrits) > 12 :
-                        match5.second = endinscrits[4]
-                        match5.save()
-                    quart.match5 = match5
-                    match6 = Match.objects.create(first=inscrits[5])
-                    if len(inscrits) > 13 :
-                        match6.second = endinscrits[5]
-                        match6.save()
-                    quart.match6 = match6
-                    match7 = Match.objects.create(first=inscrits[6])
-                    if len(inscrits) > 14 :
-                        match7.second = endinscrits[6]
-                        match7.save()
-                    quart.match7 = match7
-                    match8 = Match.objects.create(first=inscrits[7])
-                    if len(inscrits) > 15 :
-                        match8.second = endinscrits[7]
-                        match8.save()
-                    quart.match8 = match8
-                quart.save()
-                arbre.quart = huitieme
-            if len(inscrits) > 4 :
-                quart = Quart.objects.create()
-                if len(inscrits) > 8 :
-                    match1 = Match.objects.create()
-                    quart.match1 = match1
-                    match2 = Match.objects.create()
-                    quart.match2 = match2
-                    match3 = Match.objects.create()
-                    quart.match3 = match3
-                    match4 = Match.objects.create()
-                    quart.match4 = match4
-                else :
-                    match1 = Match.objects.create(first=inscrits[0],second=endinscrits[0])
-                    quart.match1 = match1
-                    match2 = Match.objects.create(first=inscrits[1])
-                    if len(inscrits) > 5 :
-                        match2.second = endinscrits[1]
-                        match2.save()
-                    quart.match2 = match2
-                    match3 = Match.objects.create(first=inscrits[2])
-                    if len(inscrits) > 6 :
-                        match3.second = endinscrits[2]
-                        match3.save()
-                    quart.match3 = match3
-                    match4 = Match.objects.create(first=inscrits[3])
-                    if len(inscrits) > 7 :
-                        match4.second = endinscrits[3]
-                        match4.save()
-                    quart.match4 = match4
-                quart.save()
-                arbre.quart = quart
-            if len(inscrits) > 2 :
-                demifinale = DemiFinale.objects.create()
-                if len(inscrits) > 4 :
-                    match1 = Match.objects.create()
-                    demifinale.match1 = match1
-                    match2 = Match.objects.create()
-                    demifinale.match2 = match2
-                else :
-                    match1 = Match.objects.create(first=inscrits[0],second=endinscrits[0])
-                    demifinale.match1 = match1
-                    match2 = Match.objects.create(first=inscrits[1])
-                    if len(inscrits) > 3 :
-                        match2.second = endinscrits[1]
-                        match2.save()
-                    demifinale.match2 = match2
-                demifinale.save()
-                arbre.demifinale = demifinale
-                petitefinale = Match.objects.create()
-                arbre.petitefinale = petitefinale
-            finale = Match.objects.create()
+    #Génération de l'arbre
+    if not Match.objects.filter(tournoi=tournoi) and (tournoi.date < datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure <= datetime.now().time())) :
+        #Génération de la liste des inscrits
+        inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
+        for inscrit in inscrits :
+            inscrit.order = randint(1,1000000)
+            inscrit.save()
+        inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('-order')[:tournoi.max_participants]
+        if len(inscrits) <= 1 :
+            tournoi.termine = True
+            if inscrits :
+                tournoi.vainqueur = inscrits[0].user
+            tournoi.save()
+        else :
+            inscr = list()
             if len(inscrits) <= 2 :
-                finale.first = inscrits[0]
-                if len(inscrits) == 2 :
-                    finale.second = inscrits[1]
-                finale.save()
-            arbre.finale = finale
-            arbre.save()
-    elif Arbre.objects.filter(tournoi=tournoi):
-        arbre = Arbre.objects.get(tournoi=tournoi)
+                inscr = inscrits
+            finale = feed_match(tournoi,inscr)
+            if len(inscrits) > 2 :
+                if len(inscrits) <= 4 :
+                    inscr = inscrits
+                petite_finale = feed_match(tournoi,indice=1)
+                demifinale1 = feed_match(tournoi,inscr,0,2,finale,petite_finale)
+                demifinale2 = feed_match(tournoi,inscr,1,2,finale,petite_finale)
+            if len(inscrits) > 4 :
+                if len(inscrits) <= 8 :
+                    inscr = inscrits
+                quart1 = feed_match(tournoi,inscr,0,4,demifinale1)
+                quart2 = feed_match(tournoi,inscr,1,4,demifinale1)
+                quart3 = feed_match(tournoi,inscr,2,4,demifinale2)
+                quart4 = feed_match(tournoi,inscr,3,4,demifinale2)
+            if len(inscrits) > 8 :
+                if len(inscrits) <= 16 :
+                    inscr = inscrits
+                huitieme1 = feed_match(tournoi,inscr,0,8,quart1)
+                huitieme2 = feed_match(tournoi,inscr,1,8,quart1)
+                huitieme3 = feed_match(tournoi,inscr,2,8,quart2)
+                huitieme4 = feed_match(tournoi,inscr,3,8,quart2)
+                huitieme5 = feed_match(tournoi,inscr,4,8,quart3)
+                huitieme6 = feed_match(tournoi,inscr,5,8,quart3)
+                huitieme7 = feed_match(tournoi,inscr,6,8,quart4)
+                huitieme8 = feed_match(tournoi,inscr,7,8,quart4)
+            if len(inscrits) > 16 :
+                inscr = inscrits
+                seizieme1 = feed_match(tournoi,inscr,0,16,huitieme1)
+                seizieme2 = feed_match(tournoi,inscr,1,16,huitieme1)
+                seizieme3 = feed_match(tournoi,inscr,2,16,huitieme2)
+                seizieme4 = feed_match(tournoi,inscr,3,16,huitieme2)
+                seizieme5 = feed_match(tournoi,inscr,4,16,huitieme3)
+                seizieme6 = feed_match(tournoi,inscr,5,16,huitieme3)
+                seizieme7 = feed_match(tournoi,inscr,6,16,huitieme4)
+                seizieme8 = feed_match(tournoi,inscr,7,16,huitieme4)
+                seizieme9 = feed_match(tournoi,inscr,8,16,huitieme5)
+                seizieme10 = feed_match(tournoi,inscr,9,16,huitieme5)
+                seizieme11 = feed_match(tournoi,inscr,10,16,huitieme6)
+                seizieme12 = feed_match(tournoi,inscr,11,16,huitieme6)
+                seizieme13 = feed_match(tournoi,inscr,12,16,huitieme7)
+                seizieme14 = feed_match(tournoi,inscr,13,16,huitieme7)
+                seizieme15 = feed_match(tournoi,inscr,14,16,huitieme8)
+                seizieme16 = feed_match(tournoi,inscr,15,16,huitieme8)
+            while Match.objects.filter(freewin=True,valide=False) :
+                for m in Match.objects.filter(freewin=True,valide=False) :
+                    if m.next_gagnant :
+                        next_m = m.next_gagnant
+                        if not next_m.first :
+                            next_m.first = m.first
+                        else :
+                            next_m.second = m.first
+                        next_m.save()
+                    m.valide = True
+                    m.save()
+    arbre = Match.objects.filter(tournoi=tournoi).order_by('row').order_by('-col')
     return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi})
                 
                     
