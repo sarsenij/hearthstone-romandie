@@ -20,7 +20,8 @@ def home_page(request):
                 tournoi_open.append(ot)
     tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('date','heure')
     tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')        
-    context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini}
+    ladder = Profil.objects.filter(cote__gt=0,u__is_active=True).order_by('-cote')[:40]
+    context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini,'ladder':ladder}
     return render(request,'tournoi/home_page.html', context)
 
 def create(request):
@@ -202,6 +203,13 @@ def u_s(match,score):
         tournoi = match.tournoi
         tournoi.vainqueur = vainqueur
         tournoi.save()
+        cote = Profil.objects.get(u=vainqueur)
+        if tournoi.loser_bracket :
+            multiple = 5
+        else :
+            multiple = 10
+        cote.cote += multiple*len(Match.objects.filter(tournoi=tournoi))
+        cote.save()
     if match.next_gagnant :
         n_g = match.next_gagnant
         if n_g.first :
@@ -217,6 +225,31 @@ def u_s(match,score):
             n_p.first = perdant
         n_p.save()
     return match
+
+def cote(user1,user2,diff):
+    cote1 = float(user1.cote)
+    cote2 = float(user2.cote)
+    if diff > 0 :
+        indice = ((cote2*100)/cote1)/2
+    else :
+        indice = ((cote1*100)/cote2)/2
+    if indice > 100 :
+        indice = 100
+    if diff > 0 :
+        result1 = cote1+(indice*diff)
+        result2 = cote2-(indice*diff)
+    else :
+        result1 = cote1-(indice*-diff)
+        result2 = cote2+(indice*-diff)
+    if result1 <= 0 :
+        result1 = 1
+    if result2 <= 0 :
+        result2 = 1
+    user1.cote = int(result1)
+    user2.cote = int(result2)
+    user1.save()
+    user2.save()
+    return True
                 
 def update_score(request,match_id):
     match = get_object_or_404(Match,pk=match_id)
@@ -237,6 +270,9 @@ def update_score(request,match_id):
             admins = Staff.objects.filter(tournoi=match.tournoi)
             if request.user == match.tournoi.admin or request.user in admins :
                 confirmed = u_s(match,score)
+                user1 = match.first.profil_set.all()[0]
+                user2 = match.second.profil_set.all()[0]
+                define_cote = cote(user1,user2,int(score[0])-int(score[1]))
                 if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True) :
                     tournoi = match.tournoi
                     tournoi.termine = True
@@ -248,6 +284,9 @@ def update_score(request,match_id):
                     first = False
                 if (first and match.score_second == int(score)) or (not first and match.score_first == int(score)) :
                     confirmed = u_s(match,score)
+                    user1 = match.first.profil_set.all()[0]
+                    user2 = match.second.profil_set.all()[0]
+                    define_cote = cote(user1,user2,int(score[0])-int(score[1]))
                     if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True):
                         tournoi = match.tournoi
                         tournoi.termine = True

@@ -4,6 +4,9 @@
 
 {% block content %}
 <a href="/tournoi/create/">Créer un tournoi</a><br />
+<table style="width:100%;">
+<tr>
+<td style="width:70%;">
 <h3>Tournois ouverts</h3>
 <table class="forum_page">
 <tbody>
@@ -72,5 +75,37 @@
 {% endfor %}
 {% endif %}
 </tbody>
+</table>
+</td>
+<td style="vertical-align:top;">
+<h3>Classement</h3>
+<table class="forum_page">
+<thead>
+    <tr>
+        <th>N°</th>
+        <th>Nom</th>
+        <th>Cote</th>
+    </tr>
+</thead>
+<tbody>
+{% for l in ladder %}
+    {% if l.u == request.user %}
+    <tr style="background-color: rgba(230,184,128,0.60);">
+    {% else %}
+    {% if forloop.counter|divisibleby:2 %}
+    <tr style="background-color: rgba(230,184,138,0.1);">
+    {% else %}
+    <tr style="background-color: rgba(230,184,138,0.15);">            
+    {% endif %}
+    {% endif %}
+        <td>{{forloop.counter}}</td>
+        <td><a href="/profil/detail/{{l.id}}/">{{ l.pseudo }}</a></td>
+        <td>{{l.cote}}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+</td>
+</tr>
 </table>
 {% endblock %}

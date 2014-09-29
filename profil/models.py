@@ -37,7 +37,7 @@ class Profil(models.Model) :
     prenom = models.CharField(max_length=125,blank=True,null=True,default="")
     prenom_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
 
-    email = models.CharField(max_length=125)
+    email = models.CharField(max_length=125,null=True,blank=True)
     email_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
     
     rue = models.CharField(max_length=125,blank=True,null=True,default="")
@@ -59,6 +59,8 @@ class Profil(models.Model) :
     telephone_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
 
     lastseen = models.DateTimeField(null=True,default=datetime.now)
+
+    cote = models.IntegerField(default=1000)
 
 class Contact(models.Model) :
 
