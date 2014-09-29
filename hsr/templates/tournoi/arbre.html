@@ -22,7 +22,7 @@
 {% if next_match %}
 <p>
 Prochain match :<br />
-{{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}}) VS {{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}})
+{{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}}) VS {% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}
 {% if next_match.first and next_match.second %}
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
 <input name="sc_f" value="{%if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slugify|slice:"0:1"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slugify|slice:"0:1"}}{% endif %}" /> - <input name="sc_s" value="{% if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slugify|slice:"1:2"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slugify|slice:"1:2"}}{% endif %}" />{% csrf_token %} <input type="submit" value="Valider" />
