@@ -105,3 +105,8 @@ Déjà dans vos contacts
         </tr>
     {% endfor %}
 </table>
+<script type="text/javascript">
+$(document).ready(function(){
+    document.getElementById("menu_droite_bas").innerHTML = 'Vus récemment :{% for ls in notif_lastseen %} <a href="/profil/detail/{{ls.id}}/"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}<br /><a style="color:red;">Admins</a> <a style="color:blue;">Staffs</a> <a>Membres</a>';
+});
+</script>

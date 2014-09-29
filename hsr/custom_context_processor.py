@@ -22,7 +22,7 @@ def notif(request):
             postdv = PostDv.objects.get(topic=suivi.topic,compte=request.user).post
             if postdv != Post.objects.filter(topic=suivi.topic).order_by('-created')[0].id :
                 suivis.append([Topic.objects.get(id=suivi.topic.id),postdv])
-        lastseen = Profil.objects.filter(lastseen__gte=datetime.now()-timedelta(minutes=5)).order_by('pseudo')
+        lastseen = Profil.objects.filter(lastseen__gte=datetime.now()-timedelta(minutes=1)).order_by('pseudo')
         profil = Profil.objects.get(u=request.user)
 	profil.lastseen = datetime.now()
 	profil.save()
