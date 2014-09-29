@@ -99,6 +99,13 @@ function getSelect(selectId,destId)
     </tr>
 </tbody>
 </table>
+<h3>Staff</h3>
+<ul>
+<li><a href="/profil/detail/{{tournoi.admin.profil_set.all.0.id}}/">{{tournoi.admin.profil_set.all.0.pseudo}}</a> (<a href="/notification/new_message/?dest={{tournoi.admin.profil_set.all.0.pseudo}}">message</a>)</li>
+{% for s in staffs %}
+<li><a href="/profil/detail/{{s.admin.profil_set.all.0.id}}/">{{s.admin.profil_set.all.0.pseudo}}</a> (<a href="/notification/new_message/?dest={{s.admin.profil_set.all.0.pseudo}}">message</a>)</li>
+{% endfor%}
+</ul>
 <h3>Inscrits</h3>
 <ul>
 {% for i in inscrits %}

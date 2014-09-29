@@ -72,7 +72,7 @@ def detail(request,tournoi_id):
     contacts = list()
     membres = list()
     invites = list()
-    staffs = list()
+    staffs = Staff.objects.filter(tournoi=tournoi).order_by('admin__username')
     inscrit = False
     inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
     attente = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[tournoi.max_participants:]
@@ -80,7 +80,6 @@ def detail(request,tournoi_id):
         contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
         membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
         invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
-        staffs = Staff.objects.filter(tournoi=tournoi).order_by('admin__username')
     if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
         inscrit = True
     return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs,'attente':attente})
