@@ -11,6 +11,7 @@
 
 
 {% block content %}
+<a href="/tournoi/">Tournois</a> / Créer un tournoi
 {% for error in tournoi.errors %}
 {% if error == "regles" %}
 <p style="color:red;">
@@ -33,7 +34,7 @@ Vous devez spécifier une description pour le tournoi.
 </p>
 {% endif %}
 {% endfor %}
-<form action="" method="POST">
+<form action="{% if edit %}?id={{tournoi.instance.id}}{% endif %}" method="POST">
 <table class="forum_page">
 <tbody>
 {% for key in tournoi %}
@@ -43,7 +44,7 @@ Vous devez spécifier une description pour le tournoi.
     <tr style="background-color: rgba(230,184,138,0.15);">            
     {% endif %}
     <th>{{key.label}}</th>
-    <td>{% if key.name == "date" %}<input class="inputDate" id="inputDate" name="date" value="{{tournoi.instance.date|date:"Y-m-d"}}" />{% else %}{{key}}{% endif %}</td>
+    <td>{% if key.name == "date" %}<input class="inputDate" id="inputDate" name="date" value="{{tournoi.instance.date|date:"Y-m-d"}}" />{% elif key.name == "descr" %}{% include "pybb/bbcode.html" with name=key.name content=tournoi.instance.descr %}{% else %}{{key}}{% endif %}</td>
     </tr>
 {% endfor %}
 <tr><td colspan="2"><input type="submit" value="Créer le tournoi" />{% csrf_token %}</td></tr>

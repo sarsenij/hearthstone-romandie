@@ -28,6 +28,6 @@
 <form method="POST" action="">
 {% csrf_token %}
 <input type="hidden" name="titre" value="{{all_messages.0.titre.id}}" />
-{% include "pybb/bbcode.html" %}
+{% include "pybb/bbcode.html" with name="content"%}
 </form>
 {% endblock %}

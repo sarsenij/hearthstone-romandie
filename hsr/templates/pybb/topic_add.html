@@ -12,7 +12,7 @@
     		{% include "pybb/form_field.html" with field=form.name %}
             <tr>
             <td colspan=2>
-            {% include "pybb/bbcode.html" %}
+            {% include "pybb/bbcode.html" with name="content" %}
             </td>
             </tr>
     </table>

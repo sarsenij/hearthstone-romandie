@@ -8,11 +8,11 @@
 			<button title="switch to source" type="button" onclick="javascript:SwitchEditor()" style="background-image:url('/static/bbcode/images/icon_html.gif');"></button>
 		</div>
 		<div class="container" style="background-color: white; padding: 1%;">
-		<textarea id="tbMsg" name="content" style="height:150px;width:100%;">{{content}}</textarea>
+		<textarea id="tbMsg{{name}}" name="{{name}}" style="height:150px;width:100%;">{{content}}</textarea>
 		</div>
 	</div>
 	<script type="text/javascript">
-		initEditor("tbMsg", true);
+		initEditor("tbMsg{{name}}", true);
 	</script>
 	<br />
 	<input type="submit" onclick="doCheck();" value="Envoyer" />

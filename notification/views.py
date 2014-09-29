@@ -93,7 +93,7 @@ def new_message(request):
         if request.user.is_active :
             contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
         else :
-            contacts = list()
+            return redirect('/')
         membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
         if request.GET.get('dest'):
             dest = request.GET.get('dest')

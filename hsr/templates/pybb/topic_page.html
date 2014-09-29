@@ -109,7 +109,7 @@ Page :
     <center>
     <form onsubmit="doCheck();" method="post" action="{% url "pybb:post_add" %}?topic={{ topic.pk }}">
         {% csrf_token %}
-        {% include "pybb/bbcode.html" %}
+        {% include "pybb/bbcode.html" with name="content"%}
     </form>
     </center>
     {% endif %}

@@ -8,8 +8,7 @@ from django.forms import ModelForm
 
 class Tournoi(models.Model):
     name = models.CharField(max_length=225,verbose_name="Nom du tournoi")
-    descr = models.TextField(verbose_name="Description")
-    regles = models.TextField(verbose_name="Règles spécifiques")
+    descr = models.TextField(verbose_name="Description et règles")
     prive = models.BooleanField(verbose_name="Tournoi sur invitation",default=False)
     date = models.DateField(verbose_name="Date du tournoi",default=date.today)
     heure = models.TimeField(verbose_name="Heure du tournoi",null=True,default="00:00")
@@ -53,7 +52,7 @@ class Staff(models.Model):
 class TournoiForm(ModelForm):
     class Meta:
         model = Tournoi
-        fields = ['name','descr','regles','prive','date','heure','max_participants','match','finale']#,'poules','loser_bracket']
+        fields = ['name','descr','prive','date','heure','max_participants','match','finale']#,'poules','loser_bracket']
 
 class Inscrit(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_inscrit")
@@ -65,9 +64,9 @@ class Match(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_match",null=True,blank=True)
     first = models.ForeignKey('auth.User',related_name="first_match",null=True,blank=True)
     second = models.ForeignKey('auth.User',related_name="second_match",null=True,blank=True)
-    score = models.IntegerField(null=True,blank=True)
-    score_first = models.IntegerField(null=True,blank=True)
-    score_second = models.IntegerField(null=True,blank=True)
+    score = models.CharField(null=True,blank=True,max_length=2)
+    score_first = models.CharField(null=True,blank=True,max_length=2)
+    score_second = models.CharField(null=True,blank=True,max_length=2)
     freewin = models.BooleanField(default=False)
     next_gagnant = models.ForeignKey('Match',null=True,related_name="Match_next_gagnant",blank=True)
     next_perdant = models.ForeignKey('Match',null=True,related_name="Match_next_perdant",blank=True)

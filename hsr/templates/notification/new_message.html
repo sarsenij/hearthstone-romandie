@@ -46,7 +46,7 @@ Titre
 </tr>
 <tr>
 <td colspan="{% if contacts %}3{% else %}2{% endif %}">
-{% include "pybb/bbcode.html" %}
+{% include "pybb/bbcode.html" with name="content"%}
 {% csrf_token %}
 </td>
 </tr>

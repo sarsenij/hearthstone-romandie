@@ -9,13 +9,16 @@ function getSelect(selectId,destId)
     document.getElementById(destId).value = document.getElementById(destId).value+selectElmt.options[selectElmt.selectedIndex].value+" ";
 }
 </script>
-<a href="/tournoi/">Tournois</a>
+<a href="/tournoi/">Tournois</a> / {{tournoi.name}}
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><a href="/tournoi/arbre/{{tournoi.id}}">Arbre</a></p>
     {% if tournoi.termine %}<center>Ce tournoi est terminé</center><br />{% endif %}
     {% if tournoi.vainqueur %}<center><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></center><br />{% endif %}
+    {% if request.user.is_active %}
     <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
+    {% endif %}
     {% if membres %}
+    <p><a href="/tournoi/create/?id={{tournoi.id}}">Editer le tournoi</a></p>
     <table class="forum_page">
     <tr>
     <th colspan="2">Staff du tournoi</th>
@@ -61,34 +64,25 @@ function getSelect(selectId,destId)
 <tbody>
     {% if tournoi.prive %}
     <tr style="background-color: rgba(230,184,138,0.15);">            
-    <th colspan="2" style="color:red;">Ce tournoi est privé</th>
+    <th colspan="4" style="color:red;">Ce tournoi est privé</th>
     </tr>
     {% endif %}
     <tr style="background-color: rgba(230,184,138,0.1);">
-    <td><img src="{{tournoi.admin.profil_set.all.0.avatar}}" /></td>
-    <td>{{tournoi.admin.profil_set.all.0.pseudo}}</td>
+    <td style="width:25%;"><img width="100px" src="{{tournoi.admin.profil_set.all.0.avatar}}" /></td>
+    <td style="width:25%;">{{tournoi.admin.profil_set.all.0.pseudo}}</td>
+    <td style="width:25%;">{{tournoi.date|date:"d-m-Y"}}</td>
+    <td style="width:25%;">{{tournoi.heure|date:"H:i"}}</td>
     </tr>
     <tr style="background-color: rgba(230,184,138,0.15);">            
-    <td>{{tournoi.date|date:"d-m-Y"}}</td>
-    <td>{{tournoi.heure|date:"H:i"}}</td>
+    <th colspan="4">Description</th>
     </tr>
     <tr style="background-color: rgba(230,184,138,0.1);">
-    <th colspan="2">Description</th>
+    {% load bbcode_tags %}
+    <td colspan="4">{%bbcode tournoi.descr%}</td>
     </tr>
     <tr style="background-color: rgba(230,184,138,0.15);">            
-    <td colspan="2">{{tournoi.descr}}</td>
-    </tr>
-    <tr style="background-color: rgba(230,184,138,0.1);">
-    <th colspan="2">Règles</th>
-    </tr>
-    <tr style="background-color: rgba(230,184,138,0.15);">            
-    <td colspan="2">{{tournoi.regles}}</td>
-    </tr>
-    <tr style="background-color: rgba(230,184,138,0.1);">
     <th>Participants</th>
     <td>{{tournoi.inscrit}} / {{tournoi.max_participants}}</td>
-    </tr>
-    <tr style="background-color: rgba(230,184,138,0.15);">            
     <th>Formats</th>
     <td>
     {% if tournoi.poules %}Poules : {{tournoi.get_poules_display}}<br />{% endif %}

@@ -3,7 +3,7 @@
 
 
 {% block content %}
-<a href="/tournoi/create/">Créer un tournoi</a><br />
+Tournois{% if request.user.is_active %} / <a href="/tournoi/create/">Créer un tournoi</a>{% endif %}<br />
 <table style="width:100%;">
 <tr>
 <td style="width:70%;">

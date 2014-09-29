@@ -2,7 +2,7 @@
 {% block title %}Tournoi {{tournoi.name}} | {{block.super}}{% endblock %}
 
 {% block content %}
-<a href="/tournoi/">Tournois</a>
+<a href="/tournoi/">Tournois</a> / {{tournoi.name}}</a>
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><a href="/tournoi/detail/{{tournoi.id}}">Détails</a></p>
 {% if tournoi.termine %}
@@ -12,7 +12,7 @@
 {% endif %}
 {% endif %}
 {% if not arbre and not tournoi.termine %}
-<p>L'arbre n'a pas encore été généré</p>
+<p>L'arbre sera généré le {{tournoi.date|date:"d m Y"}} à {{tournoi.heure|date:"H:i"}}</p>
 {% elif not arbre and tournoi.termine %}
 <p>Aucun match n'a eu lieu</p>
 {% else %}
@@ -25,7 +25,7 @@ Prochain match :<br />
 {{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}}) VS {% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}
 {% if next_match.first and next_match.second %}
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
-<input name="sc_f" value="{%if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slugify|slice:"0:1"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slugify|slice:"0:1"}}{% endif %}" /> - <input name="sc_s" value="{% if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slugify|slice:"1:2"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slugify|slice:"1:2"}}{% endif %}" />{% csrf_token %} <input type="submit" value="Valider" />
+<input name="sc_f" value="{%if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slice:"0:1"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slice:"0:1"}}{% endif %}" /> - <input name="sc_s" value="{% if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slice:"1:2"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slice:"1:2"}}{% endif %}" />{% csrf_token %} <input type="submit" value="Valider" />
 </form>
 {% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
 {% endif %}
@@ -33,7 +33,7 @@ Prochain match :<br />
 {% endif %}
 {% for match in arbre %}
 <div class="col{{match.col}} row{{match.row}}">
-{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slugify|slice:"0:1"}}{% endif %} - {% if match.freewin %}<i>Freewin</i>{% else %}{% if match.score %}{{match.score|slugify|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
+{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slice:"0:1"}}{% endif %} - {% if match.freewin %}<i>Freewin</i>{% else %}{% if match.score %}{{match.score|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
 {% if admin or request.user == tournoi.admin %}
 {% if not match.valide and match.first and match.second %}
 <form method="POST" action="/tournoi/update/{{match.id}}">

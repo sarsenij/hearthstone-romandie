@@ -25,8 +25,17 @@ def home_page(request):
     return render(request,'tournoi/home_page.html', context)
 
 def create(request):
+    if not request.user.is_active :
+        return redirect('/tournoi/')
+    tournoi = TournoiForm()
+    edit = False
     if request.method == "POST" :
         tournoi = TournoiForm(request.POST)
+        if request.GET.get('id') :
+            t = get_object_or_404(Tournoi,pk=request.GET.get('id'))
+            if request.user == t.admin or Staff.objects.filter(tournoi=t,admin=request.user) :
+                tournoi = TournoiForm(request.POST,instance=t)
+                edit = True
         if tournoi.is_valid() and not (tournoi.instance.date < datetime.now().date() or (tournoi.instance.date == datetime.now().date() and tournoi.instance.heure <= datetime.now().time())) : 
             tournoi.save()
             thistournoi = Tournoi.objects.get(id=tournoi.instance.id)
@@ -35,9 +44,12 @@ def create(request):
             if thistournoi.prive :
                 invit = Invit.objects.create(tournoi=thistournoi,invite=request.user)
             return redirect('/tournoi/detail/%d'%thistournoi.id)
-    else :
-        tournoi = TournoiForm()
-    return render(request,'tournoi/create.html',{'tournoi':tournoi})       
+    elif request.GET.get('id') :
+        t = get_object_or_404(Tournoi,pk=request.GET.get('id'))
+        if request.user == t.admin or Staff.objects.filter(tournoi=t,admin=request.user) :
+            tournoi = TournoiForm(instance=t)
+            edit = True
+    return render(request,'tournoi/create.html',{'tournoi':tournoi,'edit':edit})       
 
 def detail(request,tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
@@ -46,6 +58,8 @@ def detail(request,tournoi_id):
         it.seen = True
         it.save()
     if request.method == "POST" :
+        if not request.user.is_active :
+            return redirect('/tournoi/detail/%d'%tournoi.id)
         if request.POST['action'] == "staff" :
             for staff in Staff.objects.filter(tournoi=tournoi):
                 notif = InviteTournoi.objects.get(user=staff.admin,staff=True,tournoi=tournoi)
@@ -77,12 +91,13 @@ def detail(request,tournoi_id):
     inscrit = False
     inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
     attente = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[tournoi.max_participants:]
-    if request.user == tournoi.admin or Staff.objects.filter(tournoi=tournoi,admin=request.user) :
-        contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
-        membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
-        invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
-    if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
-        inscrit = True
+    if request.user.is_active :
+        if request.user == tournoi.admin or Staff.objects.filter(tournoi=tournoi,admin=request.user) :
+            contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
+            membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
+            invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
+        if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
+            inscrit = True
     return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs,'attente':attente})
 
 def feed_match(tournoi,inscrits=list(),indice=0,total=0,next_gagnant=False,next_perdant=False):
@@ -185,8 +200,9 @@ def arbre(request, tournoi_id):
         error_msg = request.GET.get('error')
     else :
         error_msg = str()
-
-    admin = Staff.objects.filter(tournoi=tournoi,admin=request.user)
+    admin = list()
+    if request.user.is_active :
+        admin = Staff.objects.filter(tournoi=tournoi,admin=request.user)
     return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg,'admin':admin})
 
 def u_s(match,score):
@@ -253,6 +269,8 @@ def cote(user1,user2,diff):
                 
 def update_score(request,match_id):
     match = get_object_or_404(Match,pk=match_id)
+    if not request.user.is_active :
+        return redirect('/tournoi/arbre/%d'%match.tournoi.id)
     error_msg = u''
     if not match.valide and request.method == "POST" :
         score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
@@ -282,7 +300,7 @@ def update_score(request,match_id):
                     first = True
                 else :
                     first = False
-                if (first and match.score_second == int(score)) or (not first and match.score_first == int(score)) :
+                if (first and match.score_second == score) or (not first and match.score_first == score) :
                     confirmed = u_s(match,score)
                     user1 = match.first.profil_set.all()[0]
                     user2 = match.second.profil_set.all()[0]
@@ -292,17 +310,17 @@ def update_score(request,match_id):
                         tournoi.termine = True
                         tournoi.save()
                 elif first and not match.score_second :
-                    match.score_first = int(score)
+                    match.score_first = score
                     match.save()
                 elif not first and not match.score_first :
-                    match.score_second = int(score)
+                    match.score_second = score
                     match.save()
                 elif first :
-                    match.score_first = int(score)
+                    match.score_first = score
                     match.save()
                     error_msg="dismatch"
                 else :
-                    match.score_second = int(score)
+                    match.score_second = score
                     match.save()
                     error_msg="dismatch"
                     
@@ -311,17 +329,19 @@ def update_score(request,match_id):
 
 def inscription(request,tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
-    if (tournoi.prive and Invit.objects.filter(tournoi=tournoi,invite=request.user)) or not tournoi.prive :
-        inscrit = Inscrit.objects.create(tournoi=tournoi,user=request.user)
-        tournoi.inscrit += 1
-        tournoi.save()
+    if request.user.is_active :
+        if (tournoi.prive and Invit.objects.filter(tournoi=tournoi,invite=request.user)) or not tournoi.prive :
+            inscrit = Inscrit.objects.create(tournoi=tournoi,user=request.user)
+            tournoi.inscrit += 1
+            tournoi.save()
     return redirect('/tournoi/detail/%d'%tournoi.id) 
 
 def desinscription(request,tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
-    inscr = Inscrit.objects.get(tournoi=tournoi,user=request.user)
-    inscr.delete()
-    tournoi.inscrit -= 1
-    tournoi.save()
+    if request.user.is_active :
+        inscr = Inscrit.objects.get(tournoi=tournoi,user=request.user)
+        inscr.delete()
+        tournoi.inscrit -= 1
+        tournoi.save()
     return redirect('/tournoi/detail/%d'%tournoi.id) 
 
