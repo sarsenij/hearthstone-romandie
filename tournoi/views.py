@@ -14,12 +14,12 @@ from django.contrib.auth.models import User
 
 def home_page(request):
     tournoi_open = list()
-    for ot in Tournoi.objects.filter(date__gte=datetime.now().date()).order_by('heure').order_by('date') :
+    for ot in Tournoi.objects.filter(date__gte=datetime.now().date()).order_by('date','heure') :
         if (ot.date == datetime.now().date() and ot.heure >= datetime.now().time()) or ot.date > datetime.now().date() :
             if (ot.prive and request.user.is_active and Invit.objects.filter(tournoi=ot,invite=request.user)) or not ot.prive :
                 tournoi_open.append(ot)
-    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('heure').order_by('date')
-    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('heure').order_by('-date')        
+    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('date','heure')
+    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')        
     context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini}
     return render(request,'tournoi/home_page.html', context)
 
@@ -173,7 +173,7 @@ def arbre(request, tournoi_id):
                         next_m.save()
                     m.valide = True
                     m.save()
-    arbre = Match.objects.filter(tournoi=tournoi).order_by('row').order_by('-col')
+    arbre = Match.objects.filter(tournoi=tournoi).order_by('-col','row')
     try :
         next_match = Match.objects.get(tournoi=tournoi,first=request.user,valide=False)
     except :
