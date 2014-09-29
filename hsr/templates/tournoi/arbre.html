@@ -13,7 +13,7 @@
 {% endif %}
 {% if not arbre and not tournoi.termine %}
 <p>L'arbre n'a pas encore été généré</p>
-{% elif tournoi.termine %}
+{% elif not arbre and tournoi.termine %}
 <p>Aucun match n'a eu lieu</p>
 {% else %}
 {% if error_msg %}

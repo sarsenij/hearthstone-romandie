@@ -237,6 +237,10 @@ def update_score(request,match_id):
             admins = Staff.objects.filter(tournoi=match.tournoi)
             if request.user == match.tournoi.admin or request.user in admins :
                 confirmed = u_s(match,score)
+                if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True) :
+                    tournoi = match.tournoi
+                    tournoi.termine = True
+                    tournoi.save()
             elif request.user in [match.first,match.second] :
                 if request.user == match.first :
                     first = True
@@ -244,6 +248,10 @@ def update_score(request,match_id):
                     first = False
                 if (first and match.score_second == int(score)) or (not first and match.score_first == int(score)) :
                     confirmed = u_s(match,score)
+                    if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True):
+                        tournoi = match.tournoi
+                        tournoi.termine = True
+                        tournoi.save()
                 elif first and not match.score_second :
                     match.score_first = int(score)
                     match.save()
