@@ -185,8 +185,9 @@ def arbre(request, tournoi_id):
         error_msg = request.GET.get('error')
     else :
         error_msg = str()
-            
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
+
+    admin = Staff.objects.filter(tournoi=tournoi,admin=request.user)
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg,'admin':admin})
 
 def u_s(match,score):
     match.score = int(score)

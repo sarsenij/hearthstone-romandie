@@ -32,7 +32,15 @@ Prochain match :<br />
 </p>
 {% endif %}
 {% for match in arbre %}
-<div class="col{{match.col}} row{{match.row}}">{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slugify|slice:"0:1"}}{% endif %} - {% if match.freewin %}<i>Freewin</i>{% else %}{% if match.score %}{{match.score|slugify|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}</div>
+<div class="col{{match.col}} row{{match.row}}">
+{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slugify|slice:"0:1"}}{% endif %} - {% if match.freewin %}<i>Freewin</i>{% else %}{% if match.score %}{{match.score|slugify|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
+{% if admin or request.user == tournoi.admin %}
+{% if not match.valide and match.first and match.second %}
+<form method="POST" action="/tournoi/update/{{match.id}}">
+<input name="sc_f" /> <input name="sc_s" />{% csrf_token %} <input type="submit" value="Valider" />
+</form>
+{% endif %}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% endblock %}
