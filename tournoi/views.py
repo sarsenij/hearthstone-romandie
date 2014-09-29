@@ -174,7 +174,15 @@ def arbre(request, tournoi_id):
                     m.valide = True
                     m.save()
     arbre = Match.objects.filter(tournoi=tournoi).order_by('row').order_by('-col')
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi})
+    try :
+        next_match = Match.objects.get(tournoi=tournoi,first=request.user,valide=False)
+    except :
+        try :
+            next_match = Match.objects.get(tournoi=tournoi,second=request.user,valide=False)
+        except :
+            next_match = False
+            
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match})
                 
                     
                     

@@ -16,6 +16,12 @@
 {% elif tournoi.termine %}
 <p>Aucun match n'a eu lieu</p>
 {% else %}
+{% if next_match %}
+<p>
+Prochain match :<br />
+{{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}}) VS {{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}})
+</p>
+{% endif %}
 {% for match in arbre %}
 <div class="col{{match.col}} row{{match.row}}">{{match.first.profil_set.all.0.pseudo}} - {% if match.freewin %}<i>Freewin</i>{% else %}{{match.second.profil_set.all.0.pseudo}}{% endif %}</div>
 {% endfor %}
