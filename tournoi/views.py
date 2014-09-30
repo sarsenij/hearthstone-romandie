@@ -19,7 +19,7 @@ def home_page(request):
             if (ot.prive and request.user.is_active and Invit.objects.filter(tournoi=ot,invite=request.user)) or not ot.prive :
                 tournoi_open.append(ot)
     tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),termine=False).exclude(date=datetime.now().date(),heure__gte=datetime.now().time()).order_by('date','heure')
-    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')        
+    tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')[:20] 
     ladder = Profil.objects.filter(cote__gt=0,u__is_active=True).order_by('-cote')[:40]
     context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini,'ladder':ladder}
     return render(request,'tournoi/home_page.html', context)
