@@ -43,6 +43,7 @@ def create(request):
             thistournoi.save()
             if thistournoi.prive :
                 invit = Invit.objects.create(tournoi=thistournoi,invite=request.user)
+                invitourn = InviteTournoi.objects.create(tournoi=thistournoi,user=request.user,staff=False)
             return redirect('/tournoi/detail/%d'%thistournoi.id)
         else :
             tournoi.errors['perime'] = ""
@@ -226,8 +227,9 @@ def feed_freewin(go,dego):
                         n_g.first = let1
                     n_g.save()
 
-            if let.next_perdant and let.next_perdant.freewin :
-                dego.append(let.next_perdant)
+            if let.next_perdant : 
+                if let.next_perdant.freewin :
+                    dego.append(let.next_perdant)
                 
             tournoi = let.tournoi
             if let.col == 0 and not Match.objects.filter(tournoi=tournoi,col=0,score__isnull=True).exclude(freewin=True):
@@ -259,6 +261,8 @@ def feed_freewin(go,dego):
                 else :
                     gagnant = let.next_gagnant
                     gagnant.freewin = True
+                    if gagnant.next_perdant :
+                        dego.append(gagnant.next_perdant)
                     if let.next_gagnant.first :
                         go.append([let.next_gagnant,let.next_gagnant.first])
                         gagnant.valide = True
@@ -269,6 +273,8 @@ def feed_freewin(go,dego):
                 else :   
                     perdant = let.next_perdant
                     perdant.freewin = True
+                    if perdant.next_perdant :
+                        dego.append(perdant.next_perdant)
                     if let.next_perdant.first :
                         go.append([let.next_perdant,let.next_perdant.first])
                         perdant.valide=True
@@ -368,7 +374,11 @@ def update_score(request,match_id):
                 int(score)
             except :
                 score = ""
-            if len(score) != 2 or (score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result)) :
+            if match.col == 0 :
+                attendu = match.tournoi.finale
+            else :
+                attendu = match.tournoi.match
+            if len(score) != 2 or (score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result)) or int(score[0]) > attendu or int(score[1]) > attendu :
                 error_msg = "invalide"
             else :
                 admins = Staff.objects.filter(tournoi=match.tournoi)

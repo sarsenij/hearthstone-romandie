@@ -52,7 +52,7 @@ Vous devez spécifier une description pour le tournoi.
     <td>{% if key.name == "date" %}<input class="inputDate" id="inputDate" name="date" value="{{tournoi.instance.date|date:"Y-m-d"}}" />{% elif key.name == "descr" %}{% include "pybb/bbcode.html" with name=key.name content=tournoi.instance.descr %}{% else %}{{key}}{% endif %}</td>
     </tr>
 {% endfor %}
-<tr><td colspan="2"><input type="submit" value="Créer le tournoi" />{% csrf_token %}</td></tr>
+{% csrf_token %}
 </tbody>
 </table>
 </form>
