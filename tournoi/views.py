@@ -211,6 +211,7 @@ def feed_freewin(go,dego):
             let1 = let[1]
             let = let[0]
             let.first = let1
+            let.valide = True
             let.save()
             if let.next_gagnant : 
                 if let.next_gagnant.freewin :
@@ -218,9 +219,9 @@ def feed_freewin(go,dego):
                 else :
                     n_g = let.next_gagnant
                     if n_g.first :
-                        n_g.second = vainqueur
+                        n_g.second = let1
                     else :
-                        n_g.first = vainqueur
+                        n_g.first = let1
                     n_g.save()
 
             if let.next_perdant and let.next_perdant.freewin :
@@ -243,23 +244,34 @@ def feed_freewin(go,dego):
                 cote.save()
             go.remove([let,let.first])
         for let in dego :
+            if let.freewin :
+                let.valide = True
+            else :
+                let.freewin = True
+            let.save()
+            tournoi = let.tournoi
+            if let.col == 0 and not Match.objects.filter(tournoi=tournoi,col=0,score__isnull=True).exclude(freewin=True):
+                tournoi.termine = True
+                tournoi.save()
             if let.next_gagnant :
                 if let.next_gagnant.freewin :
                     dego.append(let.next_gagnant)
                 else :
-                    if let.next_gagnant.first :
-                        go.append([let.next_gagnant,let.next_gagnant.first])
                     gagnant = let.next_gagnant
                     gagnant.freewin = True
+                    if let.next_gagnant.first :
+                        go.append([let.next_gagnant,let.next_gagnant.first])
+                        gagnant.valide = True
                     gagnant.save()
             if let.next_perdant :
                 if let.next_perdant.freewin :
                     dego.append(let.next_perdant)
                 else :   
-                    if let.next_perdant.first :
-                        go.append([let.next_perdant,let.next_perdant.first])
                     perdant = let.next_perdant
                     perdant.freewin = True
+                    if let.next_perdant.first :
+                        go.append([let.next_perdant,let.next_perdant.first])
+                        perdant.valide=True
                     perdant.save()
             dego.remove(let)
     return True
@@ -356,7 +368,7 @@ def update_score(request,match_id):
                 int(score)
             except :
                 score = ""
-            if not score or score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result) :
+            if len(score) != 2 or (score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result)) :
                 error_msg = "invalide"
             else :
                 admins = Staff.objects.filter(tournoi=match.tournoi)

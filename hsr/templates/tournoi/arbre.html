@@ -9,6 +9,8 @@
 <p>Le tournoi est terminé</p>
 {% if tournoi.vainqueur %}
 <p><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></p>
+{% else %}
+<p>Il n'y a pas de vainqueur pour ce tournoi</p>
 {% endif %}
 {% endif %}
 {% if not arbre and not tournoi.termine %}
