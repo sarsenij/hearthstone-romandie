@@ -5,14 +5,17 @@
 <a href="/tournoi/">Tournois</a> / {{tournoi.name}}</a>
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><a href="/tournoi/detail/{{tournoi.id}}">Détails</a></p>
+{% if error_msg %}
+<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}Il vous faut un BattleTag pour participer aux tournois{% endif %}</p>
+{% endif %}
 <center>
 {% if tournoi.termine %}
 <p>Le tournoi est terminé</p>
+{% endif %}
 {% if tournoi.vainqueur %}
 <p><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></p>
-{% else %}
+{% elif tournoi.termine %}
 <p>Il n'y a pas de vainqueur pour ce tournoi</p>
-{% endif %}
 {% endif %}
 {% if not arbre and not tournoi.termine %}
 <p>L'arbre sera généré le {{tournoi.date|date:"d m Y"}} à {{tournoi.heure|date:"H:i"}}</p>
@@ -21,9 +24,6 @@
 </center>
 {% else %}
 </center>
-{% if error_msg %}
-<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% endif %}</p>
-{% endif %}
 {% if next_match %}
 <p>
 <b>Prochain match</b> :<br />

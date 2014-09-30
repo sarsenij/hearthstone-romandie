@@ -238,12 +238,10 @@ def feed_freewin(go,dego):
                 tournoi.vainqueur = let1
                 tournoi.save()
                 cote = Profil.objects.get(u=let1)
-                if tournoi.loser_bracket :
-                    multiple = 5
-                else :
-                    multiple = 10
-                cote.cote += multiple*len(Match.objects.filter(tournoi=tournoi))
-                cote.save()
+                multiple = 5
+                if len(Match.objects.filter(tournoi=Tournoi)) > 3 :
+                    cote.cote += multiple*len(Match.objects.filter(tournoi=tournoi))
+                    cote.save()
             go.remove([let,let.first])
         for let in dego :
             if let.freewin :
@@ -419,6 +417,8 @@ def inscription(request,tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
     if request.user.is_active :
         if (tournoi.prive and Invit.objects.filter(tournoi=tournoi,invite=request.user)) or not tournoi.prive :
+            if not Profil.objects.get(u=request.user).battletag :
+                return redirect('/tournoi/arbre/%d?error=battletag'%tournoi.id)
             inscrit = Inscrit.objects.create(tournoi=tournoi,user=request.user)
             tournoi.inscrit += 1
             tournoi.save()
