@@ -27,7 +27,7 @@
 {% if next_match %}
 <p>
 <b>Prochain match</b> :<br />
-<div class="match" style="width:400px;">
+<div class="match next_match{%if next_match.col == 0 and next_match.row == 0 %}finale{% endif %}" style="width:400px;">
 <div class="pseudo">{{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}})</div><div class="pseudo">{% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}</div>
 {% if next_match.first and next_match.second %}
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
@@ -41,13 +41,13 @@
 <input type="submit" value="OK" />
 </div>
 </form>
-{% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
-{% endif %}
 <div class="boutons">
 {% if next_match.col == 0 %}{{next_match.tournoi.get_finale_display}}{% else %}{{next_match.tournoi.get_match_display}}{% endif %}
 </div>
-</p>
+{% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
+{% endif %}
 </div>
+</p>
 <hr />
 {% endif %}
 <div id="arbre">
@@ -70,7 +70,7 @@
 {% endif %}
 {% endif %}
 {% if match.col == 0 and match.row == 1 %}<div class="inter8">{% else %}<div class="inter{{match.col}}">{% endif %}</div>
-<div class="match{% if match.row == 0 and match.col == 0 %} finale{% endif %}">
+<div class="{% if next_match == match %}next_match{% if match.row == 0 and match.col == 0 %}finale{% endif %}{% endif %} match{% if match.row == 0 and match.col == 0 %} finale{% endif %}">
 <div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
 {% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
 </div>

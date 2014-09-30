@@ -388,6 +388,15 @@ div.finale {
     padding-top:15px;
 }
 
+div.next_match {
+    background-image: url('/static/images/tournoi/match_fond_h.png')
+}
+
+div.next_matchfinale {
+    background-image: url('/static/images/tournoi/match_finale_fond_h.png')
+}
+
+
 div.inter8 {
     height:40px;
 }

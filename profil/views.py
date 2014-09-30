@@ -129,6 +129,8 @@ def deco(request) :
 def editer(request) :
     msg = list()
     msg_error = list()
+    if not request.user.is_active :
+        return redirect('/')
     profil = get_object_or_404(Profil,u__id=request.user.id)
     user = get_object_or_404(User,id=request.user.id)
     if request.method == "POST":
