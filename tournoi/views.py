@@ -18,7 +18,7 @@ def home_page(request):
         if (ot.date == datetime.now().date() and ot.heure >= datetime.now().time()) or ot.date > datetime.now().date() :
             if (ot.prive and request.user.is_active and Invit.objects.filter(tournoi=ot,invite=request.user)) or not ot.prive :
                 tournoi_open.append(ot)
-    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),heure__lte=datetime.now().time(),termine=False).order_by('date','heure')
+    tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),termine=False).exclude(date=datetime.now().date(),heure__gte=datetime.now().time()).order_by('date','heure')
     tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')        
     ladder = Profil.objects.filter(cote__gt=0,u__is_active=True).order_by('-cote')[:40]
     context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini,'ladder':ladder}
@@ -205,6 +205,65 @@ def arbre(request, tournoi_id):
         admin = Staff.objects.filter(tournoi=tournoi,admin=request.user)
     return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg,'admin':admin})
 
+def feed_freewin(go,dego):
+    while go or dego :
+        for let in go :
+            let1 = let[1]
+            let = let[0]
+            let.first = let1
+            let.save()
+            if let.next_gagnant : 
+                if let.next_gagnant.freewin :
+                    go.append([let.next_gagnant,let.first])
+                else :
+                    n_g = let.next_gagnant
+                    if n_g.first :
+                        n_g.second = vainqueur
+                    else :
+                        n_g.first = vainqueur
+                    n_g.save()
+
+            if let.next_perdant and let.next_perdant.freewin :
+                dego.append(let.next_perdant)
+                
+            tournoi = let.tournoi
+            if let.col == 0 and not Match.objects.filter(tournoi=tournoi,col=0,score__isnull=True).exclude(freewin=True):
+                tournoi.termine = True
+                tournoi.save()
+            
+            if let.col == 0 and let.row == 0 :
+                tournoi.vainqueur = let1
+                tournoi.save()
+                cote = Profil.objects.get(u=let1)
+                if tournoi.loser_bracket :
+                    multiple = 5
+                else :
+                    multiple = 10
+                cote.cote += multiple*len(Match.objects.filter(tournoi=tournoi))
+                cote.save()
+            go.remove([let,let.first])
+        for let in dego :
+            if let.next_gagnant :
+                if let.next_gagnant.freewin :
+                    dego.append(let.next_gagnant)
+                else :
+                    if let.next_gagnant.first :
+                        go.append([let.next_gagnant,let.next_gagnant.first])
+                    gagnant = let.next_gagnant
+                    gagnant.freewin = True
+                    gagnant.save()
+            if let.next_perdant :
+                if let.next_perdant.freewin :
+                    dego.append(let.next_perdant)
+                else :   
+                    if let.next_perdant.first :
+                        go.append([let.next_perdant,let.next_perdant.first])
+                    perdant = let.next_perdant
+                    perdant.freewin = True
+                    perdant.save()
+            dego.remove(let)
+    return True
+
 def u_s(match,score):
     match.score = int(score)
     match.valide = True
@@ -227,19 +286,26 @@ def u_s(match,score):
         cote.cote += multiple*len(Match.objects.filter(tournoi=tournoi))
         cote.save()
     if match.next_gagnant :
-        n_g = match.next_gagnant
-        if n_g.first :
-            n_g.second = vainqueur
+        if match.next_gagnant.freewin :
+            ff = feed_freewin([[match.next_gagnant,vainqueur]],[])               
+                                
         else :
-            n_g.first = vainqueur
-        n_g.save()
+            n_g = match.next_gagnant
+            if n_g.first :
+                n_g.second = vainqueur
+            else :
+                n_g.first = vainqueur
+            n_g.save()
     if match.next_perdant :
-        n_p = match.next_perdant
-        if n_p.first :
-            n_p.second = perdant
+        if match.next_perdant.freewin :
+            ff = feed_freewin([[match.next_perdant,perdant]],[])               
         else :
-            n_p.first = perdant
-        n_p.save()
+            n_p = match.next_perdant
+            if n_p.first :
+                n_p.second = perdant
+            else :
+                n_p.first = perdant
+            n_p.save()
     return match
 
 def cote(user1,user2,diff):
@@ -273,56 +339,64 @@ def update_score(request,match_id):
         return redirect('/tournoi/arbre/%d'%match.tournoi.id)
     error_msg = u''
     if not match.valide and request.method == "POST" :
-        score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
-        if match.col == 0 :
-            result = match.tournoi.finale
-        else :
-            result = match.tournoi.match
         try :
-            int(score)
+            request.POST['freewin']
+            match.freewin = True
+            match.valide = True
+            match.score = "00"
+            match.save()
+            ff = feed_freewin([],[match])
         except :
-            score = ""
-        if not score or score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result) :
-            error_msg = "invalide"
-        else :
-            admins = Staff.objects.filter(tournoi=match.tournoi)
-            if request.user == match.tournoi.admin or request.user in admins :
-                confirmed = u_s(match,score)
-                user1 = match.first.profil_set.all()[0]
-                user2 = match.second.profil_set.all()[0]
-                define_cote = cote(user1,user2,int(score[0])-int(score[1]))
-                if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True) :
-                    tournoi = match.tournoi
-                    tournoi.termine = True
-                    tournoi.save()
-            elif request.user in [match.first,match.second] :
-                if request.user == match.first :
-                    first = True
-                else :
-                    first = False
-                if (first and match.score_second == score) or (not first and match.score_first == score) :
+            score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
+            if match.col == 0 :
+                result = match.tournoi.finale
+            else :
+                result = match.tournoi.match
+            try :
+                int(score)
+            except :
+                score = ""
+            if not score or score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result) :
+                error_msg = "invalide"
+            else :
+                admins = Staff.objects.filter(tournoi=match.tournoi)
+                if request.user == match.tournoi.admin or request.user in admins :
                     confirmed = u_s(match,score)
                     user1 = match.first.profil_set.all()[0]
                     user2 = match.second.profil_set.all()[0]
                     define_cote = cote(user1,user2,int(score[0])-int(score[1]))
-                    if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True):
+                    if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True).exclude(freewin=True) :
                         tournoi = match.tournoi
                         tournoi.termine = True
                         tournoi.save()
-                elif first and not match.score_second :
-                    match.score_first = score
-                    match.save()
-                elif not first and not match.score_first :
-                    match.score_second = score
-                    match.save()
-                elif first :
-                    match.score_first = score
-                    match.save()
-                    error_msg="dismatch"
-                else :
-                    match.score_second = score
-                    match.save()
-                    error_msg="dismatch"
+                elif request.user in [match.first,match.second] :
+                    if request.user == match.first :
+                        first = True
+                    else :
+                        first = False
+                    if (first and match.score_second == score) or (not first and match.score_first == score) :
+                        confirmed = u_s(match,score)
+                        user1 = match.first.profil_set.all()[0]
+                        user2 = match.second.profil_set.all()[0]
+                        define_cote = cote(user1,user2,int(score[0])-int(score[1]))
+                        if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True).exclude(freewin=True):
+                            tournoi = match.tournoi
+                            tournoi.termine = True
+                            tournoi.save()
+                    elif first and not match.score_second :
+                        match.score_first = score
+                        match.save()
+                    elif not first and not match.score_first :
+                        match.score_second = score
+                        match.save()
+                    elif first :
+                        match.score_first = score
+                        match.save()
+                        error_msg="dismatch"
+                    else :
+                        match.score_second = score
+                        match.save()
+                        error_msg="dismatch"
                     
     return  redirect(u'/tournoi/arbre/%d?error=%s'%(match.tournoi.id,error_msg))
                     

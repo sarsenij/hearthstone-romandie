@@ -30,14 +30,16 @@ Prochain match :<br />
 {% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
 {% endif %}
 </p>
+<hr />
 {% endif %}
 {% for match in arbre %}
 <div class="col{{match.col}} row{{match.row}}">
-{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slice:"0:1"}}{% endif %} - {% if match.freewin %}<i>Freewin</i>{% else %}{% if match.score %}{{match.score|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
+{% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slice:"0:1"}}{% endif %} - {% if match.freewin and not match.second %}<i>Freewin</i>{% elif not match.second %}<i>Inconnu</i>{% else %}{% if match.score %}{{match.score|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
 {% if admin or request.user == tournoi.admin %}
 {% if not match.valide and match.first and match.second %}
 <form method="POST" action="/tournoi/update/{{match.id}}">
 <input name="sc_f" /> <input name="sc_s" />{% csrf_token %} <input type="submit" value="Valider" />
+<input type="checkbox" name="freewin" /> Forfait
 </form>
 {% endif %}
 {% endif %}
