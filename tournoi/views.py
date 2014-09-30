@@ -44,6 +44,8 @@ def create(request):
             if thistournoi.prive :
                 invit = Invit.objects.create(tournoi=thistournoi,invite=request.user)
             return redirect('/tournoi/detail/%d'%thistournoi.id)
+        else :
+            tournoi.errors['perime'] = ""
     elif request.GET.get('id') :
         t = get_object_or_404(Tournoi,pk=request.GET.get('id'))
         if request.user == t.admin or Staff.objects.filter(tournoi=t,admin=request.user) :
@@ -277,7 +279,7 @@ def feed_freewin(go,dego):
     return True
 
 def u_s(match,score):
-    match.score = int(score)
+    match.score = score
     match.valide = True
     match.save()
     if int(score[0]) > int(score[1]) :

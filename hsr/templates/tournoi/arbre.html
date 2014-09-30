@@ -5,6 +5,7 @@
 <a href="/tournoi/">Tournois</a> / {{tournoi.name}}</a>
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><a href="/tournoi/detail/{{tournoi.id}}">Détails</a></p>
+<center>
 {% if tournoi.termine %}
 <p>Le tournoi est terminé</p>
 {% if tournoi.vainqueur %}
@@ -17,13 +18,15 @@
 <p>L'arbre sera généré le {{tournoi.date|date:"d m Y"}} à {{tournoi.heure|date:"H:i"}}</p>
 {% elif not arbre and tournoi.termine %}
 <p>Aucun match n'a eu lieu</p>
+</center>
 {% else %}
+</center>
 {% if error_msg %}
 <p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% endif %}</p>
 {% endif %}
 {% if next_match %}
 <p>
-Prochain match :<br />
+<b>Prochain match</b> :<br />
 {{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}}) VS {% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}
 {% if next_match.first and next_match.second %}
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
@@ -34,17 +37,73 @@ Prochain match :<br />
 </p>
 <hr />
 {% endif %}
+<div id="arbre">
+<div>
+<div>
 {% for match in arbre %}
-<div class="col{{match.col}} row{{match.row}}">
-{% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo}}{% if match.score %} {{match.score|slice:"0:1"}}{% endif %} - {% if match.freewin and not match.second %}<i>Freewin</i>{% elif not match.second %}<i>Inconnu</i>{% else %}{% if match.score %}{{match.score|slice:"1:2"}}{% endif %} {{match.second.profil_set.all.0.pseudo}}{% endif %}
+{% if match.row == 0 %}
+</div>
+{% if match.col == 0 %}
+<div class="col" id="col0"><center><b>Finales</b></center>
+{% elif match.col == 2 %}
+<div class="col" id="col2"><center><b>Demi-finales</b></center>
+{% elif match.col == 4 %}
+<div class="col" id="col4"><center><b>Quarts</b></center>
+{% elif match.col == 8 %}
+<div class="col" id="col8"><center><b>Huitièmes</b></center>
+{% elif match.col == 16 %}
+<div class="col" id="col16"><center><b>Seizièmes</b></center>
+
+{% endif %}
+{% endif %}
+{% if match.col == 0 and match.row == 1 %}<div class="inter8">{% else %}<div class="inter{{match.col}}">{% endif %}</div>
+<div class="match{% if match.row == 0 and match.col == 0 %} finale{% endif %}">
+<div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
+{% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
+</div>
+<div class="pseudo id{{match.second.id}}"{% if match.second %} onmouseover="OnIn('id{{match.second.id}}');" onmouseout="OnOut('id{{match.second.id}}');"{% endif %}>
+{% if match.freewin and not match.second %}<i>Freewin</i>{% elif not match.second %}<i>Inconnu</i>{% endif %}{{match.second.profil_set.all.0.pseudo|slice:"0:12"}}
+</div>
 {% if admin or request.user == tournoi.admin %}
 {% if not match.valide and match.first and match.second %}
 <form method="POST" action="/tournoi/update/{{match.id}}">
-<input name="sc_f" /> <input name="sc_s" />{% csrf_token %} <input type="submit" value="Valider" />
-<input type="checkbox" name="freewin" /> Forfait
+<div class="resultat"><input name="sc_f" size="1" /></div><div class="resultat resultat2"><input name="sc_s" size="1" /></div>{% csrf_token %}
+<div class="boutons">Nul<input type="checkbox" name="freewin" /></div>
+<div class="boutons boutons2"><input type="submit" value="OK" /></div>
 </form>
+{% else %}
+<div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
 {% endif %}
+{% else %}
+<div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
+{% endif %}
+{% if match.valide %}
+<div class="boutons"><img src="/static/images/tournoi/{% if match.col == 0 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.col == 0 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+{% endif %}
+</div>
+<div class="clear"></div>
+{% if match.col == 0 and match.row == 1 %}
+{% elif match.col == 0 and match.row == 0 %}
+{% else %}
+<div class="inter{{match.col}}"></div>
 {% endif %}
 {% endfor %}
+</div>
+</div>
 {% endif %}
+<script type="text/javascript">
+function OnIn(elem) {
+    var tds = document.getElementsByClassName(elem);
+    for(var i = 0; i < tds.length; i++) {
+        tds[i].style.color = "#cd853f";
+    }
+}
+function OnOut(elem) {
+    var tds = document.getElementsByClassName(elem);
+    for(var i = 0; i < tds.length; i++) {
+        tds[i].style.color = "white";
+    }
+}
+</script>
 {% endblock %}

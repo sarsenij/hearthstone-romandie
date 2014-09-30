@@ -356,3 +356,86 @@ table#contacts_profil {
 
 
 /* END PROFIL */
+
+/* TOURNOI ARBRE */
+
+.clear {clear:both;}
+
+div#arbre {
+    width:100%;
+    position:relative;
+}
+
+div.col {
+    width:18%;
+    float:left;
+    margin-left:2%;
+}
+
+div.match {
+    width:100%;
+    height:80px;
+    background-image: url('/static/images/tournoi/match_fond.png');
+    background-size: 100% 80px;
+    position:relative;
+}
+
+div.finale {
+    width:100%;
+    height:100px;
+    background-image: url('/static/images/tournoi/match_finale_fond.png');
+    background-size: 100% 115px;
+    padding-top:15px;
+}
+
+div.inter8 {
+    height:40px;
+}
+
+div.inter4 {
+    height:120px;
+}
+
+div.inter2 {
+    height:280px;
+}
+
+div.inter0 {
+    height:600px;
+}
+ div.pseudo {
+    width:50%;
+    margin-left:7%;
+    height:32px;
+    text-align:center;
+    line-height:40px;
+    float:left;
+}
+div.resultat {
+    width:12%;
+    height:32px;
+    text-align:center;
+    line-height:40px;
+    margin-left:55%;
+    position:absolute;
+}
+
+div.resultat2 {
+    margin-top:32px;
+}
+
+div.boutons {
+    width:30%;
+    height:32px;
+    text-align:center;
+    line-height:40px;
+    margin-left:2%;
+    position:absolute;
+    margin-left:70%;
+}
+
+div.boutons2 {
+    line-height:40px;
+    margin-top:32px;
+}
+/* END TOURNOI ARBRE */

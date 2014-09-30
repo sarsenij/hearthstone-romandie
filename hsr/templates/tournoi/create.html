@@ -13,6 +13,11 @@
 {% block content %}
 <a href="/tournoi/">Tournois</a> / Créer un tournoi
 {% for error in tournoi.errors %}
+{% if error == "perime" %}
+<p style="color:red;">
+La date du tournoi est déjà passée.
+</p>
+{% endif %}
 {% if error == "regles" %}
 <p style="color:red;">
 Vous devez spécifier des règles pour le tournoi.
