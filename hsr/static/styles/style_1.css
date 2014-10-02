@@ -107,18 +107,18 @@ a:hover {
 #menu_tournoi_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/tournoi.png');
-    width: 221px;
-    height: 51px;
+    width: 201px;
+    height: 35px;
     left: 50%;
-    margin-left: -106px;
-    top: 338px;
+    margin-left: -99px;
+    top: 345px;
     z-index: 14;
 }
 #menu_tournoi_h:hover {
 	background: url('/static/images/menu/Hover/tournoi_h.png');
 }
 #menu_tournoi_h:active {
-	top: 340px;
+	top: 346px;
 }
 
 #menu_forum_h {
