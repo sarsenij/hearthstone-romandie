@@ -192,11 +192,13 @@ a:hover {
 #menu_droite {
 	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
 	border: 3px double rgba(139,69,19, 1);
-	position: absolute;
+	position: fixed;
 	top: 150px;
+	bottom: 3%;
 	width: 17%;
 	right: 0.5%;
 	padding: 0.4%;
+	overflow: auto;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
