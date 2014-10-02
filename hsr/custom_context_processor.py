@@ -15,7 +15,7 @@ def notif(request):
         chat = ChatMsg.objects.all().order_by('-id')
         if len(chat) > 10 :
             chat = chat[0:10]
-        chat = reversed(chat)
+        #chat = reversed(chat)
         suivistmp = Suivi.objects.filter(user=request.user)
         suivis = list()
         for suivi in suivistmp :
