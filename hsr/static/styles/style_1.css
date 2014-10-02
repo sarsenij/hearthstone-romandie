@@ -104,6 +104,23 @@ a:hover {
 	top: 196px;
 }
 
+#menu_tournoi_h {
+	position: absolute;
+	background: url('/static/images/menu/Hover/tournoi.png');
+    width: 221px;
+    height: 51px;
+    left: 50%;
+    margin-left: -106px;
+    top: 338px;
+    z-index: 14;
+}
+#menu_tournoi_h:hover {
+	background: url('/static/images/menu/Hover/tournoi_h.png');
+}
+#menu_tournoi_h:active {
+	top: 340px;
+}
+
 #menu_forum_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/forum.png');
