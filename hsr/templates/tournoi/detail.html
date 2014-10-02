@@ -18,7 +18,7 @@ function getSelect(selectId,destId)
     {% if request.user.is_active %}
     <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
     {% endif %}
-    {% if membres %}
+    {% if request.user == tournoi.admin %}
     <p><a href="/tournoi/create/?id={{tournoi.id}}">Editer le tournoi</a></p>
     <table class="forum_page">
     <tr>
