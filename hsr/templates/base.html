@@ -75,9 +75,9 @@
         {% include 'notification/indicateur.html' %} 
 		</div>
         <br />
-        <form action="/notification/indicator/" method="POST" id="chat">
-        {{request.user.profil_set.all.0.pseudo}} - <input name="message" id="chat_message" />
-        <input type="submit" value="Chat" />
+        <form action="/notification/indicator/" method="POST" id="chat"><table style="width: 100%;"><td>
+        {{request.user.profil_set.all.0.pseudo}}</td><td><input type="text" name="message" id="chat_message" style="width: 100%;" /></td>
+        <td><center><input type="submit" value="Chat" /></center></td></table>
         {% csrf_token %}
         </form>
         <br />

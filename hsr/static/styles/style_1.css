@@ -22,7 +22,7 @@ html, body {
 
 body {
 /*	background-color: #4b371b;*/
-	color: white;
+	color: #FDF5E6;
 	cursor: default;
 	text-shadow: 1px 1px 0px rgba(0,0,0,1);
 	background-color: black;
@@ -36,12 +36,12 @@ a:link, a:visited, a {
 	color: #cd853f;
 	text-decoration: none;
 	cursor: pointer;
-	vertical-align: -0.19px;
+	vertical-align: 0px;
 }
 
 a:hover {
 	color: #deb887;
-	vertical-align: -0.19px;
+	vertical-align: 0px;
 }
 
 #deco {
@@ -172,9 +172,9 @@ a:hover {
 	width: 56%;
 	left: 50%;
 	margin-left: -28%;
+	margin-bottom: 0.5%;
 	padding: 0.5%;
 	z-index: 14;
-	color: white;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
