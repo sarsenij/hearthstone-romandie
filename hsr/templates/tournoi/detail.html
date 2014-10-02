@@ -20,6 +20,8 @@ function getSelect(selectId,destId)
     {% endif %}
     {% if request.user == tournoi.admin %}
     <p><a href="/tournoi/create/?id={{tournoi.id}}">Editer le tournoi</a></p>
+    {% endif %}
+    {% if membres %}
     <table class="forum_page">
     <tr>
     <th colspan="2">Modifier du staff au tournoi</th>
