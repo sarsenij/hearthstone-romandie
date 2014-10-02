@@ -114,9 +114,18 @@ Déjà dans vos contacts
         {% else %}
         <tr class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
         {% endif %}
-        <td>{{c.created|date:"d/m" }}<br />
+        <td><center>{{c.created|date:"d/m" }}<br />
         {% load bbcode_tags %}
-        {{c.created|date:"H:i" }}</td><td><a href="/profil/detail/{{c.user.profil_set.all.0.id}}/">{{c.user.profil_set.all.0.pseudo}}</a></td><td>{% bbcode c.message %}
+        {{c.created|date:"H:i" }}</center></td>
+        <td><center><a href="/profil/detail/{{c.user.profil_set.all.0.id}}/">{{c.user.profil_set.all.0.pseudo}}</a></center></td>
+        <td>
+        {% if forloop.counter|divisibleby:2 %}
+        <span style="color: #FFF8DC;">
+        {% else %}
+        <span>
+        {% endif %}
+        {% bbcode c.message %}
+        </span>
         </td>
         </tr>
     {% endfor %}
