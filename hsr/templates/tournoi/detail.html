@@ -22,32 +22,32 @@ function getSelect(selectId,destId)
     <p><a href="/tournoi/create/?id={{tournoi.id}}">Editer le tournoi</a></p>
     <table class="forum_page">
     <tr>
-    <th colspan="2">Staff du tournoi</th>
-    <th colspan="2">Invités au tournoi</th>
+    <th colspan="2">Modifier du staff au tournoi</th>
+    <th colspan="2">Modifier les invitations au tournoi</th>
     </tr>
     <tr>
-    <td>Contacts : <select id="staff_contact" onchange="getSelect('staff_contact','staff')">
+    <td>Mes contacts : <select id="staff_contact" onchange="getSelect('staff_contact','staff')">
     <option value="">-----</option>
     {% for contact in contacts %}
     <option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
     {% endfor %}
     </select>
     </td>
-    <td>Membres : <select id="staff_membre" onchange="getSelect('staff_membre','staff')">
+    <td>Membres du site : <select id="staff_membre" onchange="getSelect('staff_membre','staff')">
     <option value="">-----</option>
     {% for membre in membres %}
     <option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
     {% endfor %}
     </select>
     </td>
-    <td>Contacts : <select id="invit_contact" onchange="getSelect('invit_contact','invit')">
+    <td>Mes contacts : <select id="invit_contact" onchange="getSelect('invit_contact','invit')">
     <option value="">-----</option>
     {% for contact in contacts %}
     <option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
     {% endfor %}
     </select>
     </td>
-    <td>Membres : <select id="invit_membre" onchange="getSelect('invit_membre','invit')">
+    <td>Membres du site : <select id="invit_membre" onchange="getSelect('invit_membre','invit')">
     <option value="">-----</option>
     {% for membre in membres %}
     <option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
