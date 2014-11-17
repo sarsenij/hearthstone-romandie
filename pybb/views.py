@@ -60,7 +60,10 @@ def home_page(request):
             if not dv :
                 dvsuivi[topic] = [0,0,0] #Pas visité
             else :
-                post_page = list(Post.objects.filter(topic=topic.topic).order_by('created').values_list('id',flat=True)).index(dv[0].post)/10
+                if dv[0].post :
+                    post_page = list(Post.objects.filter(topic=topic.topic).order_by('created').values_list('id',flat=True)).index(dv[0].post)/10
+                else :
+                    post_page = 0
                 if dv[0].post == Post.objects.filter(topic=topic.topic).order_by('-created')[0].id:
                     dvsuivi[topic] = [1,post_page,dv[0].post] #Tout vu
                 else :
