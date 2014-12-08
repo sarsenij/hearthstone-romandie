@@ -25,8 +25,8 @@ body {
 	color: #FDF5E6;
 	cursor: default;
 	text-shadow: 1px 1px 0px rgba(0,0,0,1);
-	background-color: black;
-	background-image: url('/static/images/backgrounds/flous/flou_4_qs.jpg');
+	background-color: #4b271d;
+	background-image: url('/static/images/backgrounds/flous/flou_4_qs_2.jpg');
 	background-attachment: fixed;
 	background-repeat:no-repeat;
 	font-family: 'Balthazar', serif;
@@ -51,8 +51,8 @@ a:hover {
 	-webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,1);
 	box-shadow: 0px 0px 10px 2px rgba(0,0,0,1);
-	padding: 0.5%;
-	margin: 0.5%
+	padding: 5px;
+	margin: 10px;
 }
 
 #messages_erreur {
@@ -71,12 +71,28 @@ a:hover {
 #logo {
 	position: absolute;
 	background-image: url('/static/images/logos/585px_Hearthstone_Logo_TRANSP_WO_FOND_DELIRE.png');
-    width: 644px;;
+    width: 644px;
     height: 239px;
     left: 50%;
     margin-left: -343px;
     top: -20px;
     z-index: 14;
+}
+
+#logo_gvg {
+	position: absolute;
+	background-image: url('/static/images/divers/gvg.png');
+    width: 435px;
+    height: 385px;
+    -moz-transform: scale(0.5) rotate(10deg);
+	-webkit-transform: scale(0.5) rotate(10deg);
+	-o-transform: scale(0.5) rotate(10deg);
+	-ms-transform: scale(0.5) rotate(10deg);
+	transform: scale(0.5) rotate(10deg);
+	-webkit-backface-visibility: hidden;
+    left: 49.2%;
+    top: 40px;
+    z-index: 12;
 }
 
 /* MENU */
@@ -169,7 +185,8 @@ a:hover {
 	border: 3px double rgba(139,69,19, 1);
 	position: relative;
 	top: 388px;
-	width: 56%;
+	width: 54.6%;
+	min-width: 730px;
 	left: 50%;
 	margin-left: -28%;
 	margin-bottom: 0.5%;
@@ -185,16 +202,95 @@ a:hover {
 	border: 3px double rgba(139,69,19, 1);
 	position: fixed;
 	left: 0px;
-	margin: 0.5%;
+	margin: 10px;
 	top: 150px;
+	height: 150px;
 	width: 17%;
 	min-width: 225px;
-	padding: 0.4%;
+	min-height: 150px;
+	padding: 5px;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	
 }
+
+#twitter_bird {
+	position: fixed;
+	display: table;
+	background-image: url('/static/images/divers/tweet.png');
+	background-size: 100%;
+	background-repeat: no-repeat;
+	top: 587px;
+	left: 7.5%;
+    width: 50px;
+    height: 63px;
+	z-index: 20;
+}
+
+#twitter_box {
+	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
+	border: 3px double rgba(139,69,19, 1);
+	position: fixed;
+	left: 0px;
+	margin: 10px;
+	top: 600px;
+	height: 270px;
+	width: 17%;
+	min-width: 225px;
+	padding: 5px;
+	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+}
+
+#gvg_cards {
+	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
+	border: 3px double rgba(139,69,19, 1);
+	position: fixed;
+	left: 0px;
+	margin: 10px;
+	top: 370px;
+	height: 165px;
+	width: 17%;
+	min-width: 225px;
+	padding: 5px;
+	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
+	overflow-y: hidden;
+	overflow-x: auto;
+	white-space: nowrap;
+	
+}
+
+#gvg_pack {
+	position: fixed;
+	display: table;
+	background-image: url('/static/images/cartes_gvg/pack.png');
+	background-size: 100%;
+	background-repeat: no-repeat;
+	top: 330px;
+	left: 7.2%;
+    width: 57px;
+    height: 70px;
+	z-index: 20;
+}
+
+#gvg_cards_bientot {
+	position: relative;
+	background-image: url('/static/images/divers/bientot.png');
+	background-size: 100%;
+	background-repeat: no-repeat;
+	left: 50%;
+	margin-left: -100px;
+	top: 50%;
+	margin-top: -25px;
+    width: 200px;
+    height: 50px;
+	z-index: 20;
+}
+
 
 #menu_droite {
 	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
@@ -205,8 +301,8 @@ a:hover {
 	min-width: 225px;
 	top: 0px;
 	right: 0px;
-	margin: 0.5%;
-	padding: 0.4%;
+	margin: 10px;
+	padding: 5px;
 	overflow: auto;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);

@@ -52,12 +52,12 @@ $(document).ready(function() {
 {% endif %}
 <div class="forum">
         {% for post in posts %}
-        <a name="Post{{post.id}}">
         {% if forloop.counter|divisibleby:2 %}
         <div class="forum_row" style="background-color: rgba(230,184,138,0.1);">
         {% else %}
         <div class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
         {% endif %}
+        <a name="Post{{post.id}}">
             <div class="forum_col_1">
                 <center><a href="/profil/detail/{{post.user.profil_set.all.0.id}}/"><i class="icon-user"><img class="recherche_avatar" src="{{post.user.profil_set.all.0.avatar}}" width="100%" /></i><br /> {{ post.user }}</a>
                 <div class="muted"><i class="icon-time"></i> {{ post.created|date:"d/m/Y H:i" }}</div>

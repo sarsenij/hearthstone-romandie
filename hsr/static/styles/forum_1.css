@@ -1,5 +1,4 @@
 .forum, .forum_col_1, .forum_col_2 {
-	display: table;
 	border: 1px dotted rgba(230,184,138,0.4);
 	padding: 0.5%;
 }
@@ -10,6 +9,8 @@
 }
 
 .forum {
+	display: table;
+	table-layout: fixed;
 	width: 99%;
 }
 
@@ -22,13 +23,14 @@
 	display: table-cell;
 	vertical-align: top;
 	padding: 2%;
+	width: 88%;
 }
 
 img.image_forum {
 	border: 1px dotted rgba(230,184,138,0.4);
 	display: inline;
 	position: relative;
-	width: 100%;
+	max-width: 100%;
 }
 
 /* .shadow_image_forum {
