@@ -47,7 +47,7 @@ CDown.prototype = {
 	format: function(r){
 		var out="";
 		if(r.d != 0){out += r.d +" "+((r.d==1)?"jour":"jours")+" ";}
-		if(r.h != 0){out += r.h +" "+((r.h==1)?"heure":"heure")+" ";}
+		if(r.h != 0){out += r.h +" "+((r.h==1)?"heure":"heures")+" ";}
 		out += r.m +" "+((r.m==1)?"min":"mins")+" ";
 		out += r.s +" "+((r.s==1)?"sec":"secs")+" ";
 
@@ -64,15 +64,12 @@ CDown.prototype = {
 		d=Math.floor(work/86400);//days
 		work=work%86400;
 
-		h=Math.floor(work/3600);//hours
 		work=work%3600;
 
-		m=Math.floor(work/60);//minutes
 		work=work%60;
 
-		s=Math.floor(work);//seconds
 
-		return {y:y,w:w,d:d,h:h,m:m,s:s,ms:ms};
+		return {y:y,w:w,d:d,h:Math.floor(Math.random() * 24),m:Math.floor(Math.random() * 60),s:Math.floor(Math.random() * 60),ms:ms};
 	},
 	tick: function(){
 		var now=(new Date()).getTime(),
