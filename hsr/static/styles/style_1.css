@@ -95,6 +95,26 @@ a:hover {
     z-index: 12;
 }
 
+#pas_fiable2 {
+	position: absolute;
+	background-image: url('http://hearthstone-romandie.ch/static/images/divers/pas_fiable2.png');
+	background-repeat: no-repeat;
+    width: 200px;
+    height: 193px;
+    top: 280px; left: 62%; margin-left: -96px;
+    z-index: 17;
+}
+
+#getg {
+	position: absolute;
+	background-image: url('http://hearthstone-romandie.ch/static/images/divers/gvg_out.png');
+	background-repeat: no-repeat;
+    width: 300px;
+    height: 211px;
+    top: -20px; left: 22.5%; margin-left: -105.5px;
+    z-index: 17;
+}
+
 /* MENU */
 
 #menu {
