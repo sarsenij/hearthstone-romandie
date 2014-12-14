@@ -9,6 +9,7 @@ class Category(models.Model):
     created = models.DateTimeField(blank=True, default=datetime.now)
     position = models.IntegerField(blank=True, default=0, db_index=True)
     staff = models.BooleanField(default=False)
+    webtv = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Categories'

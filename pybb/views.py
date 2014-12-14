@@ -28,15 +28,23 @@ def get_post_form(request, topic):
         return None
 
 def home_page(request):
+    try :
+        profil = Profil.objects.get(u=request.user)
+    except :
+        profil = False
     if request.user.is_staff :
         cats = Category.objects.order_by('position')
     else :
         cats = Category.objects.all().exclude(staff=True).order_by('position')
+    if not profil or not profil.webtv :
+        cats = cats.exclude(webtv=True)
     dejavu = dict()
     if request.user.is_staff :
         forums = Forum.objects.all()
     else :
         forums = Forum.objects.all().exclude(staff=True)
+    if not profil or not profil.webtv :
+        forums.exclude(category__webtv=True)
     for forum in forums :
         dejavu[forum] = 1 #Pas d'indicateur pour les non membres
         if request.user.is_active :

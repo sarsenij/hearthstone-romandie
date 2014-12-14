@@ -62,6 +62,8 @@ class Profil(models.Model) :
 
     cote = models.IntegerField(default=1000)
 
+    webtv = models.BooleanField(default=False)
+
 class Contact(models.Model) :
 
     owner = models.ForeignKey(Profil, related_name="owner")
