@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     ('^tournoi/', include('tournoi.urls')),
     ('^forum/', include('pybb.urls', namespace='pybb')),
     (r'^$', actualites.actualites),
+    (r'^stream/', actualites.stream),
 )

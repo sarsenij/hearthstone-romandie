@@ -46,3 +46,6 @@ def actualites(request) :
                     break
             topics.append(p)
     return render_to_response('actualites/actualites.html',{'acts':acts},RequestContext(request))
+
+def stream(request):
+    return render_to_response('stream/stream.html',{},RequestContext(request))

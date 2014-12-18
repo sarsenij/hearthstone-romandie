@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+	<head>
+		<title>{% block title %}Swiss Gaming TV{% endblock %}</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	</head>
+	
+	<body>
+
+        <div id="container" style="margin:auto;border:1px solid;width:1000px;">
+            <button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');">SGTV1</button>
+            <button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');">SGTV2</button>
+
+            <div id="sgtv">
+            </div>
+
+        </div>
+
+    <script language="javascript">
+    function ChangeTV(tv) {
+        document.getElementById("sgtv").innerHTML = '<iframe src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" height="378" width="620"></iframe><iframe src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
+        var buttons = document.getElementsByClassName('tvbtn');
+        for (i = 0; i < buttons.length; i++) {
+            document.getElementById(buttons[i].id).style.fontWeight = "normal";
+        }
+        document.getElementById(tv).style.fontWeight = "bold";
+    }
+    ChangeTV('sgtv1');
+    </script>
+	</body>
+
+</html>
