@@ -5,6 +5,7 @@
 	<head>
 		<title>{% block title %}Swiss Gaming TV{% endblock %}</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
 	</head>
 	
 	<body>
@@ -12,6 +13,7 @@
         <div id="container" style="margin:auto;border:1px solid;width:1000px;">
             <button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');">SGTV1</button>
             <button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');">SGTV2</button>
+            <button id="hearthstonefr" class="tvbtn" onclick="ChangeTV('hearthstonefr');">HSFR</button>
 
             <div id="sgtv">
             </div>
@@ -19,13 +21,58 @@
         </div>
 
     <script language="javascript">
-    function ChangeTV(tv) {
-        document.getElementById("sgtv").innerHTML = '<iframe src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" height="378" width="620"></iframe><iframe src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
+    function LoadAjax(tv,change=0,player='',chat='') {
+        $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            url: 'https://api.twitch.tv/kraken/streams/'+tv+'',
+            success : function (result) {
+                var twitchData = result;
+                if (twitchData) {
+                    if (twitchData.stream) {
+                        titre = twitchData.stream.channel.status;
+                        viewers = twitchData.stream.viewers;
+                        details = viewers+' viewers';
+                    } else {
+                        titre = 'Chaîne hors ligne';
+                        details = '';
+                    }
+                } else {
+                    titre = 'Chaîne hors ligne';
+                    details = '';
+                }
+                if (change == 1) {
+                    LoadDiv(tv,titre,player,details,chat);
+                } else {
+                    LoadDetails(titre,details);
+                }
+            }
+        });
+    
+    }
+    function LoadDiv(tv,titre,player,details,chat) {
+        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">'+titre+'</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div><div id="tv_chat">'+chat+'</div>';
         var buttons = document.getElementsByClassName('tvbtn');
         for (i = 0; i < buttons.length; i++) {
             document.getElementById(buttons[i].id).style.fontWeight = "normal";
         }
         document.getElementById(tv).style.fontWeight = "bold";
+        $.ajaxSetup({ cache: false });
+        if (typeof interval != 'undefined') {
+            clearInterval(interval);
+        }
+        interval = setInterval(function() {
+            LoadAjax(tv);
+        }, 10000);
+    }
+    function LoadDetails(titre,details) {
+        document.getElementById("tv_titre").innerHTML = titre;
+        document.getElementById("tv_details").innerHTML = details;
+    }
+    function ChangeTV(tv) {
+        var player = '<iframe src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" height="378" width="620"></iframe>';
+        var chat = '<iframe src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
+        LoadAjax(tv,1,player,chat);
     }
     ChangeTV('sgtv1');
     </script>
