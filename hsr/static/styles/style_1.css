@@ -95,17 +95,7 @@ a:hover {
     z-index: 12;
 }
 
-#pas_fiable2 {
-	position: absolute;
-	background-image: url('http://hearthstone-romandie.ch/static/images/divers/pas_fiable2.png');
-	background-repeat: no-repeat;
-    width: 200px;
-    height: 193px;
-    top: 280px; left: 62%; margin-left: -96px;
-    z-index: 17;
-}
-
-#getg {
+/*#getg {
 	position: absolute;
 	background-image: url('http://hearthstone-romandie.ch/static/images/divers/gvg_out.png');
 	background-repeat: no-repeat;
@@ -113,7 +103,7 @@ a:hover {
     height: 211px;
     top: -20px; left: 22.5%; margin-left: -105.5px;
     z-index: 17;
-}
+}*/
 
 /* MENU */
 
@@ -224,15 +214,25 @@ a:hover {
 	left: 0px;
 	margin: 10px;
 	top: 150px;
-	height: 150px;
+	height: 120px;
 	width: 17%;
 	min-width: 225px;
-	min-height: 150px;
-	padding: 5px;
+	min-height: 110px;
+	padding: 10px;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	-moz-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 	
+}
+
+.liens-titre h3 {
+	position: absolute;
+	top: -14px;
+}
+
+.liens_liste {
+	position: relative;
+	top: 5px;
 }
 
 #twitter_bird {
@@ -241,7 +241,7 @@ a:hover {
 	background-image: url('/static/images/divers/tweet.png');
 	background-size: 100%;
 	background-repeat: no-repeat;
-	top: 587px;
+	top: 362px;
 	left: 7.5%;
     width: 50px;
     height: 63px;
@@ -254,9 +254,9 @@ a:hover {
 	position: fixed;
 	left: 0px;
 	margin: 10px;
-	top: 600px;
+	top: 378px;
 	height: 270px;
-	width: 17%;
+	width: 17.6%;
 	min-width: 225px;
 	padding: 5px;
 	-webkit-box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
@@ -264,7 +264,7 @@ a:hover {
 	box-shadow: 0px 0px 27px 9px rgba(0,0,0,1);
 }
 
-#gvg_cards {
+/*#gvg_cards {
 	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
 	border: 3px double rgba(139,69,19, 1);
 	position: fixed;
@@ -309,7 +309,7 @@ a:hover {
     width: 200px;
     height: 50px;
 	z-index: 20;
-}
+}*/
 
 
 #menu_droite {

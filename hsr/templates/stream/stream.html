@@ -3,21 +3,31 @@
 <html lang="fr">
 
 	<head>
-		<title>{% block title %}Swiss Gaming TV{% endblock %}</title>
+		<title>Swiss Gaming TV</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+		<link rel="stylesheet" type="text/css" href="/static/styles/style_webtv.css" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	</head>
 	
 	<body>
 
-        <div id="container" style="margin:auto;border:1px solid;width:1000px;">
-            <button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');">SGTV1</button>
-            <button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');">SGTV2</button>
-            <button id="hearthstonefr" class="tvbtn" onclick="ChangeTV('hearthstonefr');">HSFR</button>
-
+        <div id="container">
+        
+        	<div id="buttons">
+            	<button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');"></button>
+            	<button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');"></button>
+            	<button id="hearthstonefr" class="tvbtn" onclick="ChangeTV('hearthstonefr');"></button>
+			</div>
+		
             <div id="sgtv">
             </div>
 
+        </div>
+        
+        <div id="menu_left">
+        </div>
+        
+        <div id="chat_frame">
         </div>
 
     <script language="javascript">
@@ -51,12 +61,13 @@
     
     }
     function LoadDiv(tv,titre,player,details,chat) {
-        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">'+titre+'</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div><div id="tv_chat">'+chat+'</div>';
+        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">'+titre+'</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
+        document.getElementById("chat_frame").innerHTML = '<div id="tv_chat">'+chat+'</div>';
         var buttons = document.getElementsByClassName('tvbtn');
         for (i = 0; i < buttons.length; i++) {
-            document.getElementById(buttons[i].id).style.fontWeight = "normal";
+            document.getElementById(buttons[i].id).style.backgroundPosition = "0px 0px";
         }
-        document.getElementById(tv).style.fontWeight = "bold";
+        document.getElementById(tv).style.backgroundPosition = "0px -238px";
         $.ajaxSetup({ cache: false });
         if (typeof interval != 'undefined') {
             clearInterval(interval);
@@ -70,8 +81,8 @@
         document.getElementById("tv_details").innerHTML = details;
     }
     function ChangeTV(tv) {
-        var player = '<iframe src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" height="378" width="620"></iframe>';
-        var chat = '<iframe src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
+        var player = '<div class="videoWrapper"><iframe id="player" src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no"></iframe></div>';
+        var chat = '<iframe id="chat" src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
         LoadAjax(tv,1,player,chat);
     }
     ChangeTV('sgtv1');
