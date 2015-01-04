@@ -167,7 +167,7 @@ def editer(request) :
                         ville_proche = VilleProche.objects.create(ville_proche=request.POST['ville_proche_new'])
                         ville_proche.save()
                     else :
-                        ville_proche = VilleProche.objects.get(ville_proche=request.POST['localite_new'])
+                        ville_proche = VilleProche.objects.get(ville_proche=request.POST['ville_proche_new'])
                 else :
                     ville_proche = VilleProche.objects.get(id=int(request.POST['ville_proche']))
                 profil.ville_proche = ville_proche
