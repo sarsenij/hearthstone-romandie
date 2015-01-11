@@ -3,7 +3,7 @@ body {
 	cursor: default;
 	text-shadow: 1px 1px 0px rgba(0,0,0,1);
 	background-color: black;
-	background-image: url('/static/images/webtv/repeat1.jpg');
+	background-image: url('/static/images/webtv/repeat6.jpg');
 	background-attachment: fixed;
 	background-repeat: repeat;
 	font-family: 'Andale Mono', serif;
@@ -23,14 +23,15 @@ a:hover {
 
 #container {
 	position: relative;
-	left: 300px;
-	width: calc(100% - 640px);
+	left: 0px;
+	width: calc(100% - 340px);
 	/* Firefox */
-	width: -moz-calc(100% - 640px);
+	width: -moz-calc(100% - 340px);
 	/* WebKit */
-	width: -webkit-calc(100% - 640px);
+	width: -webkit-calc(100% - 340px);
 	/* Opera */
-	height: -o-calc(100% - 640px);
+	height: -o-calc(100% - 340px);
+	max-width: 870px;
 }
 
 /* BOUTONS */
@@ -110,11 +111,16 @@ a:hover {
 
 /* MENU LEFT */
 #menu_left {
-	position: fixed;
+	position: relative;
 	left: 0px;
-	top: 0px;
 	bottom: 0px;
-	height: 100%;
-	width: 300px;
+	height: 300px;
+	width: calc(100% - 340px);
+	/* Firefox */
+	width: -moz-calc(100% - 340px);
+	/* WebKit */
+	width: -webkit-calc(100% - 340px);
+	/* Opera */
+	height: -o-calc(100% - 340px);
 	background-color: rgba(1,1,1,0.2);
 }
