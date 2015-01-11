@@ -11,13 +11,10 @@
 	
 	<body>
 
-        <div id="container">
-            <div id="popup">
-                <button onclick="window.open('.','name','width=,height=')">Popup</button>
-            </div>
-            
+        <div id="container">          
         
         	<div id="buttons">
+            	<button id="popup" onclick="window.open('.','name','width=1226,height=900')"></button>  
             	<button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');"></button>
             	<button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');"></button>
             	<button id="hearthstonefr" class="tvbtn" onclick="ChangeTV('hearthstonefr');"></button>
@@ -27,13 +24,22 @@
             </div>
 
         </div>
-        
+
         <div id="menu_left">
-        </div>
+        <center>
+       		<img src="/static/images/webtv/logo/sgtv.png"/>
+       		<a target="_blank" href="http://www.geneva-e-sport.com/" ><img src="/static/images/webtv/logo/geneva_esport.png" /></a>
+       		<a target="_blank" href="http://www.romandy-gaming.com"><img src="/static/images/webtv/logo/romandy_gaming.png" /></a>
+       		<a target="_blank" href="http://gamingfederation.ch/"><img src="/static/images/webtv/logo/gaming_federation.png" /></a>
+       		<a target="_blank" href="http://hearthstone-romandie.ch/"><img src="/static/images/webtv/logo/hsr.png" /></a>
+       		<br /><br />
+       		"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+       	</center>
+       	</div>
         
         <div id="chat_frame">
         </div>
-
+        
     <script language="javascript">
     function LoadAjax(tv,change,player,chat) {
         $.ajax({
@@ -65,7 +71,7 @@
     
     }
     function LoadDiv(tv,titre,player,details,chat) {
-        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">'+titre+'</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
+        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">untextetrèstrèstrèstrèslonnnnnnnnng connard :D</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
         document.getElementById("chat_frame").innerHTML = '<div id="tv_chat">'+chat+'</div>';
         var buttons = document.getElementsByClassName('tvbtn');
         for (i = 0; i < buttons.length; i++) {
@@ -85,7 +91,7 @@
         document.getElementById("tv_details").innerHTML = details;
     }
     function ChangeTV(tv) {
-        var player = '<div class="videoWrapper"><iframe id="player" src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no"></iframe></div>';
+        var player = '<div class="videoWrapper"><iframe id="player" src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" seamless="seamless"></iframe></div>';
         var chat = '<iframe id="chat" src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
         LoadAjax(tv,1,player,chat);
     }
