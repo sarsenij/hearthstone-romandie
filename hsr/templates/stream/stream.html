@@ -72,6 +72,7 @@
     }
     function LoadDiv(tv,titre,player,details,chat) {
         document.getElementById("sgtv").innerHTML = '<div id="tv_titre">untextetrèstrèstrèstrèslonnnnnnnnng connard :D</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
+        TitleSize();
         document.getElementById("chat_frame").innerHTML = '<div id="tv_chat">'+chat+'</div>';
         var buttons = document.getElementsByClassName('tvbtn');
         for (i = 0; i < buttons.length; i++) {
@@ -88,6 +89,7 @@
     }
     function LoadDetails(titre,details) {
         document.getElementById("tv_titre").innerHTML = titre;
+        TitleSize();
         document.getElementById("tv_details").innerHTML = details;
     }
     function ChangeTV(tv) {
@@ -96,6 +98,16 @@
         LoadAjax(tv,1,player,chat);
     }
     ChangeTV('sgtv1');
+    function TitleSize() {
+        var width = document.getElementById("tv_titre").clientWidth;
+        var titre = $("#tv_titre").text().split("").length;
+        var result = (width/titre)*2;
+        var new_value = 26;
+        if (result < 26) {
+            new_value = result;
+        }
+        document.getElementById("tv_titre").style.fontSize = new_value+"px";
+    }
     </script>
 	</body>
 
