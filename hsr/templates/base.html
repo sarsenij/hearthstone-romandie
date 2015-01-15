@@ -45,6 +45,9 @@
 	
 	<body>
 	<div id="canvas_all">
+        <!--
+        <button onclick="WebTV();">Stream</button>
+        -->
 
 		<div id="logo"></div>
 
@@ -127,6 +130,7 @@
             <noscript>
                 <center><span style="color:red;">Ce site nécessite une activation du JavaScript pour une utilisation optimale.</span><br /></center>
             </noscript>
+            <div id="webtv" style="display:none;"></div>
 			{% block content %}
 			{% endblock %}
 		</div>
@@ -143,6 +147,19 @@
 	<br />
 	
 	</div>
+    <script type="text/JavaScript">
+    function WebTV() {
+        var content = $("#webtv").text().split("").length;
+        if (content == 0) {
+            var width = document.getElementById("content").clientWidth - 30;
+            document.getElementById("webtv").innerHTML = '<center><iframe width="'+width+'" height="680" src="/stream/">WebTV</iframe></center>';
+            $("#webtv").slideDown(200);
+        } else {
+            $("#webtv").slideUp(200);
+            setTimeout(function() { document.getElementById("webtv").innerHTML = '';}, 200);
+        }
+    }
+    </script>
 	</body>
 
 </html>
