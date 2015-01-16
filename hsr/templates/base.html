@@ -45,10 +45,9 @@
 	
 	<body>
 	<div id="canvas_all">
-        <!--
+<!--
         <button onclick="WebTV();">Stream</button>
-        -->
-
+-->
 		<div id="logo"></div>
 
 		<div id="logo_gvg"></div>
@@ -151,8 +150,7 @@
     function WebTV() {
         var content = $("#webtv").text().split("").length;
         if (content == 0) {
-            var width = document.getElementById("content").clientWidth - 30;
-            document.getElementById("webtv").innerHTML = '<center><iframe width="'+width+'" height="680" src="/stream/">WebTV</iframe></center>';
+            document.getElementById("webtv").innerHTML = '<center><iframe width="815" height="680" src="/stream/">WebTV</iframe></center>';
             $("#webtv").slideDown(200);
         } else {
             $("#webtv").slideUp(200);

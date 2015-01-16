@@ -1,166 +1,206 @@
+/* CSS DOCUMENT SGTV
+
+colorsheet
+red is #911802
+
+*/
+
+/* ---- RESET  ---- */
+
+body, h1, h2, h3, h4, h5, h6, ul, li, strong, button, input {
+    margin:0;
+    padding:0;
+}
+
+.clear {clear:both;}
+button {cursor:pointer;}
+a {text-decoration:none;color:#911802;cursor: pointer;/*fix bug*/}
+a:hover {color:#fff;}
+
+
+/* ----- MAIN STANDARD 800px-----  */
 body {
-	color: #F2F2F2;
-	cursor: default;
-	text-shadow: 1px 1px 0px rgba(0,0,0,1);
-	background-color: black;
-	background-image: url('/static/images/webtv/repeat9.jpg');
-	background-attachment: fixed;
-	background-repeat: repeat;
-	font-family: 'Andale Mono', serif;
-	height: 100%;
+    color: #fff;
+    background-color: #161616;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-a:link, a:visited, a {
-	color: #cd853f;
-	text-decoration: none;
-	cursor: pointer;
-	vertical-align: 0px;
+.main {min-width: 800px;}
+
+header {
+    height: 55px;
+    margin-bottom: 28px;
 }
 
-a:hover {
-	color: #deb887;
-	vertical-align: 0px;
+.content {
+    float: left;
+    width: 500px;
 }
 
-img {
-	height: 40px;
-	widht: auto;
+aside {
+    width: 300px;
+    float: right;
 }
 
-#container {
-	position: relative;
-	left: 0px;
-	width: calc(100% - 340px);
-	/* Firefox */
-	width: -moz-calc(100% - 340px);
-	/* WebKit */
-	width: -webkit-calc(100% - 340px);
-	/* Opera */
-	width: -o-calc(100% - 340px);
-	max-width: 870px;
+.sub-content {
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    /* no height for bug fix */
 }
 
-/* BOUTONS */
-#buttons {
-	position: relative;
-	width: 385px;
-  	margin: 0px auto;
-  	padding: 10px;
-	background-color: rgba(1,1,1,0.4);
+
+/* ----- HEADER ----- */
+
+header ul {
+    display: inline-block;
 }
 
-#sgtv1, #sgtv2, #hearthstonefr {
-	background-size: 100%;
-	background-repeat: no-repeat 0 0;
-    background-color: Transparent;
+header ul li {display: inline-block;}
+
+.mod {
+    margin: 0 20px;
+}
+
+.mod li a {
+    display: block;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: none;
+    margin: 0 2px;
+}
+
+.popup {
+    background: url('/static/images/webtv/popup.png') center bottom;
+    height: 22px;
+    width: 33px;
+}
+.sofa {
+    background: url('/static/images/webtv/sofa.png') center center;
+    height: 22px;
+    width: 33px;
+}
+.fullscreen {
+    background: url('/static/images/webtv/fullscreen.png') center center;
+    width: 21px;
+    height: 21px;
+}
+
+#buttons a {
+    padding-top: 20px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    display: block;
+    width: 105px;
+    height: 40px;
+    background: none;
+    border: 0px;
+    margin: 0;
+    color: #fff;
+}
+
+#buttons li {
     outline: none;
-    cursor: pointer;
-	width: 105px;
-	height: 29.4px;
-	border: 0px;
+}
+/*
+header ul li:last-child a {
+    margin-left: 17px;
+}*/
+
+#buttons a:hover {
+    background: #911802;
 }
 
-#popup {
-	background-image: url(/static/images/webtv/popup.png);
-	border: 0px;
-	width: 34px;
-	height: 29.4px;
-	background-size: 100%;
-	background-repeat: no-repeat;
-    background-color: Transparent;
-    outline: none;
-    cursor: pointer;
-}
+/* ----- SUBCONTENT ----- */
 
-#popup:hover {
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
-}
-
-#popup:active {
-    -moz-transform: scaleX(1);
-    -o-transform: scaleX(1);
-    -webkit-transform: scaleX(1);
-    transform: scaleX(1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
-}
-
-#sgtv1 {
-	background-image: url(/static/images/webtv/bs_sgtv1.png);
-}
-
-#sgtv2 {
-	background-image: url(/static/images/webtv/bs_sgtv2.png);
-}
-
-#hearthstonefr {
-	background-image: url(/static/images/webtv/bs_sgtv3.png);
-}
-
-#sgtv1:hover, #sgtv2:hover, #hearthstonefr:hover {
-	background-position: 0px -119px !important;
-}
-
-#sgtv1:active, #sgtv2:active, #hearthstonefr:active {
-	background-position: 0px -238px !important;
+.logos {
+    float: left;
+    width: 100px;
+    height: 100%;
+    margin-left: 40px;
+    list-style: none;
 }
 
 
-/* PLAYER & CHAT */
-.videoWrapper {
-	position: relative;
-	padding-bottom: 56.25%; /* 16:9 */
-	padding-top: 25px;
-	height: 0px;
+.logos li a {
+    display: block;
+    height: 70px;
+    margin-bottom: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
+
+.sgtv {background:url('/static/images/webtv/logo/sgtv.png');}
+.geneva {background:url('/static/images/webtv/logo/geneva_esport.png');}
+.rodg {background:url('/static/images/webtv/logo/romandy_gaming.png');}
+.gfed {background:url('/static/images/webtv/logo/gaming_federation.png');}
+.hsrom {background:url('/static/images/webtv/logo/hsr.png');}
+
+
+.sub-content article {
+    float: right;
+    width: 35%;
+    margin-right: 40px;
+}
+
+
+.sub-content article:last-child ul {
+    margin-left: 17px;
+}
+
+/* ----- ONLY TWITCH API ----- */
 
 #player {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+    width: 100%;
+    height: 320px;
 }
 
 #chat {
-	position: fixed;
-	right: 0px;
-	top: 0px;
-	bottom: 0px;
-	height: 100%;
-	width: 340px;
+    height: 440px;
+    margin: 0;
 }
 
 #tv_titre {
-	font: 26px "Helvetica Neue",Helvetica,Arial,sans-serif;
-	margin: 5px 0px;
+    text-transform: uppercase;
+    margin: 0 0 11px 10px;
 }
 
-#tv_details {
-	margin: 5px 0px;
+
+/* --------------------------- */
+/* ------- RESPONSIVE -------- */
+/* --------------------------- */
+/* responsive page don t remove this */
+@media screen and (min-width: 820px) {
+
+.sub-content article {
+    float: right;
 }
 
-/* MENU LEFT */
-#menu_left {
-	position: relative;
-	height: 243px;
-	padding: 5px;
-	overflow: auto;
-	width: calc(100% - 350px);
-	/* Firefox */
-	width: -moz-calc(100% - 350px);
-	/* WebKit */
-	width: -webkit-calc(100% - 350px);
-	/* Opera */
-	width: -o-calc(100% - 350px);
-	background-color: rgba(1,1,1,0.4);
-	color: white;
-	font-size: 14px;
-	text-shadow: 0px 0px 0px rgba(0,0,0,1);
+
+
+/* --- for twitch --- */
+
+#chat {
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    height: 100%;
+    width: 320px;
+}
+
+.main {
+    padding-right: 320px;
+    min-width: inherit;
+}
+.content {
+    width: 100%;
+    height: 100%;
+}
+
+/* player responsive fix standard screen */
+@media (min-height: 600px){#player {height: 360px;}}
+@media (min-height: 800px){#player {height: 560px;}}
+@media (min-height: 970px){#player {height: 760px;}}
 }

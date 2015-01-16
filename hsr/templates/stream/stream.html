@@ -1,45 +1,75 @@
 <!DOCTYPE html>
-
-<html lang="fr">
-
-	<head>
-		<title>Swiss Gaming TV</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="/static/styles/style_webtv.css" />
+<html>
+    <head>
+        <title>Swiss Gaming TV</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="/static/styles/style_webtv.css" />
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	</head>
-	
-	<body>
+    </head>
+    <body>
+<div class="main">
 
-        <div id="container">          
-        
-        	<div id="buttons">
-            	<button id="popup" onclick="window.open('.','name','width=1226,height=900')"></button>  
-            	<button id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');"></button>
-            	<button id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');"></button>
-            	<button id="hearthstonefr" class="tvbtn" onclick="ChangeTV('hearthstonefr');"></button>
-			</div>
-		
-            <div id="sgtv">
-            </div>
+    <div class="content">
+<!-- AFTERBURN MOZARTFUTCOEUR -->
+                <header>
 
-        </div>
+                <ul>
+                <li><ul class="mod">
+                        <li><a class="popup" onclick="window.open('.','name','width=1226,height=900,scrollbars=yes')"></a></li>
+                        <!--<li><a class="sofa"></a></li>
+                        <li><a class="fullscreen"></a></li>-->
+                    </ul></li>
+                 <li><ul id="buttons"> 
+                        <li><a id="sgtv1" class="tvbtn" onclick="ChangeTV('sgtv1');">SGTV1</a></li>
+                        <li><a id="sgtv2" class="tvbtn" onclick="ChangeTV('sgtv2');">SGTV2</a></li>
+                        <li><a id="sgtv3" class="tvbtn" onclick="ChangeTV('sgtv3');">SGTV3</a></li>
+                    </ul></li>
+                <!--<li><a href="S'abonner">S'abonner</a>-->
+                </header>
+                <div class="clear"><!-- FOR CLEAR THE BOARD --></div>
+                <section id="class">              
+                <div id="sgtv"><!-- FOR WEBTV --></div>              
+                </section>
+    </div>
+<aside id="chat_frame"><!-- FOR CHAT --></aside>
+<div class="clear"><!-- FOR CLEAR THE BOARD seriously--></div>
+    <section class="sub-content">
 
-        <div id="menu_left">
-        <center>
-       		<img src="/static/images/webtv/logo/sgtv.png"/>
-       		<a target="_blank" href="http://www.geneva-e-sport.com/" ><img src="/static/images/webtv/logo/geneva_esport.png" /></a>
-       		<a target="_blank" href="http://www.romandy-gaming.com"><img src="/static/images/webtv/logo/romandy_gaming.png" /></a>
-       		<a target="_blank" href="http://gamingfederation.ch/"><img src="/static/images/webtv/logo/gaming_federation.png" /></a>
-       		<a target="_blank" href="http://hearthstone-romandie.ch/"><img src="/static/images/webtv/logo/hsr.png" /></a>
-       		<br /><br />
-       		"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-       	</center>
-       	</div>
+        <ul class="logos">
+            <li><a class="sgtv"></a></li>
+            <li><a class="geneva" target="_blank" href="http://www.geneva-e-sport.com/"></a></li>
+            <li><a class="rodg" target="_blank" href="http://www.romandy-gaming.com"></a></li>
+            <li><a class="gfed" target="_blank" href="http://gamingfederation.ch/"></a></li>
+            <li><a class="hsrom" target="_blank" href="http://hearthstone-romandie.ch/"></a></li>
+        </ul>
+        <article>
+                <h1>Swiss Gaming TV</h1>
+                <p>C'est une webtv qui a pour principal but de dynamiser l'e-sport et le jeu vidéo en Suisse Romande. Vous pouvez ainsi venir régulièrement profiter de la bonne humeur de nos streamers Suisses Romands!</p>
+                <h1>Règlement</h1>
+                <ul>
+                    <li>Le respect envers les autres est la règle primordiale.</li>
+                    <li>Ne pas poster de lien dans le chat.</li>
+                    <li>Ne parler qu'en français et en anglais dans le chat.</li>
+                    <li>Profiter et se détendre.</li>
+                </ul>
+        </article>
+        <article>
+                <h1>Horaires</h1>
+                Bientôt disponible
+        </article>
+    </section>
+    <div class="clear" style="margin-bottom:40px;"><!-- FOR CLEAR THE BOARD seriously--></div>
+</div>
+
         
-        <div id="chat_frame">
-        </div>
-        
+
+       <!-- <div id="menu_left">
+            <img src="/static/images/webtv/logo/sgtv.png"/>
+            <a target="_blank" href="http://www.geneva-e-sport.com/" ><img src="/static/images/webtv/logo/geneva_esport.png" /></a>
+            <a target="_blank" href="http://www.romandy-gaming.com"><img src="/static/images/webtv/logo/romandy_gaming.png" /></a>
+            <a target="_blank" href="http://gamingfederation.ch/"><img src="/static/images/webtv/logo/gaming_federation.png" /></a>
+            <a target="_blank" href="http://hearthstone-romandie.ch/"><img src="/static/images/webtv/logo/hsr.png" /></a>
+        </div> -->
     <script language="javascript">
     function LoadAjax(tv,change,player,chat) {
         $.ajax({
@@ -71,14 +101,14 @@
     
     }
     function LoadDiv(tv,titre,player,details,chat) {
-        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">untextetrèstrèstrèstrèslonnnnnnnnng connard :D</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
+        document.getElementById("sgtv").innerHTML = '<div id="tv_titre">'+titre+'</div><div id="tv_player">'+player+'</div><div id="tv_details">'+details+'</div>';
         TitleSize();
         document.getElementById("chat_frame").innerHTML = '<div id="tv_chat">'+chat+'</div>';
         var buttons = document.getElementsByClassName('tvbtn');
         for (i = 0; i < buttons.length; i++) {
-            document.getElementById(buttons[i].id).style.backgroundPosition = "0px 0px";
+            document.getElementById(buttons[i].id).style.backgroundColor = "";
         }
-        document.getElementById(tv).style.backgroundPosition = "0px -238px";
+        document.getElementById(tv).style.backgroundColor = "#911802";
         $.ajaxSetup({ cache: false });
         if (typeof interval != 'undefined') {
             clearInterval(interval);
@@ -94,7 +124,7 @@
     }
     function ChangeTV(tv) {
         var player = '<div class="videoWrapper"><iframe id="player" src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" seamless="seamless"></iframe></div>';
-        var chat = '<iframe id="chat" src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="350"></iframe>';
+        var chat = '<iframe id="chat" src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="300"></iframe>';
         LoadAjax(tv,1,player,chat);
     }
     ChangeTV('sgtv1');
@@ -102,13 +132,12 @@
         var width = document.getElementById("tv_titre").clientWidth;
         var titre = $("#tv_titre").text().split("").length;
         var result = (width/titre)*2;
-        var new_value = 26;
-        if (result < 26) {
+        var new_value = 20;
+        if (result < 20) {
             new_value = result;
         }
         document.getElementById("tv_titre").style.fontSize = new_value+"px";
     }
     </script>
-	</body>
-
+</body>
 </html>
