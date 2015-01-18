@@ -15,7 +15,7 @@
 
                 <ul>
                 <li><ul class="mod">
-                        <li><a class="popup" onclick="window.open('.','name','width=1226,height=900,scrollbars=yes')"></a></li>
+                        <li><a class="popup" onclick="window.open('.'+$(location).attr('search'),'name','width=1226,height=900,scrollbars=yes')"></a></li>
                         <!--<li><a class="sofa"></a></li>
                         <li><a class="fullscreen"></a></li>-->
                     </ul></li>
@@ -129,11 +129,19 @@
         document.getElementById("tv_details").innerHTML = details;
     }
     function ChangeTV(tv) {
+        history.pushState(null,null,'?tv='+tv);
         var player = '<div class="videoWrapper"><iframe id="player" src="http://www.twitch.tv/'+tv+'/embed" frameborder="0" scrolling="no" seamless="seamless"></iframe></div>';
         var chat = '<iframe id="chat" src="http://www.twitch.tv/'+tv+'/chat?popout=" frameborder="0" scrolling="no" height="500" width="300"></iframe>';
         LoadAjax(tv,1,player,chat);
     }
-    ChangeTV('sgtv1');
+    var search = $(location).attr('search');
+    if (search == '?tv=sgtv2') {
+        ChangeTV('sgtv2');
+    } else if (search == '?tv=sgtv3') {
+        ChangeTV('sgtv3');
+    } else {
+        ChangeTV('sgtv1');
+    }
     function TitleSize() {
         var width = document.getElementById("tv_titre").clientWidth;
         var titre = $("#tv_titre").text().split("").length;
