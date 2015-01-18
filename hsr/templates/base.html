@@ -45,6 +45,19 @@
 	
 	<body>
 	<div id="canvas_all">
+<div id="logo_sgtv_box"></div>
+        <div id="sgtv">
+            <table>
+            <tr onclick="WebTV('sgtv1');" class="tr_webtv">
+            <td><img src="/static/images/webtv/sgtv1.png" /></td><td>-</td><td id="on_sgtv1"></td>
+            </tr>
+            <tr onclick="WebTV('sgtv2');" class="tr_webtv">
+            <td><img src="/static/images/webtv/sgtv2.png" /></td><td>-</td><td id="on_sgtv2"></td>
+            </tr>
+            <tr onclick="WebTV('sgtv3');" class="tr_webtv">
+            <td><img src="/static/images/webtv/sgtv3.png" /></td><td>-</td><td id="on_sgtv3"></td></tr>
+            </table>
+        </div>
 <!--
         <button onclick="WebTV();">Stream</button>
 -->
@@ -70,10 +83,6 @@
 				<li><a href="https://www.youtube.com/user/hearthstonefr" target="_blank">HSFR Strategy</a></li>
 				<li><a href="http://www.hearthnews.fr" target="_blank">HearthNews</a></li>
 	               <li><a href="http://achievementgen.com/hearthstone/" target="_blank">Générateur de cartes</a></li>
-			</ul>
-			<!-- <div class="liens-titre"><h3>Partenaires</h3></div> -->
-			<ul class="liens_liste">
-			<!-- <li><a href="http://www.jeuxvideo.ch/" target="_blank">Mix Image</a></li> -->
 			</ul>
 		</div>
 	
@@ -147,16 +156,49 @@
 	
 	</div>
     <script type="text/JavaScript">
-    function WebTV() {
+    function WebTV(tv) {
         var content = $("#webtv").text().split("").length;
         if (content == 0) {
-            document.getElementById("webtv").innerHTML = '<center><iframe width="815" height="680" src="/stream/">WebTV</iframe></center>';
+            document.getElementById("webtv").innerHTML = '<center><iframe width="815" height="680" src="/stream/?tv='+tv+'">WebTV</iframe></center>';
             $("#webtv").slideDown(200);
         } else {
             $("#webtv").slideUp(200);
             setTimeout(function() { document.getElementById("webtv").innerHTML = '';}, 200);
         }
     }
+    function Stream(tv) {
+        function is_on(tv) {
+            $.ajax({
+                type: "GET",
+                dataType: "jsonp",
+                url: 'https://api.twitch.tv/kraken/streams/'+tv+'',
+                success : function (result) {
+                    var twitchData = result;
+                    var on = 0;
+                    if (twitchData) {
+                        if (twitchData.stream) {
+                            on = 1;
+                        }
+                    }
+                }
+            });
+            return on;
+        }
+        var on = is_on(tv);
+        if (on == 1) {
+            document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_on.png" />';
+        } else {
+            document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_off.png" />';
+        }
+    }
+    Stream('sgtv1'); 
+    Stream('sgtv2'); 
+    Stream('sgtv3'); 
+    interval = setInterval(function() {
+        Stream('sgtv1'); 
+        Stream('sgtv2'); 
+        Stream('sgtv3'); 
+    }, 10000);
     </script>
 	</body>
 
