@@ -45,8 +45,13 @@
 	
 	<body>
 	<div id="canvas_all">
+        {% if request.user.is_active %}
 <div id="logo_sgtv_box"></div>
         <div id="sgtv">
+        {% else %}
+<div id="logo_sgtv_box_deco"></div>
+        <div id="sgtv_deco">
+        {% endif %}        
             <table>
             <tr onclick="WebTV('sgtv1');" class="tr_webtv">
             <td><img src="/static/images/webtv/sgtv1.png" /></td><td>-</td><td id="on_sgtv1"></td>
