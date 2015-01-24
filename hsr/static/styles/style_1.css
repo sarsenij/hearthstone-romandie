@@ -89,7 +89,7 @@ a:hover {
 	box-shadow: 0px 0px 10px 2px rgba(0,0,0,1);
 	padding: 5px;
 	margin: 10px;
-	top: 80px;
+	top: 32px;
 	right: 0px;
 }
 
@@ -99,8 +99,8 @@ a:hover {
 	background-image: url('/static/images/webtv/logo/sgtv.png');
 	background-size: 100%;
 	background-repeat: no-repeat;
-	top: 52px;
-	right: 37px;
+	top: 5px;
+	right: 07px;
     width: 129.3px;
     height: 53.7px;
 	z-index: 20;
@@ -125,7 +125,7 @@ a:hover {
 
 #logo {
 	position: absolute;
-	background-image: url('/static/images/logos/585px_Hearthstone_Logo_TRANSP_WO_FOND_DELIRE.png');
+	background-image: url('/static/images/logos/585px_Hearthstone_Logo_TRANSP_WO_FOND_DELIRE_GVG.png');
     width: 644px;
     height: 239px;
     left: 50%;

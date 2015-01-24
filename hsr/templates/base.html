@@ -162,9 +162,9 @@
 	</div>
     <script type="text/JavaScript">
     function WebTV(tv) {
-        var content = $("#webtv").text().split("").length;
-        if (content == 0) {
-            document.getElementById("webtv").innerHTML = '<center><iframe width="815" height="680" src="/stream/?tv='+tv+'">WebTV</iframe></center>';
+        var content = $("#webtv").text();
+        if (content != tv) {
+            document.getElementById("webtv").innerHTML = '<center><iframe style="border: 1px solid rgba(230,184,138,0.6);" width="819" height="1350" src="/stream/?tv='+tv+'" frameborder="0">'+tv+'</iframe></center>';
             $("#webtv").slideDown(200);
         } else {
             $("#webtv").slideUp(200);
@@ -172,29 +172,24 @@
         }
     }
     function Stream(tv) {
-        function is_on(tv) {
-            $.ajax({
-                type: "GET",
-                dataType: "jsonp",
-                url: 'https://api.twitch.tv/kraken/streams/'+tv+'',
-                success : function (result) {
-                    var twitchData = result;
-                    var on = 0;
-                    if (twitchData) {
-                        if (twitchData.stream) {
-                            on = 1;
-                        }
+        $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            url: 'https://api.twitch.tv/kraken/streams/'+tv+'',
+            success : function (result) {
+                var twitchData = result;
+                var on = 0;
+                if (twitchData) {
+                    if (twitchData.stream) {
+                        document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_on.png" />';
+                    } else {
+                        document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_off.png" />';
                     }
+                } else {
+                    document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_off.png" />';
                 }
-            });
-            return on;
-        }
-        var on = is_on(tv);
-        if (on == 1) {
-            document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_on.png" />';
-        } else {
-            document.getElementById("on_"+tv).innerHTML = '<img src="/static/images/webtv/_off.png" />';
-        }
+            }
+        });
     }
     Stream('sgtv1'); 
     Stream('sgtv2'); 
