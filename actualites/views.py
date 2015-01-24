@@ -6,6 +6,7 @@ from django.template import RequestContext
 from pybb.models import Post, Topic
 from notification.models import Notification
 from profil.models import Contact, Profil
+from actualites.models import Horaire
 
 def actualites(request) :
     if request.method == "POST" :
@@ -48,4 +49,4 @@ def actualites(request) :
     return render_to_response('actualites/actualites.html',{'acts':acts},RequestContext(request))
 
 def stream(request):
-    return render_to_response('stream/stream.html',{},RequestContext(request))
+    return render_to_response('stream/stream.html',{'horaires':Horaire.objects.all()},RequestContext(request))

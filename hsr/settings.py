@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'precise_bbcode',
     'tournoi',
+    'actualites',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
