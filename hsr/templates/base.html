@@ -7,6 +7,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" type="text/css" href="/static/styles/style_1.css" />
 		<link rel="stylesheet" type="text/css" href="/static/styles/forum_1.css" />
+		<link rel="stylesheet" type="text/css" href="/static/styles/elem.css" />
 		<link rel="shortcut icon" href="/static/images/favicon/favicon_anim.gif" >
 		<link rel="icon" href="/static/images/favicon/favicon_anim_f.gif" type="image/gif" >
 		<link href='http://fonts.googleapis.com/css?family=Balthazar' rel='stylesheet' type='text/css'>
@@ -44,6 +45,20 @@
 	</head>
 	
 	<body>
+	
+	
+		
+		<div id="elemental-container" class="animatable" style="position: absolute; right: 650px; top: 185px;">
+			<div class="elemental">
+				<span class="elemental__part elemental__left-shoulder"></span>
+				<span class="elemental__part elemental__body"></span>
+				<span class="elemental__part elemental__right-shoulder"></span>
+				<span class="elemental__part elemental__left-arm"></span>
+				<span class="elemental__part elemental__right-arm"></span>
+				<span class="elemental__part elemental__rock"></span>
+			</div>
+		</div>
+	
 	<div id="canvas_all">
         {% if request.user.is_active %}
 <div id="logo_sgtv_box"></div>
@@ -68,7 +83,6 @@
 -->
 		<div id="logo"></div>
 
-		<div id="logo_gvg"></div>
 		
 		<div id="pas_fiable2"></div>
 		<div id="getg"></div>
@@ -91,7 +105,8 @@
 			</ul>
 		</div>
 	
-			
+		
+		
 		<div id="menu">
 		</div>
 		
