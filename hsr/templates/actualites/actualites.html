@@ -4,7 +4,7 @@
 	<h1 style="width: 100%; text-align: center;">Actualités</h1>
 	{% for act in acts %}
 			<div class="table_actualite_titre"><a href="/forum/topic/{{act.topic.id}}" style="font-size: 20px;">{{act.topic.name}}</a><br />
-			<span style="font-size: 12px;">posté par <a href="/profil/detail/{{act.user.profil_set.all.0.id}}/" style="font-size: 16px;">{{act.user}}</a> le {{ act.created|date:"d/m/Y à H:i" }}</span></div>
+			<span style="font-size: 12px;">posté par <a href="JavaScript:void(0);" onclick="ShowContact({{act.user.profil_set.all.0.id}},event);" style="font-size: 16px;">{{act.user}}</a> le {{ act.created|date:"d/m/Y à H:i" }}</span></div>
 			{% load bbcode_tags %}
 			<div class="table_actualite_content">{% bbcode act.content %}</div>
 			<br />

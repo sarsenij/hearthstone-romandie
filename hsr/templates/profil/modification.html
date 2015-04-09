@@ -108,7 +108,7 @@ Téléphone
 <b>Mes contacts</b>
 </td></tr>
 {% for contact in contacts %}
-<td><a href="/profil/detail/{{contact.contact.id}}">{{ contact.contact.pseudo }}</a></td>
+<td><a href="JavaScript:void(0);" onclick="ShowContact({{contact.contact.id}},event);">{{ contact.contact.pseudo }}</a></td>
 <td><form action="" method="POST"><input type="hidden" name="type" value="delete_contact" /><input type="hidden" name="contact" value="{{contact.contact.id}}" />{% csrf_token %}<input type="submit" value="Supprimer" /></form></td>
 </tr>
 {% endfor %}

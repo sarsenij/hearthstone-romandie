@@ -1,128 +1,97 @@
-{% extends "base.html" %}
-{% block title %}{{info.0}} | {{block.super}}{% endblock %}
-{% block content %}
-{% if msg %}
-{{msg}}
+<div style="background-color: rgba(138,138,138,100);width:95%;margin:2px;border:2px dotted black;">
+<center>
+{{detail.pseudo}}<br />
+<img src="{{detail.avatar}}" width="40" />
+<br />
+{% if not contact and request.user != detail.u %}
+<form method="POST" action="/profil/detail/{{detail.id}}/" id="add_contact{{detail.id}}">
+{% csrf_token %}
+<input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');" />
+</form>
+{% elif request.user != detail.u %}
+Un de vos contacts.
+{% else %}
+C'est vous !
 {% endif %}
-{% if msg_error %}
-<div id="messages_erreur">
-<img src="/static/images/icones/warning-icon.png" /><br />{{msg_error}}
+{% if detail.u != request.user %}
+<a href="JavaScript:void(0);" onclick="SendMsg();">Message</a>
+{% endif %}
+ <br />Cote : {{detail.cote}}
+<br />
+{% if detail.nom_privacy == 2 or detail.nom_privacy == 1 and contact %}
+{{detail.nom}}
+{% endif %}
+{% if detail.prenom_privacy == 2 or detail.prenom_privacy == 1 and contact %}
+ {{detail.prenom}}
+<br />
+{% endif %}
+{% if detail.email_privacy == 2 or detail.email_privacy == 1 and contact %}
+{{detail.email}}
+<br />
+{% endif %}
+{% if detail.rue_privacy == 2 or detail.rue_privacy == 1 and contact %}
+{{detail.rue}}
+<br />
+{% endif %}
+{% if detail.localite_privacy == 2 or detail.localite_privacy == 1 and contact %}
+{{detail.localite.localite}}
+<br />
+{% endif %}
+{% if detail.pays_privacy == 2 or detail.pays_privacy == 1 and contact %}
+{{detail.pays.pays}}
+<br />
+{% endif %}
+{% if detail.battletag_privacy == 2 or detail.battletag_privacy == 1 and contact %}
+{{detail.battletag}}
+<br />
+{% endif %}
+Dernière connexion :
+<br />
+{{detail.lastseen|date:"d/m - H:i"}}
+<br />
+<a href="JavaScript:void(0);" onclick="iDiv=document.getElementById('showcontact');iDiv.parentNode.removeChild(iDiv);">Fermer</a></center>
 </div>
-{% endif %}
-<table id="profil">
-	<tr>
-	<td style="text-align: center;" colspan="2">
-	{% if info.1 != "None" %}<img src="{{info.1}}" height="314" width="240" />{% else %}Aucun{% endif %}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Pseudo :
-	</td>
-	<td class="profil_droite">
-		{{info.0}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Nom :
-	</td>
-	<td class="profil_droite">
-		{{info.2}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Prénom :
-	</td>
-	<td class="profil_droite">
-		{{ info.3 }}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		E-mail :
-	</td>
-	<td class="profil_droite">
-		{{info.4}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Rue :
-	</td>
-	<td class="profil_droite">
-		{{info.5}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Localité :
-	</td>
-	<td class="profil_droite">
-		
-		{{info.6}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Ville proche :
-	</td>
-	<td class="profil_droite">
-		
-		{{info.7}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Pays :
-	</td>
-	<td class="profil_droite">
-		
-		{{info.8}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		BattleTag :
-	</td>
-	<td class="profil_droite">
-		
-		{{info.9}}
-	</td>
-	</tr>
-	
-	<tr>
-	<td class="profil_gauche">
-		Téléphone :
-	</td>
-	<td class="profil_droite">
-		
-		{{info.10}}
-	</td>
-	</tr>
-	
-	<tr><td style="text-align: center;" colspan="2">
-		<br />		
-		{% if request.user.is_active %}
-		{% if not contact %}
-		<form method="POST" action="">
-		{% csrf_token %}
-		<input type="submit" value="Ajouter dans mes contacts" />
-		</form>
-		{% elif contact != 1 %}
-		Cette personne est dans vos contacts
-		{% endif %}
-		{% endif %}
-	</td></tr>
-</table>
-{% endblock %}
+
+
+<script type="text/JavaScript">
+$(document).ready(function() {
+    $('#add_contact{{detail.id}}').submit(function() { // catch the form's submit event
+        $.ajax({ // create an AJAX call...
+            data: $(this).serialize(), // get the form data
+            type: $(this).attr('method'), // GET or POST
+            url: $(this).attr('action'), // the file to call
+            success: function(response) { // on success..
+                
+            }
+        });
+        return false;
+    });
+    x = {{x}}
+    y = {{y}}
+    div=$("#showcontact");
+    if (x > $(window).width()-210) {
+        x = $(window).width()-210;
+    }
+    if (y > $(window).height()-div.outerHeight()-10) {
+        y = $(window).height()-div.outerHeight()-10;
+    }
+    div.css({"top":y+"px","left":x+"px","z-index":"1000"});
+});
+function SendMsg(){
+    document.getElementById("chat_droite").style.height = "95%";
+    $("#notif_feed").hide('slow');
+    document.getElementById("notif_feed").style.height = "0%";
+    document.getElementById("notif_feed").style.height = "70%";
+    $("#notif_feed").load("/notification/messages/");
+    $("#notif_feed").show('slow');
+    document.getElementById("chat_droite").style.height = "25%";
+    setTimeout(function(){
+    $("#feed_content").val("readmsg");
+    $("#messages").load("/notification/message/0/?dest={{detail.u.id}}");
+    $("#titres").hide();
+    $("#messages").show('slow');
+    }, 700);
+    iDiv=document.getElementById('showcontact');
+    iDiv.parentNode.removeChild(iDiv);
+}
+</script>

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from profil.models import Profil
-from notification.models import Notification, Dest, Dejavu, ChatMsg, InviteTournoi
+from notification.models import Notification, Dest, Dejavu, ChatMsg, InviteTournoi, ConvDest, ConvDV
 from pybb.models import Dejavu as PostDv, Post, Suivi, Topic
 
 def notif(request):
@@ -8,13 +8,11 @@ def notif(request):
         profil = Profil.objects.get(u=request.user)
         contacts = Notification.objects.filter(destinataire=profil,vue=False,contact__isnull=False)
         messages = 0
-        for titre in Dest.objects.filter(dest=request.user) :
-            dv = Dejavu.objects.filter(titre=titre.titre,compte=request.user)
-            if not dv or titre.titre.message_set.all().order_by('-created')[0]!= dv[0].message :
-                messages += 1
-        chat = ChatMsg.objects.all().order_by('-id')
-        if len(chat) > 10 :
-            chat = chat[0:10]
+        for conv in ConvDest.objects.filter(user=request.user) :
+            dv = ConvDV.objects.filter(user=request.user,conv=conv.conv)
+            convmsg = conv.conv.convmessage_conv.all().order_by('-date')
+            if convmsg and (not dv or convmsg[0] != dv[0].message) :
+                messages +=1
         #chat = reversed(chat)
         suivistmp = Suivi.objects.filter(user=request.user)
         suivis = list()
@@ -31,11 +29,13 @@ def notif(request):
     else :
         contacts = list()
         messages = 0
-        chat = list()
         suivis = list()
         lastseen = list()
         invtournois = list()
         stafftournois = list()
+    chat = ChatMsg.objects.all().order_by('-id')
+    if len(chat) > 10 :
+        chat = chat[0:10]
     contenu = {
         'notif_contacts':contacts,
         'notif_messages':messages,
@@ -44,5 +44,6 @@ def notif(request):
         'notif_lastseen':lastseen,
         'notif_invtournois':invtournois,
         'notif_stafftournois':stafftournois,
+        'notif_nombre':len(contacts)+len(suivis)+len(invtournois)+len(stafftournois),
     }
     return contenu

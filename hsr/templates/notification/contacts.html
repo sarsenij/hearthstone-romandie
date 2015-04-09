@@ -3,7 +3,7 @@
 {% block content %}
 {% if contacts %}
 {% for contact in contacts %}
-<a href="/profil/detail/{{ contact.owner.id }}/">{{ contact.owner.pseudo }}</a><br />
+<a href="JavaScript:void(0);" onclick="ShowContact({{ contact.owner.id }},event);">{{ contact.owner.pseudo }}</a><br />
 {% endfor %}
 {% else %}
 Vous n'avez pas de contact en attente

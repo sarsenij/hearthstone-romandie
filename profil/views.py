@@ -124,7 +124,7 @@ L'équipe de Hearthstone Romandie"""
 def deco(request) :
     if request.user.is_active :
         logout(request)
-    return redirect(request.GET['url'])
+    return redirect('/')
 
 def editer(request) :
     msg = list()
@@ -229,83 +229,17 @@ def recherche(request) :
     return render_to_response('profil/recherche.html',{'pays':Pays.objects.all().order_by('pays'),'ville_proche':VilleProche.objects.all().order_by('ville_proche'),'localite':Localite.objects.all().order_by('localite'),'result':result},RequestContext(request))
 
 def details(request,detail_id) :
-    msg = str()
-    msg_error = str()
-    if not Profil.objects.filter(id=detail_id) :
-        return redirect('/profil/recherche/')
-    contact = False
-    for d_c in Contact.objects.filter(owner__id=detail_id) :
-        if d_c.contact.u.id == request.user.id :
-            contact = True
-            break
-    owner = Profil.objects.filter(u__id=request.user.id)
-    detail = Profil.objects.get(id=detail_id)
-    contact_exist = False
-    if request.user.is_active :
-        contact_exist = Contact.objects.filter(owner__u=request.user).filter(contact=detail)
-        if detail.u == request.user :
-            contact_exist = 1
-            contact = True
-    if request.method == "POST" :
-        if request.user.is_active :
-            if not contact_exist :
-                new_contact = Contact.objects.create(owner=owner[0],contact=detail)
-                new_contact.save()
-                contact_exist = new_contact
-                notif = Notification.objects.create(destinataire=detail,contact=new_contact)
-                if Contact.objects.filter(owner=detail,contact=owner[0]) :
-                    notif.contact_already = True
-                notif.save()
-                old_contact = Contact.objects.filter(owner=detail,contact=owner[0])
-                if old_contact :
-                    notif_origin = Notification.objects.filter(destinataire=owner[0]).filter(contact=old_contact[0])
-                    if notif_origin :
-                        delete_notif = notif_origin[0]
-                        delete_notif.vue = True
-                        delete_notif.save()
-            else :
-                msg_error = "Cette personne est déjà dans vos contacts"
-        else :
-            msg_error = "Vous devez être connecté pour ajouter un contact"
-    info = list()
-    info.append(detail.pseudo)
-    info.append(detail.avatar)
-    if detail.nom_privacy == 2 or (detail.nom_privacy == 1 and contact) :
-        info.append(detail.nom)
-    else :
-        info.append("Info non disponible")
-    if detail.prenom_privacy == 2 or (detail.prenom_privacy == 1 and contact) :
-        info.append(detail.prenom)
-    else :
-        info.append("Info non disponible")
-    if detail.email_privacy == 2 or (detail.email_privacy == 1 and contact) :
-        info.append(detail.email)
-    else :
-        info.append("Info non disponible")
-    if detail.rue_privacy == 2 or (detail.rue_privacy == 1 and contact) :
-        info.append(detail.rue)
-    else :
-        info.append("Info non disponible")
-    if detail.localite_privacy == 2 or (detail.localite_privacy == 1 and contact) :
-        info.append(detail.localite.localite)
-    else :
-        info.append("Info non disponible")
-    if detail.ville_proche_privacy == 2 or (detail.ville_proche_privacy == 1 and contact) :
-        info.append(detail.ville_proche.ville_proche)
-    else :
-        info.append("Info non disponible")
-    if detail.pays_privacy == 2 or (detail.pays_privacy == 1 and contact) :
-        info.append(detail.pays.pays)
-    else :
-        info.append("Info non disponible")
-    if detail.battletag_privacy == 2 or (detail.battletag_privacy == 1 and contact) :
-        info.append(detail.battletag)
-    else :
-        info.append("Info non disponible")
-    if detail.telephone_privacy == 2 or (detail.telephone_privacy == 1 and contact) :
-        info.append(detail.telephone)
-    else :
-        info.append("Info non disponible")
-    return render_to_response('profil/detail.html',{'info':info,'contact':contact_exist,'msg':msg,'msg_error':msg_error},RequestContext(request))
+    detail = get_object_or_404(Profil,id=detail_id)
+    contact = Contact.objects.filter(owner__u=request.user,contact__id=detail_id)    
+    if request.method == "POST" and request.user.is_active and not contact :
+        new_contact = Contact.objects.create(owner=Profil.objects.get(u=request.user),contact=detail)
+        new_contact.save()
+        notif = Notification.objects.create(destinataire=detail,contact=new_contact)
+        if Contact.objects.filter(owner__id=detail_id,contact__u=request.user):
+            notif.contact_already = True
+        notif.save()
+    x = request.GET.get('x')
+    y = request.GET.get('y')
+    return render_to_response('profil/detail.html',{'x':x,'y':y,'detail':detail,'contact':contact},RequestContext(request))
      
-#TODO change mdp & email, mdp oublié, supprimer profil+user+contacts, messages
+#TODO change mdp & email, mdp oublié, supprimer profil+user+contacts

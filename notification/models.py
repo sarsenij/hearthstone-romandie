@@ -29,6 +29,25 @@ class Message(models.Model):
     content = models.TextField()
     user = models.ForeignKey('auth.User')
 
+class Conv(models.Model):
+    exist = models.BooleanField(default=True)
+    last_msg = models.DateTimeField(default=datetime.now)
+
+class ConvDest(models.Model):
+    conv = models.ForeignKey('Conv',related_name="convdest_conv")
+    user = models.ForeignKey('auth.User')
+
+class ConvMessage(models.Model):
+    conv = models.ForeignKey('Conv',related_name="convmessage_conv")
+    message = models.TextField()
+    date = models.DateTimeField(default=datetime.now)
+    user = models.ForeignKey('auth.User',null=True,blank=True)
+
+class ConvDV(models.Model):
+    user = models.ForeignKey('auth.User')
+    conv = models.ForeignKey('Conv')
+    message = models.ForeignKey('ConvMessage',null=True,blank=True)
+
 class Dejavu(models.Model) :
     compte = models.ForeignKey('auth.User',related_name='message_dejavu')
     titre = models.ForeignKey('Titre')

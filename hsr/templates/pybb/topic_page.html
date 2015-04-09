@@ -59,7 +59,7 @@ $(document).ready(function() {
         {% endif %}
         <a name="Post{{post.id}}">
             <div class="forum_col_1">
-                <center><a href="/profil/detail/{{post.user.profil_set.all.0.id}}/"><i class="icon-user"><img class="recherche_avatar" src="{{post.user.profil_set.all.0.avatar}}" width="100%" /></i><br /> {{ post.user }}</a>
+                <center><a href="JavaScript:void(0);" onclick="ShowContact({{post.user.profil_set.all.0.id}},event);"><i class="icon-user"><img class="recherche_avatar" src="{{post.user.profil_set.all.0.avatar}}" width="100%" /></i><br /> {{ post.user }}</a>
                 <div class="muted"><i class="icon-time"></i> {{ post.created|date:"d/m/Y H:i" }}</div>
                 </center>
             </div>

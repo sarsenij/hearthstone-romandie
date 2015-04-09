@@ -29,7 +29,8 @@ body {
 	background-image: url('/static/images/backgrounds/flous/flou_4_qs_2.jpg');
 	background-attachment: fixed;
 	background-repeat:no-repeat;
-	font-family: 'Balthazar', serif;
+    font-size: 12px;
+    font-family: 'WysiBBiconFont';
 }
 
 a:link, a:visited, a {
@@ -126,10 +127,11 @@ a:hover {
 #logo {
 	position: absolute;
 	background-image: url('/static/images/logos/585px_Hearthstone_Logo_TRANSP_WO_FOND_DELIRE_GVG.png');
-    width: 644px;
-    height: 239px;
+    background-size:440px 160px;
+    width: 440px;
+    height: 160px;
     left: 50%;
-    margin-left: -343px;
+    margin-left: -233px;
     top: -20px;
     z-index: 14;
 }
@@ -165,82 +167,92 @@ a:hover {
 #menu {
 	position: absolute;
 	background: url('/static/images/menu/Rond_rempli.png');
-    width: 320px;
-    height: 330px;
+    background-size: 220px 220px;
+    width: 220px;
+    height: 220px;
     left: 50%;
-    margin-left: -157px;
-    top: 125px;
+    margin-left: -107px;
+    top: 86px;
     z-index: 13;
 }
 
 #menu_actualite_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/actualite.png');
-    width: 203px;
-    height: 37px;
+    background-size:140px 24px;
+    background-repeat: 'no-repeat';
+    width: 140px;
+    height: 24px;
     left: 50%;
-    margin-left: -98px;
-    top: 195px;
+    margin-left: -66px;
+    top: 133px;
     z-index: 14;
 }
 #menu_actualite_h:hover {
 	background: url('/static/images/menu/Hover/actualite_h.png');
+    background-size:140px 24px;
 }
 #menu_actualite_h:active {
-	top: 196px;
+	top: 134px;
 }
 
 #menu_tournoi_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/tournoi.png');
-    width: 201px;
-    height: 35px;
+    background-size:137px 25px;
+    width: 137px;
+    height: 25px;
     left: 50%;
-    margin-left: -99px;
-    top: 345px;
+    margin-left: -66px;
+    top: 233px;
     z-index: 14;
 }
 #menu_tournoi_h:hover {
 	background: url('/static/images/menu/Hover/tournoi_h.png');
+    background-size:137px 25px;
 }
 #menu_tournoi_h:active {
-	top: 346px;
+	top: 234px;
 }
 
 #menu_forum_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/forum.png');
-    width: 237px;
-    height: 39px;
+    background-size:164px 26px;
+    width: 164px;
+    height: 26px;
     left: 50%;
-    margin-left: -114px;
-    top: 242px;
+    margin-left: -78px;
+    top: 164px;
     z-index: 14;
 }
 
 #menu_forum_h:hover {
 	background: url('/static/images/menu/Hover/forum_h.png');
+    background-size:164px 26px;
 }
 #menu_forum_h:active {
-	top: 243px;
+	top: 165px;
 }
 
 #menu_membres_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/membres.png');
-    width: 237px;
-    height: 39px;
+    background-size:164px 27px;
+    width: 164px;
+    height: 27px;
     left: 50%;
-    margin-left: -114px;
-    top: 292px;
+    margin-left: -78px;
+    top: 197px;
     z-index: 14;
 }
 
 #menu_membres_h:hover {
 	background: url('/static/images/menu/Hover/membres_h.png');
+    background-size:164px 27px;
 }
 #menu_membres_h:active {
-	top: 293px;
+	top: 198px;
 }
 
 /* FIN MENU */
@@ -249,7 +261,7 @@ a:hover {
 	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
 	border: 3px double rgba(139,69,19, 1);
 	position: relative;
-	top: 388px;
+	top: 290px;
 	width: 54.6%;
 	min-width: 730px;
 	left: 50%;

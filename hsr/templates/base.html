@@ -23,7 +23,7 @@
             $.ajaxSetup({ cache: false });
             setInterval(function() {
                 $("#menu_droite_in").load('/notification/indicator/');
-            }, 10000);
+            }, 5000);
         });
         $(document).ready(function() {
             $('#chat').submit(function() { // catch the form's submit event
@@ -44,7 +44,7 @@
         {% endif %}
 	</head>
 	
-	<body>
+	<body onscroll="iDiv=document.getElementById('showcontact');if(iDiv != null){iDiv.parentNode.removeChild(iDiv);}">
 	
 	
 		
@@ -60,13 +60,8 @@
 		</div>
 	
 	<div id="canvas_all">
-        {% if request.user.is_active %}
 <div id="logo_sgtv_box"></div>
         <div id="sgtv">
-        {% else %}
-<div id="logo_sgtv_box_deco"></div>
-        <div id="sgtv_deco">
-        {% endif %}        
             <table>
             <tr onclick="WebTV('sgtv1');" class="tr_webtv">
             <td><img src="/static/images/webtv/sgtv1.png" /></td><td>-</td><td id="on_sgtv1"></td>
@@ -125,34 +120,35 @@
 	
 		</div>
 		
-		{% if request.user.is_active %}			
-		<div id="menu_droite">
-	    <div id="menu_droite_in">	
-        {% include 'notification/indicateur.html' %} 
-		</div>
-        <br />
-        <form action="/notification/indicator/" method="POST" id="chat"><table style="width: 100%;"><td>
-        {{request.user.profil_set.all.0.pseudo}}</td><td><input type="text" name="message" id="chat_message" style="width: 100%;" /></td>
-        <td><center><input type="submit" value="Chat" /></center></td></table>
-        {% csrf_token %}
-        </form>
-        <br />
-        <div id="menu_droite_bas">
-        </div>
-		</div>
-		{% endif %}
-	
-	    <div id="deco">
-	    {% if request.user.is_active %}
-	        <b> {{ request.user.username }} </b><a href="/profil/">&nbsp;Profil</a><span style="color: #8B4513;"> | </span><a href="/profil/deco/?url={{request.path}}">Déconnexion</a>
-	        {% else %}
+		<div id="menu_droite" style="width:300px;">
+        {% if not request.user.is_active %}
             <form METHOD="POST" ACTION="/profil/">
             <table>
             <tr><td><input type="hidden" value="{{request.path}}" name="url" />Identifiant</td><td><input size="14" name="username" /></td></tr><tr><td>Mot de passe</td><td><input size="14" name="password" type="password" /></td></tr><tr><td><a href="/profil/">Inscription</a></td><td>{% csrf_token %}<input type="submit" value="Login" /></td></tr>
             </table>
             </form>
-	    {% endif %}
-	    </div>
+        {% endif %}
+	    <div id="menu_droite_in" style="width:100%;">	
+        {% include 'notification/indicateur.html' %} 
+		</div>
+        <div style="height:85%;">
+        <div id="notif_feed" style="width:100%;overflow:auto;height:0%;display:none;">
+        </div>
+        <input id="feed_content" type="hidden" value="" />
+        <hr />
+        <div id="chat_droite" style="width:100%;overflow:auto;height:95%;"></div>
+        </div>
+		{% if request.user.is_active %}			
+        <form action="/notification/indicator/" method="POST" id="chat"><table style="width: 100%;"><td>
+        {{request.user.profil_set.all.0.pseudo}}</td><td><input type="text" name="message" id="chat_message" style="width: 100%;" /></td>
+        <td><center><input type="submit" value="Chat" /></center></td></table>
+        {% csrf_token %}
+        </form>
+		{% endif %}
+        <div id="vusrecemment">
+        </div>
+		</div>
+	
 	       
 		<div id="content">
             <noscript>
@@ -176,6 +172,23 @@
 	
 	</div>
     <script type="text/JavaScript">
+    function ShowContact(id,event) {
+        iDiv = document.getElementById('showcontact');
+        if (iDiv){
+        iDiv.parentNode.removeChild(iDiv);
+        }
+        var iDiv = document.createElement('div');
+        document.getElementsByTagName('body')[0].appendChild(iDiv); 
+        iDiv.id = 'showcontact';
+        iDiv.style.width = "200px";
+        iDiv.style.position = 'absolute';
+        x = event.clientX-100;
+        y = event.clientY;
+        $('#showcontact').load('/profil/detail/'+id+'/?x='+x+'&y='+y);
+    }
+
+
+
     function WebTV(tv) {
         var content = $("#webtv").text();
         if (content != tv) {

@@ -40,8 +40,8 @@
             </td>
             <td style="text-align: left;">{% if topic.postit %}[Post-It] {% endif %}{% if topic.close %}[Fermé] {% endif %}<a href="{{ topic.get_absolute_url }}">{{ topic }}</a></td>
             <td>{{ topic.post_count }}</td>
-        <td><a href="/profil/detail/{{topic.posts.all.0.user.profil_set.all.0.id}}/">{{ topic.posts.all.0.user}}</a><br /><span style="font-size:80%;">{{ topic.created|date:"d/m/Y - H:i" }}</span></td>
-        <td>{% if topic.posts.all|length != 1 %}<a href="/profil/detail/{{topic.posts.all.last.user.profil_set.all.0.id}}/">{{ topic.posts.all.last.user}}</a><br /><span style="font-size:80%;">{{ topic.posts.all.last.created|date:"d/m/Y - H:i" }}</span>{% endif %}</td>
+        <td><a href="JavaScript:void(0);" onclick="ShowContact({{topic.posts.all.0.user.profil_set.all.0.id}},event);">{{ topic.posts.all.0.user}}</a><br /><span style="font-size:80%;">{{ topic.created|date:"d/m/Y - H:i" }}</span></td>
+        <td>{% if topic.posts.all|length != 1 %}<a href="JavaScript:void(0);" onclick="ShowContact({{topic.posts.all.last.user.profil_set.all.0.id}},event);">{{ topic.posts.all.last.user}}</a><br /><span style="font-size:80%;">{{ topic.posts.all.last.created|date:"d/m/Y - H:i" }}</span>{% endif %}</td>
         {% if request.user.is_staff %}
         <td><a href="/forum/topic/postit/{{topic.id}}?forum={{forum.id}}">{% if topic.postit %}<strike>{% endif %}[Post-It]{% if topic.postit %}</strike>{% endif %}</a><br />
         <a href="/forum/topic/close/{{topic.id}}?forum={{forum.id}}">{% if topic.close %}Ouvrir{% else %}Fermer{% endif %}</a><br />

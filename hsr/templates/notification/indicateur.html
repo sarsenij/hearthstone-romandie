@@ -1,137 +1,83 @@
+{% if request.user.is_active %}
+<div id="notif_buttons" style="width:100%;height:65px;">
+
+<div style="float:left;width:70px;"><!--PROFIL-->
+<center><a href="/profil/editer/"><img src="{{request.user.profil_set.all.0.avatar}}" height="40px" />
+<br />
+{{request.user.profil_set.all.0.pseudo}}</a></center>
+</div>
+
+<div style="float:left;width:70px;"><!--MESSAGE-->
+<script type="text/JavaScript">
+function FeedNotif(url,choice) {
+    $("#notif_feed").css("overflow", "hidden");
+    setTimeout(function(){
+        $("#notif_feed").css("overflow", "auto");
+    }, 5000);
+    document.getElementById("chat_droite").style.height = "95%";
+    $("#notif_feed").hide('slow');
+    document.getElementById("notif_feed").style.height = "0%";
+    if (document.getElementById("feed_content").value == choice) { 
+        $("#notif_feed").innerHTML = "";
+        document.getElementById("feed_content").value = "";
+    }else{
+        document.getElementById("notif_feed").style.height = "70%";
+        $("#notif_feed").load(url+choice+'/');
+        $("#notif_feed").show('slow');
+        document.getElementById("chat_droite").style.height = "25%";
+        document.getElementById("feed_content").value = choice;
+    }
+}
+</script>
+<center>
+<a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages');">
+<img src="https://d1syos9fsbz8ei.cloudfront.net/Images2/blog/v2/lettre-resil.gif" height="40px" />
 <br />
 {% if notif_messages %}
-<b>NEW</b> - <a href="/notification/messages/">{{notif_messages}} nouveau{% if notif_messages != 1 %}x{% endif %} message{% if notif_messages != 1 %}s{% endif %}</a>
+<span style="background-color:red;">
 {% else %}
-<a href="/notification/messages/">Mes messages</a>
+<span>
 {% endif %}
+{{notif_messages}}
+</span>
+</a>
+</center>
+</div>
+
+<div style="float:left;width:70px;"><!--NOTIF-->
+<center>
+<a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification');">
+<img src="http://cdns2.freepik.com/photos-libre/_318-36638.jpg" height="40px" />
 <br />
-<br />
-{% if notif_suivis %}
-<b>NEW</b> - Forum - Messages suivis<br />
-{%for suivi in notif_suivis%}
-<a href="{{suivi.0.get_absolute_url}}#Post{{suivi.1}}"><img src="/static/images/forum/nouveau_post.png" /> {{suivi.0.name|slice:":40"}}{% if suivi.0.name|length > 40 %}...{%endif%}</a></br />
-{% endfor %}
-<br />
-<br />
-{%endif%}
-{% if notif_invtournois %}
-<b>NEW</b> - Tournois - Invitations<br />
-{% for tournoi in notif_invtournois %}
-<a href="/tournoi/detail/{{tournoi.tournoi.id}}?seen={{tournoi.id}}">{{tournoi.tournoi.name}} - {{tournoi.tournoi.date|date:"d-m-Y"}} {{tournoi.tournoi.heure|date:"H:i"}}</a><br />
-{% endfor %}
-<br />
-<br />
-{% endif %}
-{% if notif_stafftournois %}
-<b>NEW</b> - Tournois - Membre du staff<br />
-{% for tournoi in notif_stafftournois %}
-<a href="/tournoi/detail/{{tournoi.tournoi.id}}?seen={{tournoi.id}}">{{tournoi.tournoi.name}} - {{tournoi.tournoi.date|date:"d-m-Y"}} {{tournoi.tournoi.heure|date:"H:i"}}</a><br />
-{% endfor %}
-<br />
-<br />
-{% endif %}
-{% if notif_contacts %}
-<br />
-<b>Nouveaux contacts</b>
-<br />
-<ul>
-{% for contact in notif_contacts %}
-<li>
-<table>
-<tr>
-<td>
-<a href="/profil/detail/{{contact.contact.owner.id}}/">{{contact.contact.owner.pseudo}}</a><br />
-</td>
-{% if contact.contact_already %}
-<td>
-Déjà dans vos contacts
-</td>
-<td>
-    <script language="JavaScript">
-    $(document).ready(function() {
-        $('#vu{{contact.id}}').submit(function() { // catch the form's submit event
-            $.ajax({ // create an AJAX call...
-                data: $(this).serialize(), // get the form data
-                type: $(this).attr('method'), // GET or POST
-                url: $(this).attr('action'), // the file to call
-                success: function(response) { // on success..
-                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
-                }
-            });
-            return false;
-        });
-    });
-    </script>
-<form method="POST" action="/" id="vu{{contact.id}}">{% csrf_token %}<input type="hidden" name="vu" value="{{contact.id}}" /><input type="submit" value="Vu" /></form>
-</td>
+{% if notif_nombre %}
+<span style="background-color:red;">
 {% else %}
-<td>
-    <script language="JavaScript">
-    $(document).ready(function() {
-        $('#add{{contact.id}}').submit(function() { // catch the form's submit event
-            $.ajax({ // create an AJAX call...
-                data: $(this).serialize(), // get the form data
-                type: $(this).attr('method'), // GET or POST
-                url: $(this).attr('action'), // the file to call
-                success: function(response) { // on success..
-                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
-                }
-            });
-            return false;
-        });
-    });
-    </script>
-<form method="POST" action="/" id="add{{contact.id}}">{% csrf_token %}<input type="hidden" name="add" value="{{contact.contact.owner.id}}" /><input type="hidden" name="id" value="{{contact.id}}" /><input type="submit" value="Ajouter" /></form>
-</td>
-<td>
-    <script language="JavaScript">
-    $(document).ready(function() {
-        $('#vu{{contact.id}}').submit(function() { // catch the form's submit event
-            $.ajax({ // create an AJAX call...
-                data: $(this).serialize(), // get the form data
-                type: $(this).attr('method'), // GET or POST
-                url: $(this).attr('action'), // the file to call
-                success: function(response) { // on success..
-                    $('#menu_droite_in').load('/notification/indicator/'); // update the DIV
-                }
-            });
-            return false;
-        });
-    });
-    </script>
-<form method="POST" action="/" id="vu{{contact.id}}">{% csrf_token %}<input type="hidden" name="vu" value="{{contact.id}}" /><input type="submit" value="Refuser" /></form>
-</td>
+<span>
 {% endif %}
-</table>
-</li>
-{% endfor %}
-</ul>
+{{notif_nombre}}
+</span>
+</a>
+</center>
+</div>
+
+<div><!--DECO-->
+<center>
+<a href="/profil/deco/?url={{request.path}}"><img src="http://cdns2.freepik.com/free-photo/log-out_318-39918.jpg" height="40px" /></a>
+</center>
+</div>
+
+</div>
 {% endif %}
-<table>
-    {% for c in notif_chat  %}
-        {% if forloop.counter|divisibleby:2 %}
-        <tr class="forum_row" style="background-color: rgba(230,184,138,0.1);">
-        {% else %}
-        <tr class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
-        {% endif %}
-        <td><center>{{c.created|date:"d/m" }}<br />
-        {% load bbcode_tags %}
-        {{c.created|date:"H:i" }}</center></td>
-        <td><center><a href="/profil/detail/{{c.user.profil_set.all.0.id}}/">{{c.user.profil_set.all.0.pseudo}}</a></center></td>
-        <td>
-        {% if forloop.counter|divisibleby:2 %}
-        <span style="color: #F5DEB3;">
-        {% else %}
-        <span>
-        {% endif %}
-        {% bbcode c.message %}
-        </span>
-        </td>
-        </tr>
-    {% endfor %}
-</table>
-<script type="text/javascript">
+<script type="text/JavaScript">
+var chat = '<center><b>Chat</b></center><table width="100%">{% for c in notif_chat  %}<tr class="forum_row" style="background-color: rgba(230,184,138,0.1);"><td><center><a href="JavaScript:void(0);" onclick="ShowContact({{c.user.profil_set.all.0.id}},event);">{{c.user.profil_set.all.0.pseudo}}</a></center></td><td><center>{{c.created|date:"d/m" }}{% load bbcode_tags %} - {{c.created|date:"H:i" }}</center></td></tr><tr class="forum_row" style="background-color: rgba(230,184,138,0.15);"><td colspan="2">{% if forloop.counter|divisibleby:2 %}<span style="color: #F5DEB3;">{% else %}<span>{% endif %}{% bbcode c.message %}</span></td></tr>{% endfor %}</table>';
+var vusrecemment = 'Vus récemment :{% for ls in notif_lastseen %} <a href="JavaScript:void(0);" onclick="ShowContact({{ls.id}},event);"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}';
 $(document).ready(function(){
-    document.getElementById("menu_droite_bas").innerHTML = 'Vus récemment :{% for ls in notif_lastseen %} <a href="/profil/detail/{{ls.id}}/"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}';
+    document.getElementById("chat_droite").innerHTML = chat;
+    document.getElementById("vusrecemment").innerHTML = vusrecemment;
+{% if notif_messages %}
+    if (document.getElementById("feed_content").value == "messages") {
+        $("#notif_feed").load("/notification/messages/");
+    }
+{% endif %}
 });
 </script>

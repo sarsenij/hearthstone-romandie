@@ -1,0 +1,17 @@
+{% for message in messages %}
+{% if message.user == request.user %}
+<div id="message" style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+{% else %}
+<div id="message" style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;">
+{% endif %}
+<b><a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{message.user}}</a></b> {{message.date|date:"d/m/Y H:i" }}<br />
+{{message.message}}
+</div>
+{% endfor %}
+<script type="text/JavaScript">
+                if(document.getElementById('all_messages').scrollTop / (document.getElementById('all_messages').scrollHeight - document.getElementById('all_messages').clientHeight) >= 0.98)
+                {
+                var objDiv = document.getElementById("all_messages");
+                objDiv.scrollTop = objDiv.scrollHeight;
+                }
+</script>

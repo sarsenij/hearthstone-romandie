@@ -1,15 +1,91 @@
-{% extends "base.html" %}
-{% block title %}Notifications | {{block.super}}{% endblock %}
-{% block content %}
-{% if notifications %}
-{% for notif in notifications %}
-<a href="/notification/{{ notif.not_type }}/">{{ notif.not_nombre }} nouveau{% if notif.not_nombre >= 2 %}x{% endif %} {{ notif.not_type }}{% if notif.not_nombre >= 2 %}s{% endif %}</a><br />
+<center><b>Notifications</b></center>
+
+
+{% for notif in notif_suivis %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<a href="{{notif.0.get_absolute_url}}"><img src="/static/images/forum/nouveau_post.png" /> {{notif.0}}</a>
+</div>
 {% endfor %}
+
+
+{% for notif in contacts %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<img src="/static/images/icones/mana.png" height="20px;"/> <a href="JavaScript:void(0);" onclick="ShowContact({{notif.contact.owner.id}},event);">{{notif.contact.owner.pseudo}}</a> vous a ajouté.
+<br />
+{% if notif.contact_already %}
+Il est déjà dans vos contacts.
 {% else %}
-Vous n'avez pas de notification
+<form method="POST" id="no_reload" action="/profil/detail/{{notif.contact.owner.id}}/">
+{% csrf_token %}
+<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');" />
+</form>
 {% endif %}
+</div>
+{% endfor %}
+
+
+
+{% for notif in invtournois %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<img src="/static/images/icones/tournoi.png" height="20px;"/> <a href="/tournoi/detail/{{notif.tournoi.id}}">Invitation au tournoi {{notif.tournoi.name}}</a>
+</div>
+{% endfor %}
+
+
+{% for notif in stafftournois %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<img src="/static/images/icones/tournoi.png" height="20px;"/> <a href="/tournoi/detail/{{notif.tournoi.id}}">Vous êtes staff au tournoi {{notif.tournoi.name}}</a>
+</div>
+{% endfor %}
+
+<center><b>Archives</b></center>
+
+<div style="background-color: rgba(230,184,138,0.15);width:95%;margin:2px;">
+<img src="/static/images/icones/mana.png" height="20px;"/> <a href="JavaScript:void(0);" onclick="$('#rarcontacts').toggle('slow');">Anciennes demandes</a>
+<div id="rarcontacts" style="display:none;">
+{% for notif in rarcontacts %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<img src="/static/images/icones/mana.png" height="20px;"/> <a href="JavaScript:void(0);" onclick="ShowContact({{notif.contact.owner.id}},event);">{{notif.contact.owner.pseudo}}</a> vous a ajouté.
 <br />
-<a href="/notification/contact/">Contacts proposés non acceptés</a>
-<br />
-<a href="/notification/message/">Anciens messages</a>
-{% endblock %}
+{% if notif.contact_already %}
+Il est déjà dans vos contacts.
+{% else %}
+<form method="POST" id="no_reload" action="/profil/detail/{{notif.contact.owner.id}}/">
+{% csrf_token %}
+<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');" />
+</form>
+{% endif %}
+</div>
+{% endfor %}
+</div>
+</div>
+
+
+
+<div style="background-color: rgba(230,184,138,0.15);width:95%;margin:2px;">
+<img src="/static/images/icones/tournoi.png" height="20px;"/> <a href="JavaScript:void(0);" onclick="$('#rarinvtournois').toggle('slow');">Anciens tournois</a>
+<div id="rarinvtournois" style="display:none;">
+{% for notif in rartournois %}
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<img src="/static/images/icones/tournoi.png" height="20px;"/> <a href="/tournoi/detail/{{notif.tournoi.id}}">{% if notif.staff %}Vous êtes staff au tournoi{% else %}Vous êtes invités au tournoi{% endif %} {{notif.tournoi.name}}</a>
+</div>
+{% endfor %}
+</div>
+</div>
+
+
+<script type="text/JavaScript">
+        $(document).ready(function() {
+            $('#no_reload').submit(function() { // catch the form's submit event
+                $.ajax({ // create an AJAX call...
+                    data: $(this).serialize(), // get the form data
+                    type: $(this).attr('method'), // GET or POST
+                    url: $(this).attr('action'), // the file to call
+                    success: function(response) { // on success..
+                        
+                    }
+                });
+                return false;
+            });
+        });
+</script>

@@ -1,33 +1,47 @@
-{% extends "base.html" %}
-{% block title %}Messages | {{block.super}}{% endblock %}
-{% block content %}
-<a href="/notification/messages/">Mes messages</a><br />
-<h2>{{all_messages.0.titre.titre}}</h2>
-{% for dest in all_messages.0.titre.dest_set.all %}
-{% if dest.dest != request.user %}
-{{dest.dest.profil_set.all.0.pseudo}} ; 
+<b>{% for d in dest %}{{d.user}}{% endfor %}</b>
+<br />
+<div id="all_messages" style="height:75%;overflow:auto;">
+{% for message in messages %}
+{% if message.user == request.user %}
+<div id="message" style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+{% else %}
+<div id="message" style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;">
 {% endif %}
-{% endfor %}
-<div class="forum">
-{% for message in all_messages %}
-        {% if forloop.counter|divisibleby:2 %}
-        <div class="forum_row" style="background-color: rgba(230,184,138,0.1);">
-        {% else %}
-        <div class="forum_row" style="background-color: rgba(230,184,138,0.15);">            
-        {% endif %}
-            <div class="forum_col_1">
-            <center><a href="/profil/detail/{{message.user.profil_set.all.0.id}}/"><i class="icon-user"><img class="recherche_avatar" src="{{message.user.profil_set.all.0.avatar}}" width="100%" class="recherche_avatar" /></i><br />{{message.user.profil_set.all.0.pseudo }}</a><div class="muted"><i class="icon-time"></i> {{message.created|date:"d/m/Y H:i" }}</div></center>
-            </div>
-            <div class="forum_col_2">
-{% load bbcode_tags %}
-{% bbcode message.content %}
-</div>
+<b><a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{message.user}}</a></b> {{message.date|date:"d/m/Y H:i" }}<br />
+{{message.message}}
 </div>
 {% endfor %}
 </div>
-<form method="POST" action="">
+<form id="new_message" method="POST" action="/notification/new_message/">
+<input type="hidden" name="conv" value="{{conv}}" />
+<textarea name="message" id="msg" cols="30" rows="2"></textarea><br />
+<input type="submit" value="Envoyer" />
 {% csrf_token %}
-<input type="hidden" name="titre" value="{{all_messages.0.titre.id}}" />
-{% include "pybb/bbcode.html" with name="content"%}
 </form>
-{% endblock %}
+<script type="text/javascript"> 
+var objDiv = document.getElementById("all_messages");
+objDiv.scrollTop = objDiv.scrollHeight;
+$(document).ready(function(){
+    $.ajaxSetup({ cache: false });
+    if (typeof inter != 'undefined') {
+        clearInterval(inter);
+    }
+    inter = setInterval(function() {
+        $("#all_messages").load('/notification/message/{{conv}}/?refresh=yes');
+    }, 5000);
+});
+$(document).ready(function() {
+    $('#new_message').submit(function() { // catch the form's submit event
+        $.ajax({ // create an AJAX call...
+            data: $(this).serialize(), // get the form data
+            type: $(this).attr('method'), // GET or POST
+            url: $(this).attr('action'), // the file to call
+            success: function(response) { // on success..
+                $('#msg').val('');
+                $("#all_messages").load('/notification/message/{{conv}}/?refresh=yes');
+            }
+        });
+        return false;
+    });
+});
+</script>

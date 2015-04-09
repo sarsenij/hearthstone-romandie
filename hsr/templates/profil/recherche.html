@@ -46,7 +46,7 @@ Pseudo : </td><td><input name="pseudo" />
 	<tr>
 	{% endif %}
 	<td>
-	<center><a href="/profil/detail/{{res.id}}/"><img src="{{res.avatar}}" width="200" class="recherche_avatar" /><br />
+	<center><a href="JavaScript:void(0);" onclick="ShowContact({{res.id}},event);"><img src="{{res.avatar}}" width="200" class="recherche_avatar" /><br />
 	<span id="recherche_pseudo">{{res.pseudo}}</span></a></center>
 	</td>
 	{% endfor %}

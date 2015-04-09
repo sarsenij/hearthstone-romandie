@@ -99,7 +99,7 @@ Tournois{% if request.user.is_active %} / <a href="/tournoi/create/">Créer un t
     {% endif %}
     {% endif %}
         <td>{{forloop.counter}}</td>
-        <td><a href="/profil/detail/{{l.id}}/">{{ l.pseudo }}</a></td>
+        <td><a href="JavaScript:void(0);" onclick="ShowContact({{l.id}},event);">{{ l.pseudo }}</a></td>
         <td>{{l.cote}}</td>
     </tr>
 {% endfor %}
