@@ -63,6 +63,10 @@ class Profil(models.Model) :
     cote = models.IntegerField(default=1000)
 
     webtv = models.BooleanField(default=False)
+    
+    news = models.IntegerField(default=0)
+    
+    sound = models.BooleanField(default=True)
 
 class Contact(models.Model) :
 

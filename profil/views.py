@@ -215,7 +215,7 @@ def recherche(request) :
             result = temp.order_by('pseudo')
         elif request.POST['method'] == "pseudo" :
             result = list()
-            for prof in Profil.objects.filter(u__is_active=True) :
+            for prof in Profil.objects.filter(u__is_active=True).order_by('pseudo') :
                 if request.POST['pseudo'].lower() in prof.pseudo.lower() :
                     result.append(prof)
         elif request.user.is_active :
@@ -223,9 +223,9 @@ def recherche(request) :
             for contact in Contact.objects.filter(owner=Profil.objects.get(u__id=request.user.id)).order_by('contact__pseudo') :
                 result.append(Profil.objects.get(id=contact.contact.id))
         else :
-            result = list()
+            result = Profil.objects.filter(u__is_active=True).order_by('pseudo')
     else :
-        result = list()
+        result = Profil.objects.filter(u__is_active=True).order_by('pseudo')
     return render_to_response('profil/recherche.html',{'pays':Pays.objects.all().order_by('pays'),'ville_proche':VilleProche.objects.all().order_by('ville_proche'),'localite':Localite.objects.all().order_by('localite'),'result':result},RequestContext(request))
 
 def details(request,detail_id) :

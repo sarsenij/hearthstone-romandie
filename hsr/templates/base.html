@@ -7,7 +7,6 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" type="text/css" href="/static/styles/style_1.css" />
 		<link rel="stylesheet" type="text/css" href="/static/styles/forum_1.css" />
-		<link rel="stylesheet" type="text/css" href="/static/styles/elem.css" />
 		<link rel="shortcut icon" href="/static/images/favicon/favicon_anim.gif" >
 		<link rel="icon" href="/static/images/favicon/favicon_anim_f.gif" type="image/gif" >
 		<link href='http://fonts.googleapis.com/css?family=Balthazar' rel='stylesheet' type='text/css'>
@@ -48,16 +47,6 @@
 	
 	
 		
-		<div id="elemental-container" class="animatable" style="position: absolute; right: 650px; top: 185px;">
-			<div class="elemental">
-				<span class="elemental__part elemental__left-shoulder"></span>
-				<span class="elemental__part elemental__body"></span>
-				<span class="elemental__part elemental__right-shoulder"></span>
-				<span class="elemental__part elemental__left-arm"></span>
-				<span class="elemental__part elemental__right-arm"></span>
-				<span class="elemental__part elemental__rock"></span>
-			</div>
-		</div>
 	
 	<div id="canvas_all">
 <div id="logo_sgtv_box"></div>
@@ -131,10 +120,11 @@
 	    <div id="menu_droite_in" style="width:100%;">	
         {% include 'notification/indicateur.html' %} 
 		</div>
-        <div style="height:85%;">
+        <div style="height:85%;overflow:hidden;">
         <div id="notif_feed" style="width:100%;overflow:auto;height:0%;display:none;">
         </div>
         <input id="feed_content" type="hidden" value="" />
+        <div id="waiting_notif" style="display:none;width:100%;"><center><img src="/static/images/icones/waiting.gif" /></center></div>
         <hr />
         <div id="chat_droite" style="width:100%;overflow:auto;height:95%;"></div>
         </div>

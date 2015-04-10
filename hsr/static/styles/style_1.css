@@ -36,7 +36,6 @@ body {
 a:link, a:visited, a {
 	color: #cd853f;
 	text-decoration: none;
-	cursor: pointer;
 	vertical-align: 0px;
 }
 
@@ -179,10 +178,10 @@ a:hover {
 #menu_actualite_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/actualite.png');
-    background-size:140px 24px;
+    background-size:140px 25px;
     background-repeat: 'no-repeat';
     width: 140px;
-    height: 24px;
+    height: 25px;
     left: 50%;
     margin-left: -66px;
     top: 133px;
@@ -190,7 +189,7 @@ a:hover {
 }
 #menu_actualite_h:hover {
 	background: url('/static/images/menu/Hover/actualite_h.png');
-    background-size:140px 24px;
+    background-size:140px 25px;
 }
 #menu_actualite_h:active {
 	top: 134px;
@@ -199,9 +198,9 @@ a:hover {
 #menu_tournoi_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/tournoi.png');
-    background-size:137px 25px;
+    background-size:137px 24px;
     width: 137px;
-    height: 25px;
+    height: 24px;
     left: 50%;
     margin-left: -66px;
     top: 233px;
@@ -209,7 +208,7 @@ a:hover {
 }
 #menu_tournoi_h:hover {
 	background: url('/static/images/menu/Hover/tournoi_h.png');
-    background-size:137px 25px;
+    background-size:137px 24px;
 }
 #menu_tournoi_h:active {
 	top: 234px;
@@ -238,9 +237,9 @@ a:hover {
 #menu_membres_h {
 	position: absolute;
 	background: url('/static/images/menu/Hover/membres.png');
-    background-size:164px 27px;
+    background-size:164px 28px;
     width: 164px;
-    height: 27px;
+    height: 28px;
     left: 50%;
     margin-left: -78px;
     top: 197px;
@@ -249,7 +248,7 @@ a:hover {
 
 #menu_membres_h:hover {
 	background: url('/static/images/menu/Hover/membres_h.png');
-    background-size:164px 27px;
+    background-size:164px 28px;
 }
 #menu_membres_h:active {
 	top: 198px;
@@ -408,7 +407,7 @@ a:hover {
 /* FOOTER */
 
 #table_recherche {
-	background-color: rgba(230,184,138,0.1);
+	background-color: rgba(230,184,138,0.7);
 	border: 1px solid rgba(230,184,138,0.6);
 	position: relative;
 	width: 60%;
@@ -474,10 +473,13 @@ a:hover {
 /* MEMBRES */
 .table_membres {
 	position: relative;
-	background-color: rgba(230,184,138,0.1);
-	border: 1px solid rgba(230,184,138,0.6);
 	width: 100%;
 	overflow: none;
+}
+
+.div_membres {
+    background-image: url('/static/images/backgrounds/table_membres.png');
+    height:874px;
 }
 
 .recherche_avatar {

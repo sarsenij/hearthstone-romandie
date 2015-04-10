@@ -1,5 +1,7 @@
 # Create your views here.
 # -*- encoding:utf-8 -*-
+import re
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -43,7 +45,21 @@ def actualites(request) :
         if not p in topics :
             for po in Post.objects.filter(topic__forum__id=1).order_by('id') :
                 if po.topic == p :
-                    acts.append(po)
+                    img = po.content.split("[img]")
+                    if len(img) >1 :
+                        img = img[1].split("[/img]")[0]
+                    else :
+                        img = str()
+                    content = list()
+                    contemp=re.sub(r'\[img.*?\img]', '', po.content).split("\n")
+                    for line in contemp :
+                        if len(content) >=3 :
+                            break
+                        if line.strip():
+                            content.append(line)
+                    content = "\n".join(content)
+                        
+                    acts.append([po,content,img])
                     break
             topics.append(p)
     return render_to_response('actualites/actualites.html',{'acts':acts},RequestContext(request))

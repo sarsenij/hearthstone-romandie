@@ -9,7 +9,7 @@
 </div>
 {% endfor %}
 <script type="text/JavaScript">
-                if(document.getElementById('all_messages').scrollTop / (document.getElementById('all_messages').scrollHeight - document.getElementById('all_messages').clientHeight) >= 0.98)
+                if(document.getElementById('all_messages').scrollHeight - document.getElementById('all_messages').scrollTop - document.getElementById('all_messages').clientHeight <= 50)
                 {
                 var objDiv = document.getElementById("all_messages");
                 objDiv.scrollTop = objDiv.scrollHeight;

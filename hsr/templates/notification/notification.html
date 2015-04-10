@@ -15,9 +15,9 @@
 {% if notif.contact_already %}
 Il est déjà dans vos contacts.
 {% else %}
-<form method="POST" id="no_reload" action="/profil/detail/{{notif.contact.owner.id}}/">
+<form method="POST" id="no_reload{{notif.id}}" action="/profil/detail/{{notif.contact.owner.id}}/">
 {% csrf_token %}
-<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');" />
+<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');AddFriend('no_reload{{notif.id}}',event);" />
 </form>
 {% endif %}
 </div>
@@ -50,9 +50,9 @@ Il est déjà dans vos contacts.
 {% if notif.contact_already %}
 Il est déjà dans vos contacts.
 {% else %}
-<form method="POST" id="no_reload" action="/profil/detail/{{notif.contact.owner.id}}/">
+<form method="POST" id="no_reload{{notif.id}}" action="/profil/detail/{{notif.contact.owner.id}}/">
 {% csrf_token %}
-<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');" />
+<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');AddFriend('no_reload{{notif.id}}',event);" />
 </form>
 {% endif %}
 </div>
@@ -75,17 +75,15 @@ Il est déjà dans vos contacts.
 
 
 <script type="text/JavaScript">
-        $(document).ready(function() {
-            $('#no_reload').submit(function() { // catch the form's submit event
+        function AddFriend(div,event){
+                event.preventDefault();
                 $.ajax({ // create an AJAX call...
-                    data: $(this).serialize(), // get the form data
-                    type: $(this).attr('method'), // GET or POST
-                    url: $(this).attr('action'), // the file to call
+                    data: $(div).serialize(), // get the form data
+                    type: $(div).attr('method'), // GET or POST
+                    url: $(div).attr('action'), // the file to call
                     success: function(response) { // on success..
                         
                     }
                 });
-                return false;
-            });
-        });
+        }
 </script>

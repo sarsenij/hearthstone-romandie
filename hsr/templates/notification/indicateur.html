@@ -1,4 +1,38 @@
 {% if request.user.is_active %}
+{% if notif_sound %}
+<audio id="notif_sound" style="display:none;">
+<source src="/static/sound/alert.ogg" type="audio/ogg">
+<source src="/static/sound/alert.mp3" type="audio/mpeg">
+Prout
+</audio>
+<script type="text/JavaScript">
+$(document).ready(function(){
+    var sample = document.getElementById("notif_sound");
+    sample.play();
+});
+</script>
+{% endif %}
+<script type="text/JavaScript">
+$(document).ready(function(){
+    var titre = document.title
+    var value = {{notif_nombre|add:notif_messages}}
+    if (value != 0)
+    {   
+        if (titre[0] == "(")
+        {
+            titre = "("+value+") "+titre.split(")")[1];
+        } else {
+            titre = "("+value+") "+titre;
+        }
+    }else{
+        if (titre[0] == "(")
+        {
+            titre = titre.split(")")[1];
+        }
+    }
+    document.title = titre;
+});
+</script>
 <div id="notif_buttons" style="width:100%;height:65px;">
 
 <div style="float:left;width:70px;"><!--PROFIL-->
@@ -10,6 +44,7 @@
 <div style="float:left;width:70px;"><!--MESSAGE-->
 <script type="text/JavaScript">
 function FeedNotif(url,choice) {
+    $("#waiting_notif").show();
     $("#notif_feed").css("overflow", "hidden");
     setTimeout(function(){
         $("#notif_feed").css("overflow", "auto");
@@ -20,18 +55,22 @@ function FeedNotif(url,choice) {
     if (document.getElementById("feed_content").value == choice) { 
         $("#notif_feed").innerHTML = "";
         document.getElementById("feed_content").value = "";
+                $("#waiting_notif").hide();
     }else{
         document.getElementById("notif_feed").style.height = "70%";
-        $("#notif_feed").load(url+choice+'/');
-        $("#notif_feed").show('slow');
-        document.getElementById("chat_droite").style.height = "25%";
+        $("#notif_feed").load(url+choice+'/',function(){
+            $("#notif_feed").show('slow',function(){
+                document.getElementById("chat_droite").style.height = "25%";
+                $("#waiting_notif").hide();
+            });
+        });
         document.getElementById("feed_content").value = choice;
     }
 }
 </script>
 <center>
 <a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages');">
-<img src="https://d1syos9fsbz8ei.cloudfront.net/Images2/blog/v2/lettre-resil.gif" height="40px" />
+<img src="/static/images/icones/message.png" height="40px" />
 <br />
 {% if notif_messages %}
 <span style="background-color:red;">
@@ -47,7 +86,7 @@ function FeedNotif(url,choice) {
 <div style="float:left;width:70px;"><!--NOTIF-->
 <center>
 <a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification');">
-<img src="http://cdns2.freepik.com/photos-libre/_318-36638.jpg" height="40px" />
+<img src="/static/images/icones/notif.png" height="40px" />
 <br />
 {% if notif_nombre %}
 <span style="background-color:red;">
@@ -62,7 +101,7 @@ function FeedNotif(url,choice) {
 
 <div><!--DECO-->
 <center>
-<a href="/profil/deco/?url={{request.path}}"><img src="http://cdns2.freepik.com/free-photo/log-out_318-39918.jpg" height="40px" /></a>
+<a href="/profil/deco/?url={{request.path}}"><img src="/static/images/icones/deco.png" height="40px" /></a>
 </center>
 </div>
 

@@ -2,6 +2,7 @@
 {% block title %}Membres | {{block.super}}{% endblock %}
 {% block content %}
 
+<div class="div_membres">
 <form method="POST" action="/profil/recherche/">
 {% csrf_token %}
 <table id="table_recherche">
@@ -38,18 +39,42 @@ Pseudo : </td><td><input name="pseudo" />
 {% endif %}
 <br />
 {% if result %}
-<table class="table_membres">
+<table class="table_membres" id="page0">
 	<tr>
 	{% for res in result %}
-	{% if forloop.counter0|divisibleby:3 %}
+    {% if forloop.counter0|divisibleby:15 and forloop.counter0 != 0%}
+    </tr>
+    </table>
+    <table class="table_membres" id="page{{forloop.counter0}}" style="display:none;">
+    {% endif %}
+    {% if forloop.counter0|divisibleby:15 %}
+    <td>
+    {% if forloop.counter0 %}
+    <center>
+    <a href="JavaScript:void(0);" onclick="$('#page{{forloop.counter0|add:-15}}').show();$('#page{{forloop.counter0}}').hide();"><img src="/static/images/icones/arrow_left.png" /></a>
+    </center>
+    {% endif %}
+    </td><td></td><td>
+    </td><td></td><td>
+    {% if result|length > forloop.counter0|add:14 %}
+    <center>
+    <a href="JavaScript:void(0);" onclick="$('#page{{forloop.counter0|add:15}}').show();$('#page{{forloop.counter0}}').hide();"><img src="/static/images/icones/arrow_right.png" /></a>
+    </center>
+    {% endif %}
+    </td>
+    </tr>
+    <tr>
+    {% endif %}
+	{% if forloop.counter0|divisibleby:5 and forloop.counter0 != 0%}
 	</tr>
 	<tr>
 	{% endif %}
 	<td>
-	<center><a href="JavaScript:void(0);" onclick="ShowContact({{res.id}},event);"><img src="{{res.avatar}}" width="200" class="recherche_avatar" /><br />
+	<center><a href="JavaScript:void(0);" onclick="ShowContact({{res.id}},event);"><img src="{{res.avatar}}" width="100" class="recherche_avatar" /><br />
 	<span id="recherche_pseudo">{{res.pseudo}}</span></a></center>
 	</td>
 	{% endfor %}
 </table>
 {% endif %}
+</div>
 {% endblock %}

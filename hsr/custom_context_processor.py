@@ -26,6 +26,13 @@ def notif(request):
         profil.save()
         invtournois = InviteTournoi.objects.filter(user=request.user,staff=False,seen=False)
         stafftournois = InviteTournoi.objects.filter(user=request.user,staff=True,seen=False)
+        news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages
+        if profil.sound and news > profil.news :
+            sound = True 
+        else :
+            sound = False
+        profil.news = news
+        profil.save()
     else :
         contacts = list()
         messages = 0
@@ -33,9 +40,10 @@ def notif(request):
         lastseen = list()
         invtournois = list()
         stafftournois = list()
+        sound = False
     chat = ChatMsg.objects.all().order_by('-id')
-    if len(chat) > 10 :
-        chat = chat[0:10]
+    if len(chat) > 20 :
+        chat = chat[0:20]
     contenu = {
         'notif_contacts':contacts,
         'notif_messages':messages,
@@ -45,5 +53,6 @@ def notif(request):
         'notif_invtournois':invtournois,
         'notif_stafftournois':stafftournois,
         'notif_nombre':len(contacts)+len(suivis)+len(invtournois)+len(stafftournois),
+        'notif_sound':sound
     }
     return contenu

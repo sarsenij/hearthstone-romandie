@@ -1,4 +1,6 @@
-<div style="background-color: rgba(138,138,138,100);width:95%;margin:2px;border:2px dotted black;">
+<div style="background-image:url('/static/images/profil/mid.png'),linear-gradient(rgba(209,182,129,1),rgba(136,114,73,1));width:100%;z-index:2;">
+<div style="position:absolute;z-index:1;"><img src="/static/images/profil/top.png" width="199" /></div>
+<div style="position:relative;z-index:2;padding-top:25px;">
 <center>
 {{detail.pseudo}}<br />
 <img src="{{detail.avatar}}" width="40" />
@@ -6,7 +8,7 @@
 {% if not contact and request.user != detail.u %}
 <form method="POST" action="/profil/detail/{{detail.id}}/" id="add_contact{{detail.id}}">
 {% csrf_token %}
-<input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');" />
+<input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');AddFriend(event);" />
 </form>
 {% elif request.user != detail.u %}
 Un de vos contacts.
@@ -14,6 +16,7 @@ Un de vos contacts.
 C'est vous !
 {% endif %}
 {% if detail.u != request.user %}
+<br />
 <a href="JavaScript:void(0);" onclick="SendMsg();">Message</a>
 {% endif %}
  <br />Cote : {{detail.cote}}
@@ -49,48 +52,55 @@ Dernière connexion :
 <br />
 {{detail.lastseen|date:"d/m - H:i"}}
 <br />
+<div style="position:absolute;z-index:1;"><img src="/static/images/profil/bot.png" width="200" /></div>
+<div style="position:relative;z-index:2;">
 <a href="JavaScript:void(0);" onclick="iDiv=document.getElementById('showcontact');iDiv.parentNode.removeChild(iDiv);">Fermer</a></center>
+</div>
+</div>
 </div>
 
 
 <script type="text/JavaScript">
-$(document).ready(function() {
-    $('#add_contact{{detail.id}}').submit(function() { // catch the form's submit event
-        $.ajax({ // create an AJAX call...
-            data: $(this).serialize(), // get the form data
-            type: $(this).attr('method'), // GET or POST
-            url: $(this).attr('action'), // the file to call
-            success: function(response) { // on success..
-                
-            }
-        });
-        return false;
+function AddFriend(event){
+    event.preventDefault();
+    $.ajax({ // create an AJAX call...
+        data: $('#add_contact{{detail.id}}').serialize(), // get the form data
+        type: $('#add_contact{{detail.id}}').attr('method'), // GET or POST
+        url: $('#add_contact{{detail.id}}').attr('action'), // the file to call
+        success: function(response) { // on success..
+        }
     });
+}
+$(document).ready(function() {
     x = {{x}}
-    y = {{y}}
+    y = {{y}} + window.pageYOffset
     div=$("#showcontact");
     if (x > $(window).width()-210) {
         x = $(window).width()-210;
     }
-    if (y > $(window).height()-div.outerHeight()-10) {
-        y = $(window).height()-div.outerHeight()-10;
+    if (y > $(window).height()+window.pageYOffset-div.outerHeight()-10) {
+        y = $(window).height()+window.pageYOffset-div.outerHeight()-10;
     }
     div.css({"top":y+"px","left":x+"px","z-index":"1000"});
 });
 function SendMsg(){
+    $("#waiting_notif").show();
     document.getElementById("chat_droite").style.height = "95%";
     $("#notif_feed").hide('slow');
     document.getElementById("notif_feed").style.height = "0%";
     document.getElementById("notif_feed").style.height = "70%";
-    $("#notif_feed").load("/notification/messages/");
-    $("#notif_feed").show('slow');
-    document.getElementById("chat_droite").style.height = "25%";
-    setTimeout(function(){
+    $("#notif_feed").load("/notification/messages/",function() {
+        $("#messages").load("/notification/message/0/?dest={{detail.u.id}}",function() {
+            $("#notif_feed").show('slow',function(){
+                document.getElementById("chat_droite").style.height = "25%";
+                $("#waiting_notif").hide();
+    
+            });
+        });
+        $("#titres").hide();
+        $("#messages").show();
+    });
     $("#feed_content").val("readmsg");
-    $("#messages").load("/notification/message/0/?dest={{detail.u.id}}");
-    $("#titres").hide();
-    $("#messages").show('slow');
-    }, 700);
     iDiv=document.getElementById('showcontact');
     iDiv.parentNode.removeChild(iDiv);
 }

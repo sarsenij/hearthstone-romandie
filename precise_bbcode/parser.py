@@ -186,7 +186,7 @@ class BBCodeParser(object):
                 href = 'http://' + href
             content = value if option else href
             # Render
-            return '<a href="{}">{}</a>'.format(href, content or href)
+            return '<a href="{}" target="_blank">{}</a>'.format(href, content or href)
 
         self.add_default_renderer('b', '[b]{TEXT}[/b]', '<strong>{TEXT}</strong>')
         self.add_default_renderer('i', '[i]{TEXT}[/i]', '<em>{TEXT}</em>')
@@ -525,7 +525,7 @@ class BBCodeParser(object):
         href = url
         if '://' not in href:
             href = 'http://' + href
-        return '<a href="{0}">{1}</a>'.format(href, url)
+        return '<a href="{0}" target="_blank">{1}</a>'.format(href, url)
 
     def _replace(self, data, replacements):
         """
