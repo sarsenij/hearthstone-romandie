@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<b>Mot de passe oublié</b>
+{% if error_msg %}
+<div style="width:100%;background-color:red;">{{error_msg}}</div>
+{% endif %}
+
+<form action="/profil/resetpwd/" method="POST" />
+{% csrf_token %}
+E-mail : <input name="email" /><br />
+{% if sent %}Code : {% endif %}<input name="code" {% if not sent %}type="hidden"{% endif %} />
+<br />
+<input type="submit" value="Envoyer" />
+</form>
+
+{% endblock %}

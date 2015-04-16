@@ -62,7 +62,11 @@ def actualites(request) :
                     acts.append([po,content,img])
                     break
             topics.append(p)
-    return render_to_response('actualites/actualites.html',{'acts':acts},RequestContext(request))
+    try :
+        msg = request.GET.get('msg')
+    except :
+        msg = ""
+    return render_to_response('actualites/actualites.html',{'msg':msg,'acts':acts},RequestContext(request))
 
 def stream(request):
     return render_to_response('stream/stream.html',{'horaires':Horaire.objects.all()},RequestContext(request))

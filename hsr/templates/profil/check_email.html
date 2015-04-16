@@ -1,0 +1,17 @@
+<center><b>Validez votre e-mail</b></center>
+{% if fail %}
+Votre code n'est pas valide
+{% endif %}
+Vérifiez vos spams !<br />
+<form action="/profil/check_email" method="POST">
+{% csrf_token %}
+Code de vérification : <input name="check" />
+<input type="submit" value="Envoyer" />
+</form>
+<center><b>Renvoyer la vérification :</b></center>
+<form action="/profil/send_email" method="POST">
+{% csrf_token %}
+E-mail : <input name="email" />
+<input type="submit" value="Renvoyer" />
+</form>
+

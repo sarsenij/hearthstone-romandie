@@ -1,0 +1,7 @@
+<b>Changer de mot de passe</b>
+<form action="/profil/changepwd/" method="POST">
+{% csrf_token %}
+Mot de passe : <input type="password" name="pwd1" /><br />
+Confirmez : <input type="password" name="pwd2" /><br />
+<input type="submit" value="Valider" />
+</form>

@@ -39,6 +39,11 @@ class Profil(models.Model) :
 
     email = models.CharField(max_length=125,null=True,blank=True,default="")
     email_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
+    email_sent = models.BooleanField(default=False)
+    email_fail = models.BooleanField(default=False)
+    email_verified = models.BooleanField(default=False)
+    email_code = models.IntegerField(default=0)
+    email_failcode = models.BooleanField(default=False)
     
     rue = models.CharField(max_length=125,blank=True,null=True,default="")
     rue_privacy = models.IntegerField(choices=PRIVACY_CHOICES,default=0)
@@ -67,6 +72,15 @@ class Profil(models.Model) :
     news = models.IntegerField(default=0)
     
     sound = models.BooleanField(default=True)
+
+    step_settings = models.BooleanField(default=False)
+
+
+    alert_forum = models.BooleanField(default=False)
+    alert_contact = models.BooleanField(default=False)
+    alert_tournoi = models.BooleanField(default=False)
+
+    code_pwd = models.IntegerField(default=0)
 
 class Contact(models.Model) :
 

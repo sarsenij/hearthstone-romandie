@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from django.core.mail import send_mail
 
 from django.shortcuts import redirect, get_object_or_404, render
 from django.core.urlresolvers import reverse
@@ -181,6 +182,11 @@ def post_add(request):
         posts = Post.objects.filter(topic=topic).order_by('-created')
         page = (len(posts)-1)/10
         post = posts[0].id
+        for alert in Suivi.objects.filter(topic=topic) :
+            profil = Profil.objects.get(u=alert.user)
+            if alert.user != request.user and profil.alert_forum and profil.email_verified :
+                send_mail('[HS-R] Nouveau post',u'''Nouveau post dans le topic %s.
+Lien direct : http://www.hearthstone-romandie.ch/forum/topic/%s/%s#Post%d'''%(topic.name,topic_id,page,post),'noreply@hearthstone-romandie.ch',[profil.email],fail_silently=False)
         return redirect('/forum/topic/%s/%s#Post%d'%(topic_id,page,post))
     context = {'form': form,
                'topic': topic,

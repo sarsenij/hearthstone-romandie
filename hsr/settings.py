@@ -122,3 +122,8 @@ ALLOWED_HOSTS = '*'
 FORCE_SCRIPT_NAME = ''
 RECAPTCHA_PUBLIC_KEY = '6LfDrPESAAAAAAZVe93Cz1dnd5EhO1ik-lgeRejW'
 RECAPTCHA_PRIVATE_KEY = '6LfDrPESAAAAABINT7Y69VTIviZLqijba7V3tgeK'
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+#    # ... your other backends
+    'profil.auth_backend.PasswordlessAuthBackend',
+)

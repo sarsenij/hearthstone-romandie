@@ -23,7 +23,7 @@ def base(request) :
             return render_to_response('profil/inscription.html',{'msg_error':"Utilisateur ou mot de passe inconnu"},RequestContext(request))     
         return redirect(request.POST['url'])
     if request.user.is_active :
-        return redirect('/profil/editer/')
+        return redirect('/')
     else :
         return render_to_response('profil/inscription.html',{'msg_error':str()},RequestContext(request))     
              
@@ -41,7 +41,13 @@ def nouveau(request) :
             return render_to_response('profil/inscription.html',{'msg_error':response.error_code},RequestContext(request))     
             return redirect('/profil/')
         pseudo = request.POST['pseudo']
-        if User.objects.filter(username=pseudo) or Profil.objects.filter(pseudo=pseudo):
+        if pseudo == '' :
+            msg = "Le pseudo est vide"
+            return render_to_response('profil/inscription.html',{'msg_error':msg},RequestContext(request))     
+        elif request.POST['pwd1'] == "" :
+            msg = "Le mot de passe est vide"
+            return render_to_response('profil/inscription.html',{'msg_error':msg},RequestContext(request))     
+        elif User.objects.filter(username=pseudo) or Profil.objects.filter(pseudo=pseudo):
             msg = "Ce pseudo est déjà utilisé"
             return render_to_response('profil/inscription.html',{'msg_error':msg},RequestContext(request))     
         elif request.POST['pwd1'] != request.POST['pwd2'] :
@@ -56,39 +62,9 @@ def nouveau(request) :
             new_user.save()
             new_profil = Profil.objects.create(pseudo=pseudo,u=new_user)
             new_profil.save()
-            welcome_msg_titre = Titre.objects.create(titre="Bienvenue sur Hearthstone Romandie")
-            welcome_msg_titre.save() 
-            welcome_msg_dest = Dest.objects.create(titre=welcome_msg_titre,dest=new_user)
-            welcome_msg_dest.save()
-            welcome_msg_orig = Dest.objects.create(titre=welcome_msg_titre,dest=User.objects.get(id=44))
-            welcome_msg_orig.save()
-            msg = """Bienvenue sur Hearthstone Romandie !
-
-N'hésite pas à te [url=http://hearthstone-romandie.ch/forum/topic/add?forum=13]présenter[/url] sur le forum !
-
-Tu peux remplir tes informations personnelles [url=http://hearthstone-romandie.ch/profil/editer/]ici[/url], en précisant à qui tu veux partager ces informations. La localité et la ville proche permettent de mieux rechercher les membres par région, n'hésite pas à compléter ces informations.
-
-Tu peux remplir tes contacts grâce à notre outil [url=http://hearthstone-romandie.ch/profil/recherche/]Membres[/url], expliqué en détail [url=http://hearthstone-romandie.ch/forum/topic/14]ici[/url].
-
-Nous espérons que tu feras des rencontres sympathiques sur ce site, et nous te souhaitons de plaisants duels.
-
-A bientôt !
-
-L'équipe de Hearthstone Romandie"""
-            welcome_msg = Message.objects.create(titre=welcome_msg_titre,content=msg,user=User.objects.get(id=44))
-            welcome_msg.save()
-            admin_msg_titre = Titre.objects.create(titre="Nouveau membre : %s"%new_profil.pseudo)
-            admin_msg_titre.save()
-            admin_msg_dest = Dest.objects.create(titre=admin_msg_titre,dest=User.objects.get(id=9))
-            admin_msg_dest.save()
-            admin_msg_orig = Dest.objects.create(titre=admin_msg_titre,dest=User.objects.get(id=44))
-            admin_msg_orig.save()
-            msg = """Nouveau membre : [url=http://hearthstone-romandie.ch/profil/detail/%d/]%s[/url]"""%(new_profil.id,new_profil.pseudo)
-            admin_msg = Message.objects.create(titre=admin_msg_titre,content=msg,user=User.objects.get(id=44))
-            admin_msg.save()
             u = authenticate(username=new_user.username,password=request.POST['pwd1'])
             login(request,u)
-            return redirect('/profil/')
+            return redirect('/')
     else: 
         return redirect('/profil/')
 
@@ -126,7 +102,7 @@ def deco(request) :
         logout(request)
     return redirect('/')
 
-def editer(request) :
+def settings(request) :
     msg = list()
     msg_error = list()
     if not request.user.is_active :
@@ -135,20 +111,13 @@ def editer(request) :
     user = get_object_or_404(User,id=request.user.id)
     if request.method == "POST":
         if request.POST['type'] == "edit_profil" :
-            if not request.POST['email'] :
-                msg_error.append("E-mail obligatoire")
-            if Profil.objects.filter(email=request.POST['email']).exclude(u=request.user) or User.objects.filter(email=request.POST['email']).exclude(id=request.user.id) :
-                msg_error.append("E-mail déjà utilisé")
-            if request.POST['battletag'] and Profil.objects.filter(battletag=request.POST['battletag']).exclude(u=request.user) :
-                msg_error.append("BattleTag déjà utilisé")
             if not msg_error :
-                profil.avatar = request.POST['avatar']
+                if request.POST['avatar'] != "http://" :
+                    profil.avatar = request.POST['avatar']
                 profil.nom = request.POST['nom']
                 profil.nom_privacy = int(request.POST['nom_privacy'])
                 profil.prenom = request.POST['prenom']
                 profil.prenom_privacy = int(request.POST['prenom_privacy'])
-                profil.email = request.POST['email']
-                user.email = request.POST['email']
                 profil.email_privacy = int(request.POST['email_privacy'])
                 profil.rue = request.POST['rue']
                 profil.rue_privacy = int(request.POST['rue_privacy'])
@@ -186,16 +155,38 @@ def editer(request) :
                 profil.battletag_privacy = int(request.POST['battletag_privacy'])
                 profil.telephone = request.POST['telephone']
                 profil.telephone_privacy = int(request.POST['telephone_privacy'])
+                try :
+                    request.POST['forum']
+                    profil.alert_forum = True
+                except :
+                    profil.alert_forum = False
+                try :
+                    request.POST['contact']
+                    profil.alert_contact = True
+                except :
+                    profil.alert_contact = False
+                try :
+                    request.POST['tournoi']
+                    profil.alert_tournoi = True
+                except :
+                    profil.alert_tournoi = False
+                try :
+                    request.POST['sound']
+                    profil.sound = True
+                except :
+                    profil.sound = False
+                profil.step_settings = True
                 profil.save()
                 user.save()
                 msg.append('Votre profil a été modifié')
+            return redirect('/')
         if request.POST['type'] == "delete_contact" :
             del_contact = Contact.objects.get(owner=profil,contact=Profil.objects.get(id=int(request.POST['contact'])))
             del_contact.delete()
-            msg.append("Contact supprimé")
-    contacts = Contact.objects.filter(owner=profil) 
+            return redirect('/')
+    contacts = Contact.objects.filter(owner=profil).order_by('contact__pseudo') 
 
-    return render_to_response('profil/modification.html',{'profil':profil,'localite':Localite.objects.all().order_by('localite'),'ville_proche':VilleProche.objects.all().order_by('ville_proche'), 'pays':Pays.objects.all().order_by('pays'), 'contacts':contacts, 'msg':msg,'msg_error':msg_error},RequestContext(request))     
+    return render_to_response('profil/settings.html',{'profil':profil,'localite':Localite.objects.all().order_by('localite'),'ville_proche':VilleProche.objects.all().order_by('ville_proche'), 'pays':Pays.objects.all().order_by('pays'), 'contacts':contacts, 'msg':msg,'msg_error':msg_error},RequestContext(request))     
 
 def recherche(request) :
     if request.method == "POST" :
@@ -238,8 +229,105 @@ def details(request,detail_id) :
         if Contact.objects.filter(owner__id=detail_id,contact__u=request.user):
             notif.contact_already = True
         notif.save()
+        if detail.alert_contact and detail.email_verified :
+            send_mail('[HS-R] Nouveau contact',u'''Vous avez un nouveau contact
+%s vous a ajouté.
+http://www.hearthstone-romandie.ch
+'''%Profil.objects.get(u=request.user).pseudo,'noreply@hearthstone-romandie.ch',[detail.email],fail_silently=False)
     x = request.GET.get('x')
     y = request.GET.get('y')
     return render_to_response('profil/detail.html',{'x':x,'y':y,'detail':detail,'contact':contact},RequestContext(request))
      
-#TODO change mdp & email, mdp oublié, supprimer profil+user+contacts
+def send_email(request) :
+    if not request.user.is_active :
+        return redirect('/')
+    profil = Profil.objects.get(u=request.user)
+    fail = profil.email_fail
+    profil.email_fail = False
+    profil.save()
+    if request.method == "POST" :
+        email = request.POST['email']
+        if Profil.objects.filter(email=email).exclude(u=request.user) :
+            profil.email_fail = True
+            profil.save()
+            return redirect('/')
+            
+        email_code = randint(1000,9999)
+        send_mail('Inscription à Hearthstone Romandie','''Bienvenue sur Hearthstone Romandie !
+Voici le code pour valider ton e-mail :
+%d
+En quelques étapes, tu configureras rapidement ton compte.
+Une fois cela fait, n'hésite pas à te présenter sur le forum, à participer aux discussions, à agrandir ta liste de contacts, et à flooder le chat !
+
+La communauté d'Hearthstone Romandie
+'''%email_code,'noreply@hearthstone-romandie.ch',[email],fail_silently=False)
+        profil.email_code = email_code
+        profil.email_sent = True
+        profil.email_verified = False
+        profil.email = email
+        profil.save()
+        return redirect('/')
+        
+    return render_to_response('profil/send_email.html', {'fail':fail}, RequestContext(request))
+
+def check_email(request):
+    if not request.user.is_active :
+        return redirect('/')
+    profil = Profil.objects.get(u=request.user)
+    fail = profil.email_failcode
+    profil.email_failcode = False
+    profil.save()
+    if request.method == "POST" :
+        if str(profil.email_code) == request.POST['check'] :
+            profil.email_verified = True
+            profil.save()
+            return redirect('/')
+        else :
+            profil.email_failcode = True
+            profil.save()
+            return redirect('/')
+    return render_to_response('profil/check_email.html', {'fail':fail}, RequestContext(request))
+    
+def changepwd(request):
+    if not request.user.is_active :
+        return redirect('/')
+    if request.method == "POST" :
+        if request.POST['pwd1'] == "" or request.POST['pwd1'] != request.POST['pwd2'] :
+            return redirect(r'/?msg=Erreur lors de la modification du mot de passe. Essayez encore.')
+        user =  User.objects.get(id=request.user.id)
+        user.set_password(request.POST['pwd1'])
+        user.save()
+        return redirect('/')
+    return render_to_response('profil/changepwd.html',{},RequestContext(request))
+
+def resetpwd(request):
+    sent = False
+    error_msg = ""
+    if request.user.is_active :
+        return redirect('/')
+    if request.method == "POST" :
+        if Profil.objects.filter(email=request.POST['email'],email_verified=True) :
+            profil = Profil.objects.get(email=request.POST['email'])
+            if request.POST['code'] and profil.code_pwd :
+                if str(profil.code_pwd) == request.POST['code'] :
+                    user = authenticate(username=profil.pseudo)
+                    login(request,user)
+                    profil.code_pwd = 0
+                    profil.save()
+                    return redirect('/?msg=Veuillez changer votre mot de passe')
+                else :
+                    error_msg = "Le code ne correspond pas"
+                    sent = True
+            else :
+                code = randint(1000,9999)
+                profil.code_pwd = code
+                profil.save()
+                email = profil.email
+                send_mail('Reset mot de passe','''Entrez le code suivant pour reset votre mot de passe :
+%d'''%code,'noreply@hearthstone-romandie.ch',[email],fail_silently=False)
+                sent = True
+        else :
+            error_msg = "Il n'y a pas de compte avec ce mail"
+    return render_to_response('profil/resetpwd.html',{'error_msg':error_msg,'sent':sent},RequestContext(request))
+    
+

@@ -1,0 +1,9 @@
+<center><b>Choisissez votre e-mail</b></center>
+{% if fail %}
+Votre e-mail n'est pas valide
+{% endif %}
+<form action="/profil/send_email" method="POST">
+{% csrf_token %}
+E-mail : <input name="email" />
+<input type="submit" value="Envoyer" />
+</form>

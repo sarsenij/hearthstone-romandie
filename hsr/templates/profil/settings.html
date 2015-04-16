@@ -1,115 +1,129 @@
-{% extends "base.html" %}
-{% block content %}
-{% for ms in msg %}
-<div id="messages">
-{{ ms }}
-</div>
-{% endfor %}
-{% for ms in msg_error %}
-<div id="messages_erreur">
-<img src="/static/images/icones/warning-icon.png" /><br />{{ ms }}
-</div>
-{% endfor %}
-
-<form method="POST" action="/profil/editer/">
+<form method="POST" action="/profil/settings">
 <input type="hidden" name="type" value="edit_profil" />
-<table id="modification_profil">
-<tr><td style="border: 0px solid black;">
+<table>
 {% csrf_token %}
-Nom de profil
-</td><td style="border: 0px solid black; text-align: center;">
-{{profil.pseudo}}
-</td></tr>
-<tr><td>
+<tr>
+<th colspan="3">Alertes mails</th>
+</tr>
+<tr>
+<th></th><td>Suivi du forum</td><td><input type="checkbox" name="forum" {% if profil.alert_forum %}CHECKED{% endif %} /></td>
+</tr>
+<tr>
+<th></th><td>Nouveaux contacts</td><td><input type="checkbox" name="contact" {% if profil.alert_contact %}CHECKED{% endif %}/></td>
+</tr>
+<tr>
+<th></th><td>Invitations aux tournois</td><td><input type="checkbox" name="tournoi" {% if profil.alert_tournoi %}CHECKED{% endif %}/></td>
+</tr>
+<tr>
+<th colspan="3">Sons</th>
+</tr>
+<tr>
+<td></td><td>Messages et notifications</td><td><input type="checkbox" name="sound" {% if profil.sound %}CHECKED{% endif %} /></td>
+</tr>
+</table>
+<table>
+<tr><th>
 Avatar
-</td><td>
-{% if profil.avatar != "" %}<img src="{{profil.avatar}}" height="255" width="200" />{% endif %}
-</td><td>
-<input name="avatar" size="30" value="{{profil.avatar}}" />
+</th>
+<td>
+<img src="{{profil.avatar}}" height="50" />
+</td>
+</tr><tr>
+<td>URL : </td>
+<td>
+<input name="avatar" value="{% if profil.avatar != "/static/images/avatars/avatar.png" %}{{profil.avatar}}{% else %}http://{% endif %}" />
 </td></tr>
-<tr><td>
+<tr><th>
 Nom
-</td><td>
+</th><td>
 <input name="nom" value="{{profil.nom}}" />
-</td><td>
+</td>
+</tr><tr><td>Visible par </td><td>
 <select name="nom_privacy"><option value="0"{% if not profil.nom_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.nom_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.nom_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td>
+<tr><th>
 Prénom
-</td><td>
+</th><td>
 <input name="prenom" value="{{profil.prenom}}" />
-</td><td>
+</td>
+</tr><tr><td>Visible par </td><td>
 <select name="prenom_privacy"><option value="0"{% if not profil.prenom_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.prenom_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.prenom_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td>
+<tr><th>
 Email
-</td><td>
-<input name="email" value="{{profil.email}}" />
-</td><td>
+</th><td>
+{{profil.email}} <a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','send_email');">Changer</a>
+</td>
+</tr><tr><td>Visible par </td><td>
 <select name="email_privacy"><option value="0"{% if not profil.email_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.email_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.email_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td>
+<tr><th>
 Rue
-</td><td>
+</th><td>
 <input name="rue" value="{{profil.rue}}" />
-</td><td>
+</td>
+</tr><tr><td>Visible par </td><td>
 <select name="rue_privacy"><option value="0"{% if not profil.rue_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.rue_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.rue_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td>
+<tr><th>
 Localité
-</td><td>
+</th><td>
 <select name="localite">{% for loc in localite %}<option value="{{loc.id }}"{% if profil.localite == loc %} SELECTED{% endif %}>{{loc.localite}}</option>{% endfor %}</select>
-</td><td>
-Autre
+</td>
+</tr><tr><td>
+Autre :</td><td>
 <input name="localite_new" />
 </td></tr>
-<tr><td>
+<tr><th>
 Ville proche
-</td><td>
+</th><td>
 <select name="ville_proche">{% for ville in ville_proche %}<option value="{{ville.id }}"{% if profil.ville_proche == ville %} SELECTED{% endif %}>{{ville.ville_proche}}</option>{% endfor %}</select>
-</td><td>
-Autre
+</td>
+</tr><tr><td>
+Autre :</td><td>
 <input name="ville_proche_new" />
 </td></tr>
-<tr><td>
+<tr><th>
 Pays
-</td><td>
+</th><td>
 <select name="pays">{% for p in pays %}<option value="{{p.id }}"{% if profil.pays == p %} SELECTED{% endif %}>{{p.pays}}</option>{% endfor %}</select>
-</td><td>
-Autre
+</td>
+</tr><tr><td>
+Autre :</td><td>
 <input name="pays_new" />
 </td></tr>
-<tr><td>
+<tr><th>
 BattleTag
-</td><td>
+</th><td>
 <input name="battletag" value="{{profil.battletag}}" />
-</td><td colspan="2">
+</td>
+</tr><tr><td>Visible par </td><td>
 <select name="battletag_privacy"><option value="0"{% if not profil.battletag_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.battletag_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.battletag_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td>
+<tr><th>
 Téléphone
-</td><td>
+</th><td>
 <input name="telephone" value="{{profil.telephone}}" />
-</td><td>
+</td>
+</tr><tr><td>Visible par</td><td>
 <select name="telephone_privacy"><option value="0"{% if not profil.telephone_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.telephone_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.telephone_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
-<tr><td colspan="4" style="text-align: center;">
+<tr><td colspan="3" style="text-align: center;">
 <br />
 <input type="submit" value="Enregistrer" />
 </td></tr>
 </table>
 </form>
+<a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','changepwd');">Changer de mot de passe</a>
 <br />
-<center style="color: rgba(255,255,255, 0.2);">Changer de mot de passe</center>
-<br />
-<table id="contacts_profil">
+<table>
 {% if contacts %}
 <tr><td coslpan="2">
 <b>Mes contacts</b>
 </td></tr>
 {% for contact in contacts %}
 <td><a href="JavaScript:void(0);" onclick="ShowContact({{contact.contact.id}},event);">{{ contact.contact.pseudo }}</a></td>
-<td><form action="" method="POST"><input type="hidden" name="type" value="delete_contact" /><input type="hidden" name="contact" value="{{contact.contact.id}}" />{% csrf_token %}<input type="submit" value="Supprimer" /></form></td>
+<td><form action="/profil/settings/" method="POST"><input type="hidden" name="type" value="delete_contact" /><input type="hidden" name="contact" value="{{contact.contact.id}}" />{% csrf_token %}<input type="submit" value="Supprimer" /></form></td>
 </tr>
 {% endfor %}
 {% else %}
@@ -118,4 +132,3 @@ Vous n'avez pas de contacts
 </td></tr>
 </table>
 {% endif %}
-{% endblock %}

@@ -23,7 +23,6 @@ def notif(request):
         lastseen = Profil.objects.filter(lastseen__gte=datetime.now()-timedelta(minutes=1)).order_by('pseudo')
         profil = Profil.objects.get(u=request.user)
         profil.lastseen = datetime.now()
-        profil.save()
         invtournois = InviteTournoi.objects.filter(user=request.user,staff=False,seen=False)
         stafftournois = InviteTournoi.objects.filter(user=request.user,staff=True,seen=False)
         news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages
@@ -33,6 +32,14 @@ def notif(request):
             sound = False
         profil.news = news
         profil.save()
+        if not profil.email_sent :
+            profil_step = "send_email"
+        elif not profil.email_verified :
+            profil_step = "check_email"
+        elif not profil.step_settings :
+            profil_step = "settings"
+        else :
+            profil_step = ""
     else :
         contacts = list()
         messages = 0
@@ -41,6 +48,7 @@ def notif(request):
         invtournois = list()
         stafftournois = list()
         sound = False
+        profil_step = ''
     chat = ChatMsg.objects.all().order_by('-id')
     if len(chat) > 20 :
         chat = chat[0:20]
@@ -53,6 +61,7 @@ def notif(request):
         'notif_invtournois':invtournois,
         'notif_stafftournois':stafftournois,
         'notif_nombre':len(contacts)+len(suivis)+len(invtournois)+len(stafftournois),
-        'notif_sound':sound
+        'notif_sound':sound,
+        'notif_profil_step':profil_step,
     }
     return contenu

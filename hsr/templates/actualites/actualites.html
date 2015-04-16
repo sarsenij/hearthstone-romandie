@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Actualités | {{block.super}}{% endblock %}
 {% block content %}
+{% if msg %}
+<div style="width:100%;background-color:red;">{{msg}}</div>
+{% endif %}
 	<h1 style="width: 100%; text-align: center;">Actualités</h1>
 	{% for act in acts %}
 			<div class="table_actualite_titre"><a href="/forum/topic/{{act.0.topic.id}}" style="font-size: 20px;">{{act.0.topic.name}}</a><br />
