@@ -76,6 +76,7 @@ class Dejavu(models.Model) :
     forum = models.ForeignKey('pybb.Forum')
     topic = models.ForeignKey('pybb.Topic')
     post = models.IntegerField(default=0)
+    new = models.BooleanField(default=0)
 
 class Suivi(models.Model) :
     user = models.ForeignKey('auth.User')

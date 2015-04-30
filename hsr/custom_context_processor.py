@@ -1,37 +1,41 @@
 from datetime import datetime, timedelta
 from profil.models import Profil
-from notification.models import Notification, Dest, Dejavu, ChatMsg, InviteTournoi, ConvDest, ConvDV
-from pybb.models import Dejavu as PostDv, Post, Suivi, Topic
+from notification.models import Notification, Dest, ChatMsg, InviteTournoi, ConvDest, ConvDV
+from pybb.models import Dejavu as PostDv, Post, Suivi, Topic, Dejavu
 
 def notif(request):
     if request.user.is_active :
         profil = Profil.objects.get(u=request.user)
+
         contacts = Notification.objects.filter(destinataire=profil,vue=False,contact__isnull=False)
-        messages = 0
-        for conv in ConvDest.objects.filter(user=request.user) :
-            dv = ConvDV.objects.filter(user=request.user,conv=conv.conv)
-            convmsg = conv.conv.convmessage_conv.all().order_by('-date')
-            if convmsg and (not dv or convmsg[0] != dv[0].message) :
-                messages +=1
-        #chat = reversed(chat)
-        suivistmp = Suivi.objects.filter(user=request.user)
+
+        messages = len(ConvDV.objects.filter(user=request.user,new=True))
+
         suivis = list()
-        for suivi in suivistmp :
-            postdv = PostDv.objects.get(topic=suivi.topic,compte=request.user).post
-            if postdv != Post.objects.filter(topic=suivi.topic).order_by('-created')[0].id :
-                suivis.append([Topic.objects.get(id=suivi.topic.id),postdv])
+        for suivi in Suivi.objects.filter(user=request.user) :
+            dv = Dejavu.objects.get(topic=suivi.topic,compte=request.user)
+            if dv.new :
+                suivis.append([Topic.objects.get(id=suivi.topic.id),PostDv.objects.get(topic=suivi.topic,compte=request.user).post])
+        
+
+
         lastseen = Profil.objects.filter(lastseen__gte=datetime.now()-timedelta(minutes=1)).order_by('pseudo')
-        profil = Profil.objects.get(u=request.user)
-        profil.lastseen = datetime.now()
+
         invtournois = InviteTournoi.objects.filter(user=request.user,staff=False,seen=False)
+
         stafftournois = InviteTournoi.objects.filter(user=request.user,staff=True,seen=False)
+
         news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages
         if profil.sound and news > profil.news :
             sound = True 
         else :
             sound = False
         profil.news = news
+
+        profil.lastseen = datetime.now()
+
         profil.save()
+
         if not profil.email_sent :
             profil_step = "send_email"
         elif not profil.email_verified :

@@ -3,7 +3,7 @@
 
 {% for notif in notif_suivis %}
 <div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
-<a href="{{notif.0.get_absolute_url}}"><img src="/static/images/forum/nouveau_post.png" /> {{notif.0}}</a>
+<a href="{{notif.0.get_absolute_url}}#Post{{notif.1}}"><img src="/static/images/forum/nouveau_post.png" /> {{notif.0}}</a>
 </div>
 {% endfor %}
 
@@ -47,14 +47,6 @@ Il est déjà dans vos contacts.
 <div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
 <img src="/static/images/icones/mana.png" height="20px;"/> <a href="JavaScript:void(0);" onclick="ShowContact({{notif.contact.owner.id}},event);">{{notif.contact.owner.pseudo}}</a> vous a ajouté.
 <br />
-{% if notif.contact_already %}
-Il est déjà dans vos contacts.
-{% else %}
-<form method="POST" id="no_reload{{notif.id}}" action="/profil/detail/{{notif.contact.owner.id}}/">
-{% csrf_token %}
-<input type="submit" value="Ajouter à mes contacts" id="add_{{notif.contact.owner.id}}" onclick="$('#add_{{notif.contact.owner.id}}').val('Contact ajouté !');$('#add_{{notif.contact.owner.id}}').attr('disabled','disabled');AddFriend('no_reload{{notif.id}}',event);" />
-</form>
-{% endif %}
 </div>
 {% endfor %}
 </div>

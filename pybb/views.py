@@ -163,6 +163,7 @@ def topic_page(request, pk, page=0):
             dejavu_post = 0
         if dejavu_post < posts[-1].id :
             dejavu.post = posts[-1].id
+            dejavu.new = False
             dejavu.save()
     return render(request, 'pybb/topic_page.html', context)
 
@@ -187,6 +188,9 @@ def post_add(request):
             if alert.user != request.user and profil.alert_forum and profil.email_verified :
                 send_mail('[HS-R] Nouveau post',u'''Nouveau post dans le topic %s.
 Lien direct : http://www.hearthstone-romandie.ch/forum/topic/%s/%s#Post%d'''%(topic.name,topic_id,page,post),'noreply@hearthstone-romandie.ch',[profil.email],fail_silently=False)
+        for dv in Dejavu.objects.filter(topic=topic).exclude(post=post).exclude(compte=request.user) :
+            dv.new = True
+            dv.save()
         return redirect('/forum/topic/%s/%s#Post%d'%(topic_id,page,post))
     context = {'form': form,
                'topic': topic,
@@ -249,7 +253,7 @@ def topic_add(request):
             content=form.cleaned_data['content'],
         )
         suivi = Suivi.objects.create(user=User.objects.get(id=9),topic=topic)
-        dv = Dejavu.objects.create(compte=User.objects.get(id=9),forum=forum,topic=topic,post=0)
+        dv = Dejavu.objects.create(compte=User.objects.get(id=9),forum=forum,topic=topic,post=0,new=True)
         messages.success(request, u'Topic ajouté')
         return redirect(topic)
     context = {'form': form,

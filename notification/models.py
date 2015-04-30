@@ -47,8 +47,10 @@ class ConvDV(models.Model):
     user = models.ForeignKey('auth.User')
     conv = models.ForeignKey('Conv')
     message = models.ForeignKey('ConvMessage',null=True,blank=True)
+    new = models.BooleanField(default=0)
 
 class Dejavu(models.Model) :
+    new = models.BooleanField(default=0)
     compte = models.ForeignKey('auth.User',related_name='message_dejavu')
     titre = models.ForeignKey('Titre')
     message = models.ForeignKey('Message')

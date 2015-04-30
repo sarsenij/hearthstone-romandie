@@ -268,7 +268,7 @@ La communauté d'Hearthstone Romandie
         profil.save()
         return redirect('/')
         
-    return render_to_response('profil/send_email.html', {'fail':fail}, RequestContext(request))
+    return render_to_response('profil/send_email.html', {'fail':fail},RequestContext(request))
 
 def check_email(request):
     if not request.user.is_active :
@@ -286,7 +286,7 @@ def check_email(request):
             profil.email_failcode = True
             profil.save()
             return redirect('/')
-    return render_to_response('profil/check_email.html', {'fail':fail}, RequestContext(request))
+    return render_to_response('profil/check_email.html', {'fail':fail},RequestContext(request))
     
 def changepwd(request):
     if not request.user.is_active :

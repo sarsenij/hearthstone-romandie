@@ -62,6 +62,7 @@ def message_detail(request,titre):
         convdv = ConvDV.objects.get(user=request.user,conv=conv)
         if messages :
             convdv.message = messages.order_by('-date')[0]
+            convdv.new = False
     else :
         convdv = ConvDV.objects.create(user=request.user,conv=conv)
     convdv.save()
@@ -81,17 +82,20 @@ def new_message(request):
         conv = newm.conv
         conv.last_msg = datetime.now()
         conv.save()
+        for dv in ConvDV.objects.filter(conv=conv).exclude(user=request.user) :
+            dv.new = True
+            dv.save()
     return redirect('/')
 
 def notification(request):
-    rarcontacts = Notification.objects.filter(destinataire=Profil.objects.get(u=request.user),contact__isnull=False)
-    contacts = rarcontacts.filter(vue=False)
+    rarcontacts = Notification.objects.filter(destinataire=Profil.objects.get(u=request.user),contact__isnull=False).order_by('-id')
+    contacts = rarcontacts.filter(vue=False).order_by('-id')
     for contact in contacts :
         contact.vue = True
         contact.save()
-    rartournois = InviteTournoi.objects.filter(user=request.user)
-    invtournois = rartournois.filter(seen=False,staff=False)
-    stafftournois = rartournois.filter(seen=False,staff=True)
+    rartournois = InviteTournoi.objects.filter(user=request.user).order_by('-id')
+    invtournois = rartournois.filter(seen=False,staff=False).order_by('-id')
+    stafftournois = rartournois.filter(seen=False,staff=True).order_by('-id')
     for tournoi in invtournois :
         tournoi.seen = True
         tournoi.save()    
