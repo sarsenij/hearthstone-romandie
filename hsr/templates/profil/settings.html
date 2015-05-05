@@ -123,9 +123,21 @@ Téléphone
 </td></tr>
 {% for contact in contacts %}
 <td><a href="JavaScript:void(0);" onclick="ShowContact({{contact.contact.id}},event);">{{ contact.contact.pseudo }}</a></td>
-<td><form action="/profil/settings/" method="POST"><input type="hidden" name="type" value="delete_contact" /><input type="hidden" name="contact" value="{{contact.contact.id}}" />{% csrf_token %}<input type="submit" value="Supprimer" /></form></td>
+<td><form id="form{{contact.contact.id}}" action="/profil/settings/" method="POST"><input type="hidden" name="type" value="delete_contact" /><input type="hidden" name="contact" value="{{contact.contact.id}}" />{% csrf_token %}<input type="submit" value="Supprimer" id="delete{{contact.contact.id}}" onclick="$('#delete{{contact.contact.id}}').val('Supprimé');$('#delete{{contact.contact.id}}').attr('disabled','disabled');DelFriend(event,'form{{contact.contact.id}}');" /></form></td>
 </tr>
 {% endfor %}
+<script type="text/JavaScript">
+function DelFriend(event,id){
+    event.preventDefault();
+    $.ajax({ // create an AJAX call...
+        data: $('#'+id).serialize(), // get the form data
+        type: $('#'+id).attr('method'), // GET or POST
+        url: $('#'+id).attr('action'), // the file to call
+        success: function(response) { // on success..
+        }
+    });
+}
+</script>
 {% else %}
 <tr><td style="text-align: center;">
 Vous n'avez pas de contacts
