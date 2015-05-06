@@ -1,4 +1,4 @@
-<form method="POST" action="/profil/settings">
+<form method="POST" action="/profil/settings" id="saveprofil">
 <input type="hidden" name="type" value="edit_profil" />
 <table>
 {% csrf_token %}
@@ -110,10 +110,22 @@ Téléphone
 </td></tr>
 <tr><td colspan="3" style="text-align: center;">
 <br />
-<input type="submit" value="Enregistrer" />
+<input type="submit" value="Enregistrer" id="buttonsave" onclick="$('#buttonsave').val('Enregistré.\nNouvelle modification ?');SaveProfil(event);" /></form></td>
 </td></tr>
 </table>
 </form>
+<script type="text/JavaScript">
+function SaveProfil(event){
+    event.preventDefault();
+    $.ajax({ // create an AJAX call...
+        data: $('#saveprofil').serialize(), // get the form data
+        type: $('#saveprofil').attr('method'), // GET or POST
+        url: $('#saveprofil').attr('action'), // the file to call
+        success: function(response) { // on success..
+        }
+    });
+}
+</script>
 <a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','changepwd');">Changer de mot de passe</a>
 <br />
 <table>
