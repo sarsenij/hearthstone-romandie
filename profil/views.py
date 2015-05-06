@@ -223,8 +223,10 @@ def details(request,detail_id) :
     detail = get_object_or_404(Profil,id=detail_id)
     if request.user.is_active :
         contact = Contact.objects.filter(owner__u=request.user,contact__id=detail_id)    
+        online = True
     else :
-        contact = "offline"
+        contact = 0
+        online = False
     if request.method == "POST" and request.user.is_active and not contact :
         new_contact = Contact.objects.create(owner=Profil.objects.get(u=request.user),contact=detail)
         new_contact.save()
@@ -239,7 +241,7 @@ http://www.hearthstone-romandie.ch
 '''%Profil.objects.get(u=request.user).pseudo,'noreply@hearthstone-romandie.ch',[detail.email],fail_silently=False)
     x = request.GET.get('x')
     y = request.GET.get('y')
-    return render_to_response('profil/detail.html',{'x':x,'y':y,'detail':detail,'contact':contact},RequestContext(request))
+    return render_to_response('profil/detail.html',{'x':x,'y':y,'detail':detail,'contact':contact,'online':online},RequestContext(request))
      
 def send_email(request) :
     if not request.user.is_active :

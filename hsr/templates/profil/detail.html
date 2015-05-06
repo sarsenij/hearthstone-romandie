@@ -5,19 +5,19 @@
 {{detail.pseudo}}<br />
 <img src="{{detail.avatar}}" width="40" />
 <br />
-{% if not contact and request.user != detail.u %}
+{% if not contact and request.user != detail.u and online %}
 <form method="POST" action="/profil/detail/{{detail.id}}/" id="add_contact{{detail.id}}">
 {% csrf_token %}
 <input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');AddFriend(event);" />
 </form>
-{% elif request.user != detail.u and contact != "offline" %}
+{% elif request.user != detail.u and online %}
 Un de vos contacts.
-{% elif contact != "offline" %}
+{% elif online %}
 C'est vous !
 {% else %}
 <a href="/profil/">S'inscrire pour<br />envoyer un message</a>
 {% endif %}
-{% if detail.u != request.user and contact != "offline" %}
+{% if detail.u != request.user and online %}
 <br />
 <a href="JavaScript:void(0);" onclick="SendMsg();">Message</a>
 {% endif %}
