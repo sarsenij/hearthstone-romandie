@@ -61,27 +61,10 @@ def home_page(request):
         suivis = Suivi.objects.filter(user=request.user)
     else :
         suivis = list()
-    dvsuivi = dict()
-    for topic in suivis :
-        dvsuivi[topic] = [1,0,0] #Pas d'indicateur pour les non membres
-        if request.user.is_active :
-            dv = Dejavu.objects.filter(compte=request.user).filter(topic=topic.topic)
-            if not dv :
-                dvsuivi[topic] = [0,0,0] #Pas visité
-            else :
-                if dv[0].post :
-                    post_page = list(Post.objects.filter(topic=topic.topic).order_by('created').values_list('id',flat=True)).index(dv[0].post)/10
-                else :
-                    post_page = 0
-                if dv[0].post == Post.objects.filter(topic=topic.topic).order_by('-created')[0].id:
-                    dvsuivi[topic] = [1,post_page,dv[0].post] #Tout vu
-                else :
-                    dvsuivi[topic] = [2,post_page,dv[0].post] #Nouveau post
             
     context = {'cats': cats,
             'dejavu': dejavu,
             'suivis': suivis,
-            'dvsuivi': dvsuivi,
             }
     return render(request, 'pybb/home_page.html', context)
 

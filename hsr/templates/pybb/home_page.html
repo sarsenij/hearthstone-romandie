@@ -3,55 +3,6 @@
 {% block pybb_crumbs %}Accueil{% endblock %}
 
 {% block pybb_content %}
-{% if dvsuivi %}
-<h3>Suivis (<a onClick="$('#cat_suivi').toggle();$('#off_suivi').toggle();$('#on_suivi').toggle();"><span id="off_suivi" style="display:true;font-size:14px;">Afficher</span><span id="on_suivi" style="display:none;font-size:14px;">Cacher</span></a>)</h3>
-<table class="forum_page" id="cat_suivi" style="display:none;">
-    <thead>
-        <tr>
-            <th>Visité</th>
-            <th>Topic</th>
-            <th>Posts</th>
-            <th>Auteur</th>
-            <th>Dernier</th>
-            {% if request.user.is_staff %}
-            <th>Mod</th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for topic in suivis %}
-    	{% if forloop.counter|divisibleby:2 %}
-        <tr style="background-color: rgba(230,184,138,0.1);">
-        {% else %}
-        <tr style="background-color: rgba(230,184,138,0.15);">            
-        {% endif %}
-            <td>
-            {% for key,value in dvsuivi.items %}
-                {% if key == topic %}
-                    {% if value.0 == 0 %}
-                    <img src="/static/images/forum/nouveau_topic.png" />
-                    {% elif value.0 == 1 %}
-                    {% if value.2 != 0 %}<a href="{{ topic.topic.get_absolute_url }}/{{value.1}}#Post{{value.2}}">{% endif %}<img src="/static/images/forum/vu.png" />{% if value.2 != 0 %}</a>{% endif %}
-                    {% else %}
-                    <a href="{{ topic.topic.get_absolute_url }}/{{value.1}}#Post{{value.2}}"><img src="/static/images/forum/nouveau_post.png" /></a>
-                    {% endif %} 
-                {% endif %}
-            {% endfor %}
-            </td>
-            <td style="text-align: left;">{% if topic.topic.postit %}[Post-It] {% endif %}{% if topic.topic.close %}[Fermé] {% endif %}<a href="{{ topic.topic.get_absolute_url }}">{{ topic.topic }}</a></td>
-            <td>{{ topic.topic.post_count }}</td>
-        <td><a href="JavaScript:void(0);" onclick="ShowContact({{topic.topic.posts.all.0.user.profil_set.all.0.id}},event);">{{ topic.topic.posts.all.0.user}}</a><br /><span style="font-size:80%;">{{ topic.topic.created|date:"d/m/Y - H:i" }}</span></td>
-        <td>{% if topic.topic.posts.all|length != 1 %}<a href="JavaScript:void(0);" onclick="ShowContact({{topic.topic.posts.all.last.user.profil_set.all.0.id}},event);">{{ topic.topic.posts.all.last.user}}</a><br /><span style="font-size:80%;">{{ topic.topic.posts.all.last.created|date:"d/m/Y - H:i" }}</span>{% endif %}</td>
-        {% if request.user.is_staff %}
-        <td><a href="/forum/topic/postit/{{topic.topic.id}}?forum={{topic.topic.forum.id}}">{% if topic.topic.postit %}<strike>{% endif %}[Post-It]{% if topic.topic.postit %}</strike>{% endif %}</a><br />
-        <a href="/forum/topic/close/{{topic.topic.id}}?forum={{topic.topic.forum.id}}">{% if topic.topic.close %}Ouvrir{% else %}Fermer{% endif %}</a><br />
-        <a onClick="SuppressTopic('{{topic.topic.id}}','{{topic.topic.forum.id}}')">Delete</a></td>
-        {% endif %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endif %}
 {% for cat in cats %}
 <h3>{{ cat }}</h3>
 <table class="forum_page">
