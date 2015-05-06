@@ -11,4 +11,7 @@ urlpatterns = patterns('tournoi.views',
     url(r'^update/(\d+)$', 'update_score', name='update_score'),
     url(r'^inscription/(\d+)$', 'inscription', name='inscription'),
     url(r'^desinscription/(\d+)$', 'desinscription', name='desinscription'),
+    url(r'^duel/deny/$', 'duel_deny', name='duel_deny'),
+    url(r'^duel/declare/$', 'duel_declare', name='duel_declare'),
+    url(r'^duel/score/(\d+)$', 'duel_score', name='duel_score'),
 )

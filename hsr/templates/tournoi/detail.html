@@ -11,7 +11,7 @@ function getSelect(selectId,destId)
 </script>
 <a href="/tournoi/">Tournois</a> / {{tournoi.name}}
 <h3>Tournoi {{tournoi.name}}</h3>
-<p><a href="/tournoi/arbre/{{tournoi.id}}">Arbre</a></p>
+<p><b>Détails - <a href="/tournoi/arbre/{{tournoi.id}}">Arbre</a></b></p>
     {% if tournoi.termine %}<center>Le tournoi est terminé</center><br />{% endif %}
     {% if tournoi.vainqueur %}<center><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></center><br />
     {% elif tournoi.termine %}<center>Il n'y a pas de vainqueur pour ce tournoi</center><br />{%endif %}

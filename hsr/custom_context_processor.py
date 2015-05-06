@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from profil.models import Profil
 from notification.models import Notification, Dest, ChatMsg, InviteTournoi, ConvDest, ConvDV
 from pybb.models import Dejavu as PostDv, Post, Suivi, Topic, Dejavu
-from tournoi.models import Match
+from tournoi.models import Match, Duel
 
 def notif(request):
     if request.user.is_active :
@@ -31,8 +31,14 @@ def notif(request):
             matchs.append(match)
         for match in Match.objects.filter(first__isnull=False,second=request.user,valide=False) :
             matchs.append(match)
+    
+        duels = list()
+        for match in Duel.objects.filter(first=request.user,second__isnull=False,valide=False) :
+            duels.append(match)
+        for match in Duel.objects.filter(first__isnull=False,second=request.user,valide=False) :
+            duels.append(match)
 
-        news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages+len(matchs)
+        news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages+len(matchs)+len(duels)
         if profil.sound and news > profil.news :
             sound = True 
         else :
@@ -64,6 +70,7 @@ def notif(request):
         sound = False
         profil_step = ''
         matchs = list()
+        duels = list()
     chat = ChatMsg.objects.all().order_by('-id')
     if len(chat) > 20 :
         chat = chat[0:20]
@@ -79,5 +86,6 @@ def notif(request):
         'notif_sound':sound,
         'notif_profil_step':profil_step,
         'notif_matchs':matchs,
+        'notif_duels':duels,
     }
     return contenu

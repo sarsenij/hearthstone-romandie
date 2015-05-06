@@ -4,7 +4,7 @@
 {% block content %}
 <a href="/tournoi/">Tournois</a> / {{tournoi.name}}</a>
 <h3>Tournoi {{tournoi.name}}</h3>
-<p><a href="/tournoi/detail/{{tournoi.id}}">Détails</a></p>
+<p><b><a href="/tournoi/detail/{{tournoi.id}}">Détails</a> - Arbre</b></p>
 {% if error_msg %}
 <p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}Il vous faut un BattleTag pour participer aux tournois{% endif %}</p>
 {% endif %}
@@ -24,6 +24,7 @@
 <p>Aucun match n'a eu lieu</p>
 </center>
 {% else %}
+<a href="">Rafraîchir</a>
 </center>
 {% if next_match %}
 <p>
@@ -45,9 +46,11 @@
 <div class="boutons">
 {% if next_match.col == 1 %}{{next_match.tournoi.get_finale_display}}{% else %}{{next_match.tournoi.get_match_display}}{% endif %}
 </div>
-{% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
-{% endif %}
 </div>
+<p>
+{% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
+</p>
+{% endif %}
 </p>
 <hr />
 {% endif %}

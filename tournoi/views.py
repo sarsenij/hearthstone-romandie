@@ -4,7 +4,7 @@ from random import randint
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from tournoi.models import Tournoi, Invit, TournoiForm, Staff, Inscrit, Match
+from tournoi.models import Tournoi, Invit, TournoiForm, Staff, Inscrit, Match, Duel
 from profil.models import Profil, Contact
 from notification.models import InviteTournoi
 
@@ -20,7 +20,7 @@ def home_page(request):
                 tournoi_open.append(ot)
     tournoi_en_cours = Tournoi.objects.filter(date__lte=datetime.now().date(),termine=False).exclude(date=datetime.now().date(),heure__gte=datetime.now().time()).order_by('date','heure')
     tournoi_fini = Tournoi.objects.filter(termine=True).order_by('-date','-heure')[:20] 
-    ladder = Profil.objects.filter(cote__gt=0,u__is_active=True).order_by('-cote')[:40]
+    ladder = Profil.objects.filter(cote__gt=0,u__is_active=True,cote_launch=True).order_by('-cote')[:40]
     context = {'tournoi_open':tournoi_open,'tournoi_en_cours':tournoi_en_cours,'tournoi_fini':tournoi_fini,'ladder':ladder}
     return render(request,'tournoi/home_page.html', context)
 
@@ -232,11 +232,11 @@ def feed_freewin(go,dego):
                     dego.append(let.next_perdant)
                 
             tournoi = let.tournoi
-            if let.col == 0 and not Match.objects.filter(tournoi=tournoi,col=0,score__isnull=True).exclude(freewin=True):
+            if let.col == 1 and not Match.objects.filter(tournoi=tournoi,col=1,score__isnull=True).exclude(freewin=True):
                 tournoi.termine = True
                 tournoi.save()
             
-            if let.col == 0 and let.row == 0 :
+            if let.col == 1 and let.row == 0 :
                 tournoi.vainqueur = let1
                 tournoi.save()
                 cote = Profil.objects.get(u=let1)
@@ -252,7 +252,7 @@ def feed_freewin(go,dego):
                 let.freewin = True
             let.save()
             tournoi = let.tournoi
-            if let.col == 0 and not Match.objects.filter(tournoi=tournoi,col=0,score__isnull=True).exclude(freewin=True):
+            if let.col == 1 and not Match.objects.filter(tournoi=tournoi,col=1,score__isnull=True).exclude(freewin=True):
                 tournoi.termine = True
                 tournoi.save()
             if let.next_gagnant :
@@ -292,7 +292,7 @@ def u_s(match,score):
     else :
         vainqueur = match.second
         perdant = match.first
-    if match.col == 0 and match.row == 0 :
+    if match.col == 1 and match.row == 0 :
         tournoi = match.tournoi
         tournoi.vainqueur = vainqueur
         tournoi.save()
@@ -368,7 +368,7 @@ def update_score(request,match_id):
             ff = feed_freewin([],[match])
         except :
             score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
-            if match.col == 0 :
+            if match.col == 1 :
                 result = match.tournoi.finale
             else :
                 result = match.tournoi.match
@@ -376,7 +376,7 @@ def update_score(request,match_id):
                 int(score)
             except :
                 score = ""
-            if match.col == 0 :
+            if match.col == 1 :
                 attendu = match.tournoi.finale
             else :
                 attendu = match.tournoi.match
@@ -389,7 +389,7 @@ def update_score(request,match_id):
                     user1 = match.first.profil_set.all()[0]
                     user2 = match.second.profil_set.all()[0]
                     define_cote = cote(user1,user2,int(score[0])-int(score[1]))
-                    if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True).exclude(freewin=True) :
+                    if match.col == 1 and not Match.objects.filter(tournoi=match.tournoi,col=1,score__isnull=True).exclude(freewin=True) :
                         tournoi = match.tournoi
                         tournoi.termine = True
                         tournoi.save()
@@ -403,7 +403,7 @@ def update_score(request,match_id):
                         user1 = match.first.profil_set.all()[0]
                         user2 = match.second.profil_set.all()[0]
                         define_cote = cote(user1,user2,int(score[0])-int(score[1]))
-                        if match.col == 0 and not Match.objects.filter(tournoi=match.tournoi,col=0,score__isnull=True).exclude(freewin=True):
+                        if match.col == 1 and not Match.objects.filter(tournoi=match.tournoi,col=1,score__isnull=True).exclude(freewin=True):
                             tournoi = match.tournoi
                             tournoi.termine = True
                             tournoi.save()
@@ -452,3 +452,34 @@ def launch(request,tournoi_id):
         tournoi.heure = datetime.now().strftime('%H:%M')
         tournoi.save()
     return redirect('/tournoi/arbre/%s'%tournoi_id)
+
+def duel_deny(request) :
+    if request.method == "POST" :
+        duel = get_object_or_404(Duel,pk=request.POST['duel'])
+        if duel.first == request.user or duel.second == request.user :
+            duel.valide = True
+            duel.save()
+    return redirect('/')
+
+def duel_score(request,duel_id):
+    if request.method == "POST" :
+        duel = get_object_or_404(Duel,pk=duel_id)
+        if duel.first == request.user :
+            duel.first_score = int(request.POST['win'])
+        elif duel.second == request.user :
+            duel.second_score = int(request.POST['win'])
+        duel.save()
+        if duel.first_score and duel.first_score == duel.second_score:
+            cote(Profil.objects.get(u=duel.first),Profil.objects.get(u=duel.second),duel.first_score-2)
+            duel.valide = True
+        duel.save()
+    return redirect('/')
+            
+def duel_declare(request):
+    if request.method == "POST" :
+        profil = get_object_or_404(Profil,u=request.user)
+        adversaire = get_object_or_404(Profil,pk=request.POST['adversaire'])
+        if profil.battletag and adversaire.battletag and not Duel.objects.filter(first=profil.u,second=adversaire.u,valide=False) and not Duel.objects.filter(first=adversaire.u,second=profil.u,valide=False):
+            duel = Duel.objects.create(first=request.user,second=adversaire.u)
+            duel.save()
+    return redirect ('/')
