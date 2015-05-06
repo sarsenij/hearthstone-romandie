@@ -50,10 +50,11 @@
 <p>
 {% if request.user == next_match.first and next_match.score_first%}En attente du report de résultat de votre adversaire{% endif %}{%if request.user == next_match.second and next_match.score_second %}En attente du report de résultat de votre adversaire{% endif %}
 </p>
+{% else %}
+</div>
 {% endif %}
-</p>
+{% endif %}
 <hr />
-{% endif %}
 <div id="arbre">
 <div>
 <div>
