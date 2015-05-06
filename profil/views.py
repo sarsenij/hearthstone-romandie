@@ -221,7 +221,10 @@ def recherche(request) :
 
 def details(request,detail_id) :
     detail = get_object_or_404(Profil,id=detail_id)
-    contact = Contact.objects.filter(owner__u=request.user,contact__id=detail_id)    
+    if request.user.is_active :
+        contact = Contact.objects.filter(owner__u=request.user,contact__id=detail_id)    
+    else :
+        contact = "offline"
     if request.method == "POST" and request.user.is_active and not contact :
         new_contact = Contact.objects.create(owner=Profil.objects.get(u=request.user),contact=detail)
         new_contact.save()

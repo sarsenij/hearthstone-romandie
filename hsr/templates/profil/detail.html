@@ -10,12 +10,14 @@
 {% csrf_token %}
 <input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');AddFriend(event);" />
 </form>
-{% elif request.user != detail.u %}
+{% elif request.user != detail.u and contact != "offline" %}
 Un de vos contacts.
-{% else %}
+{% elif contact != "offline" %}
 C'est vous !
+{% else %}
+<a href="/profil/">S'inscrire pour<br />envoyer un message</a>
 {% endif %}
-{% if detail.u != request.user %}
+{% if detail.u != request.user and contact != "offline" %}
 <br />
 <a href="JavaScript:void(0);" onclick="SendMsg();">Message</a>
 {% endif %}
