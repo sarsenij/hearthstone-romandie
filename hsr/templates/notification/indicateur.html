@@ -108,9 +108,11 @@ function FeedNotif(url,choice) {
 <script type="text/JavaScript">
 var chat = '<center><b>Chat</b></center><table width="100%">{% for c in notif_chat  %}<tr class="forum_row" style="background-color: rgba(230,184,138,0.1);"><td><center><a href="JavaScript:void(0);" onclick="ShowContact({{c.user.profil_set.all.0.id}},event);">{{c.user.profil_set.all.0.pseudo}}</a></center></td><td><center>{{c.created|date:"d/m" }}{% load bbcode_tags %} - {{c.created|date:"H:i" }}</center></td></tr><tr class="forum_row" style="background-color: rgba(230,184,138,0.15);"><td colspan="2">{% if forloop.counter|divisibleby:2 %}<span style="color: #F5DEB3;">{% else %}<span>{% endif %}{% bbcode c.message %}</span></td></tr>{% endfor %}</table>';
 var vusrecemment = 'Vus récemment :{% for ls in notif_lastseen %} <a href="JavaScript:void(0);" onclick="ShowContact({{ls.id}},event);"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}';
+var matchs = '{% for match in notif_matchs %}<a href="/tournoi/arbre/{{match.tournoi.id}}"><img src="/static/images/icones/tournoi.png" height="15px" style="float:left;" />Match en attente pour le tournoi {{match.tournoi.name}}</a><hr />{% endfor %}'
 $(document).ready(function(){
     document.getElementById("chat_droite").innerHTML = chat;
     document.getElementById("vusrecemment").innerHTML = vusrecemment;
+    document.getElementById("notif_matchs").innerHTML = matchs;
 {% if notif_messages %}
     if (document.getElementById("feed_content").value == "messages") {
         $("#notif_feed").load("/notification/messages/");

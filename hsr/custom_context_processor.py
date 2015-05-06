@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from profil.models import Profil
 from notification.models import Notification, Dest, ChatMsg, InviteTournoi, ConvDest, ConvDV
 from pybb.models import Dejavu as PostDv, Post, Suivi, Topic, Dejavu
+from tournoi.models import Match
 
 def notif(request):
     if request.user.is_active :
@@ -25,7 +26,13 @@ def notif(request):
 
         stafftournois = InviteTournoi.objects.filter(user=request.user,staff=True,seen=False)
 
-        news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages
+        matchs = list()
+        for match in Match.objects.filter(first=request.user,second__isnull=False,valide=False) :
+            matchs.append(match)
+        for match in Match.objects.filter(first__isnull=False,second=request.user,valide=False) :
+            matchs.append(match)
+
+        news = len(contacts)+len(suivis)+len(invtournois)+len(stafftournois)+messages+len(matchs)
         if profil.sound and news > profil.news :
             sound = True 
         else :
@@ -44,6 +51,9 @@ def notif(request):
             profil_step = "settings"
         else :
             profil_step = ""
+
+               
+
     else :
         contacts = list()
         messages = 0
@@ -53,6 +63,7 @@ def notif(request):
         stafftournois = list()
         sound = False
         profil_step = ''
+        matchs = list()
     chat = ChatMsg.objects.all().order_by('-id')
     if len(chat) > 20 :
         chat = chat[0:20]
@@ -67,5 +78,6 @@ def notif(request):
         'notif_nombre':len(contacts)+len(suivis)+len(invtournois)+len(stafftournois),
         'notif_sound':sound,
         'notif_profil_step':profil_step,
+        'notif_matchs':matchs,
     }
     return contenu

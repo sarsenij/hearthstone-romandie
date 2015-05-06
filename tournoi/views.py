@@ -1,5 +1,5 @@
 # -*- encoding:utf-8 -*-
-from datetime import datetime
+from datetime import datetime, date
 from random import randint
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -103,7 +103,7 @@ def detail(request,tournoi_id):
             inscrit = True
     return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs,'attente':attente})
 
-def feed_match(tournoi,inscrits=list(),indice=0,total=0,next_gagnant=False,next_perdant=False):
+def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False):
     match = Match.objects.create(tournoi=tournoi,col=total,row=indice)
     if len(inscrits) :
         match.first = inscrits[indice].user
@@ -346,7 +346,9 @@ def cote(user1,user2,diff):
     if result2 <= 0 :
         result2 = 1
     user1.cote = int(result1)
+    user1.cote_launch = True
     user2.cote = int(result2)
+    user2.cote_launch = True
     user1.save()
     user2.save()
     return True
@@ -443,3 +445,10 @@ def desinscription(request,tournoi_id):
         tournoi.save()
     return redirect('/tournoi/detail/%d'%tournoi.id) 
 
+def launch(request,tournoi_id):
+    tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
+    if request.user == tournoi.admin :
+        tournoi.date = date.today()
+        tournoi.heure = datetime.now().strftime('%H:%M')
+        tournoi.save()
+    return redirect('/tournoi/arbre/%s'%tournoi_id)

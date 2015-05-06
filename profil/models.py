@@ -66,6 +66,7 @@ class Profil(models.Model) :
     lastseen = models.DateTimeField(null=True,default=datetime.now)
 
     cote = models.IntegerField(default=1000)
+    cote_launch = models.BooleanField(default=False)
 
     webtv = models.BooleanField(default=False)
     
