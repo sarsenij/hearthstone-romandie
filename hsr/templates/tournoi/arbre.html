@@ -30,7 +30,7 @@
 <p>
 <b>Prochain match</b> :<br />
 <div class="match next_match{%if next_match.col == 1 and next_match.row == 0 %}finale{% endif %}" style="width:400px;">
-<div class="pseudo">{{next_match.first.profil_set.all.0.pseudo}} ({{next_match.first.profil_set.all.0.battletag}})</div><div class="pseudo">{% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}} ({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}</div>
+<div class="pseudo" style="line-height:15px;margin-top:6px;">{{next_match.first.profil_set.all.0.pseudo}}<br />({{next_match.first.profil_set.all.0.battletag}})</div><div class="pseudo" style="line-height:15px;">{% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}}<br />({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}</div>
 {% if next_match.first and next_match.second %}
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
 <div class="resultat">{% csrf_token %}
@@ -57,8 +57,11 @@
 <div id="arbre">
 <div>
 <div>
+{% load set_var %}
+{% set inter = -1 %}
 {% for match in arbre %}
 {% if match.row == 0 %}
+{% set inter = inter %}
 </div>
 {% if match.col == 1 %}
 <div class="col" id="col0"><center><b>Finales</b> {{match.tournoi.get_finale_display}}</center>
@@ -73,7 +76,7 @@
 
 {% endif %}
 {% endif %}
-{% if match.col == 1 and match.row == 1 %}<div class="inter8">{% else %}<div class="inter{{match.col}}">{% endif %}</div>
+{% if match.col == 1 and match.row == 1 %}<div>{% else %}<div class="inter{{inter}}">{% endif %}</div>
 <div class="{% if next_match == match %}next_match{% if match.row == 0 and match.col == 1 %}finale{% endif %}{% endif %} match{% if match.row == 0 and match.col == 1 %} finale{% endif %}">
 <div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
 {% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
@@ -103,7 +106,7 @@
 {% if match.col == 1 and match.row == 1 %}
 {% elif match.col == 1 and match.row == 0 %}
 {% else %}
-<div class="inter{{match.col}}"></div>
+<div class="inter{{inter}}"></div>
 {% endif %}
 {% endfor %}
 </div>

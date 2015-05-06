@@ -592,20 +592,23 @@ div.next_matchfinale {
 }
 
 
-div.inter8 {
+div.inter1 {
     height:40px;
 }
 
-div.inter4 {
+div.inter2 {
     height:120px;
 }
 
-div.inter2 {
+div.inter3 {
     height:280px;
 }
 
-div.inter0 {
+div.inter4 {
     height:600px;
+}
+div.inter5 {
+    height:1240px;
 }
  div.pseudo {
     width:50%;
