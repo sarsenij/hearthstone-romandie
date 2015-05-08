@@ -7,7 +7,7 @@
 {% else %}
 <div id="message" style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;">
 {% endif %}
-<b><a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{message.user}}</a></b> {{message.date|date:"d/m/Y H:i" }}<br />
+<b><a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{message.user}}</a></b> <span class="message_date">{{message.date|date:"d/m/Y H:i" }}</span><br />
 {{message.message}}
 </div>
 {% endfor %}

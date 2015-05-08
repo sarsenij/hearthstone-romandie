@@ -5,7 +5,7 @@ import os.path
 
 BASE_PATH = os.path.dirname(__file__)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SERVER_EMAIL = 'noreply@hearthstone-romandie.ch'
