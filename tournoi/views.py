@@ -4,7 +4,7 @@ from random import randint
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from tournoi.models import Tournoi, Invit, TournoiForm, Staff, Inscrit, Match, Duel
+from tournoi.models import Tournoi, Invit, TournoiForm, Inscrit, Match, Duel
 from profil.models import Profil, Contact
 from notification.models import InviteTournoi
 
@@ -33,7 +33,7 @@ def create(request):
         tournoi = TournoiForm(request.POST)
         if request.GET.get('id') :
             t = get_object_or_404(Tournoi,pk=request.GET.get('id'))
-            if request.user == t.admin or Staff.objects.filter(tournoi=t,admin=request.user) :
+            if request.user == t.admin :
                 tournoi = TournoiForm(request.POST,instance=t)
                 edit = True
         if tournoi.is_valid() and not (tournoi.instance.date < datetime.now().date() or (tournoi.instance.date == datetime.now().date() and tournoi.instance.heure <= datetime.now().time())) : 
@@ -49,7 +49,7 @@ def create(request):
             tournoi.errors['perime'] = ""
     elif request.GET.get('id') :
         t = get_object_or_404(Tournoi,pk=request.GET.get('id'))
-        if request.user == t.admin or Staff.objects.filter(tournoi=t,admin=request.user) :
+        if request.user == t.admin :
             tournoi = TournoiForm(instance=t)
             edit = True
     return render(request,'tournoi/create.html',{'tournoi':tournoi,'edit':edit})       
@@ -63,45 +63,36 @@ def detail(request,tournoi_id):
     if request.method == "POST" :
         if not request.user.is_active :
             return redirect('/tournoi/detail/%d'%tournoi.id)
-        if request.POST['action'] == "staff" :
-            for staff in Staff.objects.filter(tournoi=tournoi):
-                notif = InviteTournoi.objects.get(user=staff.admin,staff=True,tournoi=tournoi)
-                notif.delete()
-                staff.delete()
-            for staff in request.POST['staff'].split(" "):
-                if User.objects.filter(username=staff) and not Staff.objects.filter(tournoi=tournoi,admin=User.objects.get(username=staff)):
-                    new_staff = Staff.objects.create(tournoi=tournoi,admin=User.objects.get(username=staff))
-                    if not InviteTournoi.objects.filter(user=User.objects.get(username=staff),staff=True,tournoi=tournoi):
-                        it = InviteTournoi.objects.create(user=User.objects.get(username=staff),staff=True,tournoi=tournoi)
                     
         if request.POST['action'] == "invite" :
-            for invit in Invit.objects.filter(tournoi=tournoi):
-                notif = InviteTournoi.objects.get(user=invit.invite,staff=False,tournoi=tournoi)
-                notif.delete()
-                invit.delete()
             for invit in request.POST["invit"].split(" "):
                 if User.objects.filter(username=invit) and not Invit.objects.filter(tournoi=tournoi,invite=User.objects.get(username=invit)):
                     new_invit = Invit.objects.create(tournoi=tournoi,invite=User.objects.get(username=invit))
                     if not InviteTournoi.objects.filter(user=User.objects.get(username=invit),staff=False,tournoi=tournoi):
                         it = InviteTournoi.objects.create(user=User.objects.get(username=invit),tournoi=tournoi)
+            for invit in Invit.objects.filter(tournoi=tournoi) :
+                if invit.invite.username not in request.POST["invit"].split(" "):
+                    invit.delete()
+                    it = InviteTournoi.objects.get(user=invit.invite,tournoi=tournoi)
+                    it.delete()     
+            
     inscrop = False
     if tournoi.date > datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure > datetime.now().time()) :
         inscrop = True
     contacts = list()
     membres = list()
     invites = list()
-    staffs = Staff.objects.filter(tournoi=tournoi).order_by('admin__username')
     inscrit = False
     inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
     attente = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[tournoi.max_participants:]
     if request.user.is_active :
-        if request.user == tournoi.admin or Staff.objects.filter(tournoi=tournoi,admin=request.user) :
+        if request.user == tournoi.admin :
             contacts = Contact.objects.filter(owner=Profil.objects.get(u=request.user)).order_by('contact__pseudo')
             membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
             invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
         if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
             inscrit = True
-    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'staffs':staffs,'attente':attente})
+    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'attente':attente})
 
 def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False):
     match = Match.objects.create(tournoi=tournoi,col=total,row=indice)
@@ -128,10 +119,16 @@ def arbre(request, tournoi_id):
             inscrit.order = randint(1,1000000)
             inscrit.save()
         inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('-order')[:tournoi.max_participants]
-        if len(inscrits) <= 1 :
+        if tournoi.poules :
+            tournoi.termine = True
+            tournoi.save()
+        elif len(inscrits) <= 1 :
             tournoi.termine = True
             if inscrits :
                 tournoi.vainqueur = inscrits[0].user
+            tournoi.save()
+        elif len(inscrits) < 8 and tournoi.poules :
+            tournoi.termine = True
             tournoi.save()
         else :
             inscr = list()
@@ -144,15 +141,15 @@ def arbre(request, tournoi_id):
                 petite_finale = feed_match(tournoi,indice=1)
                 demifinale1 = feed_match(tournoi,inscr,0,2,finale,petite_finale)
                 demifinale2 = feed_match(tournoi,inscr,1,2,finale,petite_finale)
-            if len(inscrits) > 4 :
-                if len(inscrits) <= 8 :
+            if len(inscrits) > 4 and (not tournoi.poule or len(inscrits) > 8):
+                if len(inscrits) <= 8 and not tournoi.poule:
                     inscr = inscrits
                 quart1 = feed_match(tournoi,inscr,0,4,demifinale1)
                 quart2 = feed_match(tournoi,inscr,1,4,demifinale1)
                 quart3 = feed_match(tournoi,inscr,2,4,demifinale2)
                 quart4 = feed_match(tournoi,inscr,3,4,demifinale2)
-            if len(inscrits) > 8 :
-                if len(inscrits) <= 16 :
+            if len(inscrits) > 8 and not tournoi.poule or len(inscrits) > 16:
+                if len(inscrits) <= 16 and not tournoi.poule:
                     inscr = inscrits
                 huitieme1 = feed_match(tournoi,inscr,0,8,quart1)
                 huitieme2 = feed_match(tournoi,inscr,1,8,quart1)
@@ -162,7 +159,7 @@ def arbre(request, tournoi_id):
                 huitieme6 = feed_match(tournoi,inscr,5,8,quart3)
                 huitieme7 = feed_match(tournoi,inscr,6,8,quart4)
                 huitieme8 = feed_match(tournoi,inscr,7,8,quart4)
-            if len(inscrits) > 16 :
+            if len(inscrits) > 16 and not tournoi.poule:
                 inscr = inscrits
                 seizieme1 = feed_match(tournoi,inscr,0,16,huitieme1)
                 seizieme2 = feed_match(tournoi,inscr,1,16,huitieme1)
@@ -180,6 +177,13 @@ def arbre(request, tournoi_id):
                 seizieme14 = feed_match(tournoi,inscr,13,16,huitieme7)
                 seizieme15 = feed_match(tournoi,inscr,14,16,huitieme8)
                 seizieme16 = feed_match(tournoi,inscr,15,16,huitieme8)
+            if tournoi.poule :
+                if len(inscrits) > 16 :
+                    indice = 16
+                    
+                inscr = inscrits
+                poulea1 = feed_match(tournoi,inscr,0,
+                
             while Match.objects.filter(freewin=True,valide=False) :
                 for m in Match.objects.filter(freewin=True,valide=False) :
                     if m.next_gagnant :
@@ -204,9 +208,7 @@ def arbre(request, tournoi_id):
     else :
         error_msg = str()
     admin = list()
-    if request.user.is_active :
-        admin = Staff.objects.filter(tournoi=tournoi,admin=request.user)
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg,'admin':admin})
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
 
 def feed_freewin(go,dego):
     while go or dego :
@@ -326,15 +328,15 @@ def u_s(match,score):
             n_p.save()
     return match
 
-def cote(user1,user2,diff):
+def cote(user1,user2,diff,ind=100):
     cote1 = float(user1.cote)
     cote2 = float(user2.cote)
     if diff > 0 :
-        indice = ((cote2*100)/cote1)/2
+        indice = ((cote2*ind)/cote1)/2
     else :
-        indice = ((cote1*100)/cote2)/2
-    if indice > 100 :
-        indice = 100
+        indice = ((cote1*ind)/cote2)/2
+    if indice > ind :
+        indice = ind
     if diff > 0 :
         result1 = cote1+(indice*diff)
         result2 = cote2-(indice*diff)
@@ -383,8 +385,7 @@ def update_score(request,match_id):
             if len(score) != 2 or (score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result)) or int(score[0]) > attendu or int(score[1]) > attendu :
                 error_msg = "invalide"
             else :
-                admins = Staff.objects.filter(tournoi=match.tournoi)
-                if request.user == match.tournoi.admin or request.user in admins :
+                if request.user == match.tournoi.admin :
                     confirmed = u_s(match,score)
                     user1 = match.first.profil_set.all()[0]
                     user2 = match.second.profil_set.all()[0]
@@ -470,7 +471,7 @@ def duel_score(request,duel_id):
             duel.second_score = int(request.POST['win'])
         duel.save()
         if duel.first_score and duel.first_score == duel.second_score:
-            cote(Profil.objects.get(u=duel.first),Profil.objects.get(u=duel.second),duel.first_score-2)
+            cote(Profil.objects.get(u=duel.first),Profil.objects.get(u=duel.second),duel.first_score-2,10)
             duel.valide = True
         duel.save()
     return redirect('/')

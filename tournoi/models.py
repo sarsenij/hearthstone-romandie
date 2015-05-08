@@ -45,14 +45,10 @@ class Invit(models.Model):
     tournoi = models.ForeignKey('Tournoi')
     invite = models.ForeignKey('auth.User')
 
-class Staff(models.Model):
-    tournoi = models.ForeignKey('Tournoi')
-    admin = models.ForeignKey('auth.User')
-
 class TournoiForm(ModelForm):
     class Meta:
         model = Tournoi
-        fields = ['name','descr','prive','date','heure','max_participants','match','finale']#,'poules','loser_bracket']
+        fields = ['name','descr','prive','date','heure','max_participants','match','finale','poules',]#,'poules','loser_bracket']
 
 class Inscrit(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_inscrit")
