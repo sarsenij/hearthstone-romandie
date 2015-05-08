@@ -137,6 +137,9 @@
             document.getElementById("chat_droite").style.height = "25%";
             $("#waiting_notif").hide();
         });
+    {% if notif_profil_step == "settings" %}
+    document.getElementById("annoncesettings").innerHTML = "Veuillez compléter votre profil une première fois";
+    {% endif %}
     });
     });
         

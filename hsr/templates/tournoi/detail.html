@@ -24,24 +24,9 @@ function getSelect(selectId,destId)
     {% if membres %}
     <table class="forum_page">
     <tr>
-    <th colspan="2">Modifier du staff au tournoi</th>
     <th colspan="2">Modifier les invitations au tournoi</th>
     </tr>
     <tr>
-    <td>Mes contacts : <select id="staff_contact" onchange="getSelect('staff_contact','staff')">
-    <option value="">-----</option>
-    {% for contact in contacts %}
-    <option value="{{contact.contact.pseudo}}">{{contact.contact.pseudo}}</option>
-    {% endfor %}
-    </select>
-    </td>
-    <td>Membres du site : <select id="staff_membre" onchange="getSelect('staff_membre','staff')">
-    <option value="">-----</option>
-    {% for membre in membres %}
-    <option value="{{membre.pseudo}}">{{membre.pseudo}}</option>
-    {% endfor %}
-    </select>
-    </td>
     <td>Mes contacts : <select id="invit_contact" onchange="getSelect('invit_contact','invit')">
     <option value="">-----</option>
     {% for contact in contacts %}
@@ -58,7 +43,6 @@ function getSelect(selectId,destId)
     </td>
     </tr>
     <tr>
-    <td colspan="2"><form action="/tournoi/detail/{{tournoi.id}}" method="POST">{% csrf_token %}<input type="hidden" name="action" value="staff" /><textarea cols="45%" rows="3" name="staff" id="staff">{% for staff in staffs %}{{staff.admin.username}} {% endfor %}</textarea><br /><input type="submit" value="Editer le staff" /></form></td>
     <td colspan="2"><form action="/tournoi/detail/{{tournoi.id}}" method="POST">{% csrf_token %}<input type="hidden" name="action" value="invite" /><textarea cols="45%" rows="3" name="invit" id="invit">{% for invite in invites %}{{invite.invite.username}} {% endfor %}</textarea><br /><input type="submit" value="Editer les invitations" /></form></td>
     </tr>
     </table>
