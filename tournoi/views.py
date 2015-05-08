@@ -423,6 +423,10 @@ def update_score(request,match_id):
 def inscription(request,tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
     if request.user.is_active :
+        if request.method == "POST" :
+            profil = get_object_or_404(Profil,u=request.user)
+            profil.battletag = request.POST['battletag']
+            profil.save()
         if (tournoi.prive and Invit.objects.filter(tournoi=tournoi,invite=request.user)) or not tournoi.prive :
             if not Profil.objects.get(u=request.user).battletag :
                 return redirect('/tournoi/arbre/%d?error=battletag'%tournoi.id)

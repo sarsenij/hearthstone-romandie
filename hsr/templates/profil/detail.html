@@ -24,7 +24,7 @@ C'est vous !
 {% if detail.cote_launch %}
  <br />Cote : {{detail.cote}}
 {% endif%}
-{% if request.user.is_active and request.user.profil_set.all.0.battletag and detail.battletag %}
+{% if request.user != detail.u and request.user.is_active and request.user.profil_set.all.0.battletag and detail.battletag %}
 <form action="/tournoi/duel/declare/" method="POST" id="duel_declare">
 {% csrf_token %}<input type="hidden" value="{{detail.id}}" name="adversaire" />
 </form>

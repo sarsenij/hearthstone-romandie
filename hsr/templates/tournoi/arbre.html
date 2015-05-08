@@ -6,7 +6,7 @@
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><b><a href="/tournoi/detail/{{tournoi.id}}">Détails</a> - Arbre</b></p>
 {% if error_msg %}
-<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}Il vous faut un BattleTag pour participer aux tournois{% endif %}</p>
+<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}<form action="/tournoi/inscription/{{tournoi.id}}" method="POST">Il vous faut un BattleTag pour participer aux tournois : <input name="battletag" /><input type="submit" value="Envoyer" />{% csrf_token %}</form>{% endif %}</p>
 {% endif %}
 <center>
 {% if tournoi.termine %}
