@@ -177,13 +177,7 @@ def arbre(request, tournoi_id):
                 seizieme14 = feed_match(tournoi,inscr,13,16,huitieme7)
                 seizieme15 = feed_match(tournoi,inscr,14,16,huitieme8)
                 seizieme16 = feed_match(tournoi,inscr,15,16,huitieme8)
-            if tournoi.poule :
-                if len(inscrits) > 16 :
-                    indice = 16
                     
-                inscr = inscrits
-                poulea1 = feed_match(tournoi,inscr,0,
-                
             while Match.objects.filter(freewin=True,valide=False) :
                 for m in Match.objects.filter(freewin=True,valide=False) :
                     if m.next_gagnant :
