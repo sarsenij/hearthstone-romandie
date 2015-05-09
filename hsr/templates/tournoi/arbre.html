@@ -55,6 +55,45 @@
 {% endif %}
 {% endif %}
 <hr />
+<table id="poules" style="width:100%;">
+<tr>
+<td>
+{% for match in poules %}
+{% if forloop.counter|add:"4"|divisibleby:5 %}
+</td>
+{% if match.poule == 5 %}</tr><tr><td></td>{% endif %}
+<td>
+<center><b>Groupe {{match.poule}}</b></center>
+{% endif %}
+<div class="{% if next_match == match %}next_match{% endif %} match">
+<div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
+{% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
+</div>
+<div class="pseudo id{{match.second.id}}"{% if match.second %} onmouseover="OnIn('id{{match.second.id}}');" onmouseout="OnOut('id{{match.second.id}}');"{% endif %}>
+{% if match.freewin and not match.second %}<i>Freewin</i>{% elif not match.second %}<i>Inconnu</i>{% endif %}{{match.second.profil_set.all.0.pseudo|slice:"0:12"}}
+</div>
+{% if admin or request.user == tournoi.admin %}
+{% if not match.valide and match.first and match.second %}
+<form method="POST" action="/tournoi/update/{{match.id}}">
+<div class="resultat"><input name="sc_f" size="1" /></div><div class="resultat resultat2"><input name="sc_s" size="1" /></div>{% csrf_token %}
+<div class="boutons boutons2"><input type="submit" value="OK" /></div>
+</form>
+{% else %}
+<div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
+{% endif %}
+{% else %}
+<div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
+{% endif %}
+{% if match.valide %}
+<div class="boutons"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+{% endif %}
+</div>
+
+{% endfor %}
+</tr>
+</table>
+
 <div id="arbre">
 <div>
 <div>
@@ -112,6 +151,9 @@
 {% endfor %}
 </div>
 </div>
+{% endif %}
+{% if tournoi.admin == request.user %}
+<a href="?regenarbre=y">Régénérer l'arbre</a>
 {% endif %}
 <script type="text/javascript">
 function OnIn(elem) {

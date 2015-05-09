@@ -94,35 +94,80 @@ def detail(request,tournoi_id):
             inscrit = True
     return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'attente':attente})
 
-def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False):
+def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False,poule=False,feed_blank=False):
     match = Match.objects.create(tournoi=tournoi,col=total,row=indice)
-    if len(inscrits) :
-        match.first = inscrits[indice].user
-        if len(inscrits) > indice + total :
-            match.second = inscrits[indice+total].user
-        else :
-            match.freewin = True
     if next_gagnant :
         match.next_gagnant = next_gagnant
     if next_perdant :
         match.next_perdant = next_perdant
+    if poule :
+        match.poule = poule
+    if feed_blank :
+        match.freewin = True
+        next_gagnant = match.next_gagnant
+        next_gagnant.freewin=True
+        next_gagnant.save()
+        if match.next_perdant :
+            next_gagnant = match.next_perdant
+            next_gagnant.freewin=True
+            next_gagnant.save()
+    if len(inscrits) :
+        if poule :
+            if len(inscrits) >= indice+1 :
+                match.first = inscrits[indice].user
+            else :
+                match.freewin = True
+                next_gagnant = match.next_gagnant
+                next_gagnant.freewin=True
+                next_gagnant.save()
+                if match.next_perdant :
+                    next_gagnant = match.next_perdant
+                    next_gagnant.freewin=True
+                    next_gagnant.save()
+            if len(inscrits) >= indice+2 :
+                match.second = inscrits[indice+1].user
+            else :
+                match.freewin = True
+                next_gagnant = match.next_gagnant
+                next_gagnant.freewin=True
+                next_gagnant.save()
+                if match.next_perdant :
+                    next_gagnant = match.next_perdant
+                    next_gagnant.freewin=True
+                    next_gagnant.save()
+        else :
+            match.first = inscrits[indice].user
+            if len(inscrits) > indice + total :
+                match.second = inscrits[indice+total].user
+            else :
+                match.freewin = True
     match.save()
     return match
 
 def arbre(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
+    try :
+        if request.GET['regenarbre'] == 'y' and request.user == tournoi.admin :
+            for match in Match.objects.filter(tournoi=tournoi) :
+                match.delete()
+            for inscr in Inscrit.objects.filter(tournoi=tournoi) :
+                inscr.order = 0
+                inscr.save()
+    except :
+        pass
     #Génération de l'arbre
     if not Match.objects.filter(tournoi=tournoi) and (tournoi.date < datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure <= datetime.now().time())) :
         #Génération de la liste des inscrits
         inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
+        if tournoi.poules :
+            inscrits=inscrits[0:len(inscrits)-(len(inscrits)%4)]
         for inscrit in inscrits :
             inscrit.order = randint(1,1000000)
             inscrit.save()
         inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('-order')[:tournoi.max_participants]
         if tournoi.poules :
-            tournoi.termine = True
-            tournoi.save()
-        elif len(inscrits) <= 1 :
+            inscrits=inscrits[0:len(inscrits)-(len(inscrits)%4)]
+        if len(inscrits) <= 1 :
             tournoi.termine = True
             if inscrits :
                 tournoi.vainqueur = inscrits[0].user
@@ -141,15 +186,15 @@ def arbre(request, tournoi_id):
                 petite_finale = feed_match(tournoi,indice=1)
                 demifinale1 = feed_match(tournoi,inscr,0,2,finale,petite_finale)
                 demifinale2 = feed_match(tournoi,inscr,1,2,finale,petite_finale)
-            if len(inscrits) > 4 and (not tournoi.poule or len(inscrits) > 8):
-                if len(inscrits) <= 8 and not tournoi.poule:
+            if len(inscrits) > 4 and (not tournoi.poules or len(inscrits) > 8):
+                if len(inscrits) <= 8 and not tournoi.poules:
                     inscr = inscrits
                 quart1 = feed_match(tournoi,inscr,0,4,demifinale1)
                 quart2 = feed_match(tournoi,inscr,1,4,demifinale1)
                 quart3 = feed_match(tournoi,inscr,2,4,demifinale2)
                 quart4 = feed_match(tournoi,inscr,3,4,demifinale2)
-            if len(inscrits) > 8 and not tournoi.poule or len(inscrits) > 16:
-                if len(inscrits) <= 16 and not tournoi.poule:
+            if len(inscrits) > 8 and not tournoi.poules or len(inscrits) > 16:
+                if len(inscrits) <= 16 and not tournoi.poules:
                     inscr = inscrits
                 huitieme1 = feed_match(tournoi,inscr,0,8,quart1)
                 huitieme2 = feed_match(tournoi,inscr,1,8,quart1)
@@ -159,7 +204,7 @@ def arbre(request, tournoi_id):
                 huitieme6 = feed_match(tournoi,inscr,5,8,quart3)
                 huitieme7 = feed_match(tournoi,inscr,6,8,quart4)
                 huitieme8 = feed_match(tournoi,inscr,7,8,quart4)
-            if len(inscrits) > 16 and not tournoi.poule:
+            if len(inscrits) > 16 and not tournoi.poules:
                 inscr = inscrits
                 seizieme1 = feed_match(tournoi,inscr,0,16,huitieme1)
                 seizieme2 = feed_match(tournoi,inscr,1,16,huitieme1)
@@ -177,10 +222,51 @@ def arbre(request, tournoi_id):
                 seizieme14 = feed_match(tournoi,inscr,13,16,huitieme7)
                 seizieme15 = feed_match(tournoi,inscr,14,16,huitieme8)
                 seizieme16 = feed_match(tournoi,inscr,15,16,huitieme8)
+            if tournoi.poules : 
+                if len(inscrits) == 8 :
+                    gagnant = [demifinale1,demifinale2]
+                    list_inscrit = [inscrits[0:4],inscrits[4:8]]
+                elif len(inscrits) <= 16 :
+                    gagnant = [quart1,quart2,quart3,quart4]
+                    list_inscrit = [inscrits[0:4],inscrits[4:8],inscrits[8:12]]
+                    if len(inscrits) > 12 :
+                        list_inscrit.append(inscrits[12:16])
+                else :
+                    gagnant = [huitieme1,huitieme2,huitieme3,huitieme4,huitieme5,huitieme6,huitieme7,huitieme8]
+                    list_inscrit = [inscrits[0:4],inscrits[4:8],inscrits[8:12],inscrits[12:16],inscrits[16:20]]
+                    if len(inscrits) > 20 :
+                        list_inscrit.append(inscrits[20:24])
+                    if len(inscrits) > 24 :
+                        list_inscrit.append(inscrits[24:28])
+                    if len(inscrits) > 28 :
+                        list_inscrit.append(inscrits[28:32])
+                globalincr = 1
+                incr = 0
+                for g in gagnant :
+                    if globalincr%2 :
+                        incr += 1
+                    inscr = list()
+                    if globalincr%2 :
+                        c1 = feed_match(tournoi,inscr,0,1,gagnant[incr-1],poule=globalincr)
+                        b1 = feed_match(tournoi,inscr,0,2,gagnant[(len(gagnant)/2)+incr-1],c1,poule=globalincr)
+                    else :
+                        c1 = feed_match(tournoi,inscr,0,1,gagnant[(len(gagnant)/2)+incr-1],poule=globalincr)
+                        b1 = feed_match(tournoi,inscr,0,2,gagnant[incr-1],c1,poule=globalincr)
+                    b2 = feed_match(tournoi,inscr,2,2,c1,poule=globalincr)
+                    try :
+                        li = list_inscrit[globalincr-1]
+                        a1 = feed_match(tournoi,li,0,4,b1,b2,poule=globalincr)
+                        a2 = feed_match(tournoi,li,2,4,b1,b2,poule=globalincr) 
+                    except :
+                        a1 = feed_match(tournoi,list(),0,4,b1,b2,poule=globalincr,feed_blank=True)
+                        a2 = feed_match(tournoi,list(),2,4,b1,b2,poule=globalincr,feed_blank=True)
+
                     
-            while Match.objects.filter(freewin=True,valide=False) :
-                for m in Match.objects.filter(freewin=True,valide=False) :
-                    if m.next_gagnant :
+                    globalincr += 1
+                    
+            while Match.objects.filter(tournoi=tournoi,freewin=True,valide=False) :
+                for m in Match.objects.filter(tournoi=tournoi,freewin=True,valide=False) :
+                    if m.next_gagnant:
                         next_m = m.next_gagnant
                         if not next_m.first :
                             next_m.first = m.first
@@ -189,7 +275,14 @@ def arbre(request, tournoi_id):
                         next_m.save()
                     m.valide = True
                     m.save()
-    arbre = Match.objects.filter(tournoi=tournoi).order_by('-col','row')
+                        
+
+
+
+
+
+    arbre = Match.objects.filter(tournoi=tournoi,poule=0,loser_bracket=False).order_by('-col','row')
+    poules = Match.objects.filter(tournoi=tournoi,loser_bracket=False).exclude(poule=0).order_by('poule','-col','row')
     try :
         next_match = Match.objects.get(tournoi=tournoi,first=request.user,valide=False)
     except :
@@ -202,7 +295,7 @@ def arbre(request, tournoi_id):
     else :
         error_msg = str()
     admin = list()
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'poules':poules,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
 
 def feed_freewin(go,dego):
     while go or dego :

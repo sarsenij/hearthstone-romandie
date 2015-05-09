@@ -69,6 +69,8 @@ class Match(models.Model):
     col = models.IntegerField(default=0)
     row = models.IntegerField(default=0)
     valide = models.BooleanField(default=False)
+    poule = models.IntegerField(default=0)
+    loser_bracket = models.BooleanField(default=False)
 
 class Duel(models.Model):
     first = models.ForeignKey('auth.User',related_name="first_duel",null=True,blank=True)
