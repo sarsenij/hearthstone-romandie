@@ -397,12 +397,11 @@ a:hover {
 
 
 #menu_droite {
+    width:300px;
 	background: rgba(0,0,0, 0.8) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
 	border: 3px double rgba(139,69,19, 1);
 	position: fixed;
 	bottom: 0px;
-	width: 17%;
-	min-width: 225px;
 	top: 0px;
 	right: 0px;
 	margin: 10px;
@@ -684,6 +683,14 @@ div.boutons2 {
 }
 
 
+#deroule {
+    display:none;
+}
+
+#menu_smartphone {
+    display:none;
+}
+
 @media screen and (max-width: 1500px)
 {
     #content {
@@ -693,3 +700,80 @@ div.boutons2 {
     
 }
 
+@media screen and (max-width: 1250px)
+{
+    #canvas_all {
+        min-width:800px;
+    }
+    #twitter_bird {
+        display:none;
+    }
+    #twitter_box {
+        display:none;
+    }
+    #liens {
+        display:none;
+    }
+    #liens_liste {
+        display:none;
+    }
+    #logo_sgtv_box {
+        top:120px;
+        position:absolute;
+        z-index:14;
+    }
+    #sgtv {
+        top:150px;
+        position:absolute;
+    }
+    #content {
+        width:auto;
+        max-width:781px;
+        left:0px;
+        margin-left:0px;
+    }
+    #deroule {
+        display:block;
+    }
+    #se_deroule {
+        display:none;
+    }
+    #menu_droite {
+        position:absolute;
+        top:5px;
+        right:auto;
+        left:0px;
+        bottom:auto;
+        margin:0px;
+        height:auto;
+        z-index:15;
+        max-height:600px;
+
+    }
+}
+@media screen and (max-width: 799px)
+{
+    #canvas_all {
+        min-width:320px;
+    }
+    #sgtv, #logo_sgtv_box {
+        display:none;
+    }
+    #content {
+        width:300px;
+        top:220px;
+    }   
+    #menu_droite {
+        width:300px;
+        max-height:455px;
+	background: rgba(0,0,0, 1) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
+    }
+    #menu_smartphone {
+        display:block;
+        position:absolute;
+        top:120px;
+    }
+    #menu, #menu_actualite_h, #menu_forum_h, #menu_membres_h, #menu_tournoi_h, #logo {
+        display:none;
+    }
+}

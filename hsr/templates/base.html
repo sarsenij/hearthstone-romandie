@@ -68,8 +68,6 @@
 		<div id="logo"></div>
 
 		
-		<div id="pas_fiable2"></div>
-		<div id="getg"></div>
 		
 		<div id="twitter_box">
 		<a class="twitter-timeline" href="https://twitter.com/HS_Romandie" data-widget-id="539348362961883137">Tweets by @HS_Romandie</a>
@@ -108,8 +106,14 @@
 		<div id="gvg_cards_bientot"></div>
 	
 		</div>
+        <div id="menu_smartphone">
+		<a href="/">Actualités</a>
+		<a href="/forum/">Forum</a>
+		<a href="/profil/recherche/">Membres</a>
+		<a href="/tournoi/">Tournois</a>
+        </div>
 		
-		<div id="menu_droite" style="width:300px;">
+		<div id="menu_droite">
         {% if not request.user.is_active %}
             <form METHOD="POST" ACTION="/profil/">
             <table>
@@ -121,11 +125,16 @@
 	    <div id="menu_droite_in" style="width:100%;">	
         {% include 'notification/indicateur.html' %} 
 		</div>
+        <div id="deroule">
+        <center><a href="JavaScript:void(0);" onclick="$('#se_deroule').toggle('slow');">V V V</a></center>
+        </div>
+        <div id="se_deroule">
         <div style="height:85%;overflow:hidden;">
         <div id="notif_feed" style="width:100%;overflow:auto;height:0%;display:none;">
         {% if notif_profil_step %}
         <script type="text/JavaScript">
     $(document).ready(function(){
+    $("#se_deroule").show();
     $("#waiting_notif").show();
     document.getElementById("chat_droite").style.height = "95%";
     $("#notif_feed").hide('slow');
@@ -162,6 +171,7 @@
         </form>
 		{% endif %}
         <div id="vusrecemment">
+        </div>
         </div>
 		</div>
 	
