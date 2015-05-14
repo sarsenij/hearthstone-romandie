@@ -1,22 +1,23 @@
 <center><b>Messages</b></center>
 <div id="all_msg" style="height:95%;overflow:auto;">
 <div id="titres" style="height:100%;overflow:auto;width:95%;">
-Ecrire à <select name="contact" id="contact" onchange="OpenMessage(0)">
+<center>Ecrire à <select name="contact" id="contact" onchange="OpenMessage(0)">
 <option value="">-----</option>
 {% for contact in contacts %}
 <option value="{{contact.contact.u.id}}">{{contact.contact.pseudo}}</option>
 {% endfor %}
 </select>
+</center>
 <br />
 {% if non_lu %}
 <br />
 <br />
 <center><b>Non lus</b></center>
 {% for nl in non_lu %}
-<div style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;">
+<div style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;padding:5px;">
 <a href="Javascript:void(0);" onclick="OpenMessage({{nl.id}});">
 <b>{% for dest in nl.convdest_conv.all %}{% if dest.user != request.user %} {{dest.user}}{% endif %}{% endfor %}</b>
-<br />{{nl.convmessage_conv.all.last.date|date:"d/m/Y H:i" }} {{ nl.convmessage_conv.all.last.message }}
+<span class="message_date">{{nl.convmessage_conv.all.last.date|date:"d/m/Y H:i" }}</span> <br /> {{ nl.convmessage_conv.all.last.message }}
 </a>
 </div>
 {% endfor %}
@@ -25,10 +26,10 @@ Ecrire à <select name="contact" id="contact" onchange="OpenMessage(0)">
 <br />
 <center><b>Lus</b></center>
 {% for nl in lu %}
-<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<div style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;padding:5px;">
 <a href="Javascript:void(0);" onclick="OpenMessage({{nl.id}});">
 <b>{% for dest in nl.convdest_conv.all %}{% if dest.user != request.user %} {{dest.user}}{% endif %}{% endfor %}</b>
-<br />{{nl.convmessage_conv.all.last.date|date:"d/m/Y H:i" }} {{ nl.convmessage_conv.all.last.message }}
+<span class="message_date">{{nl.convmessage_conv.all.last.date|date:"d/m/Y H:i" }}</span> <br /> {{ nl.convmessage_conv.all.last.message }}
 </a>
 </div>
 {% endfor %}

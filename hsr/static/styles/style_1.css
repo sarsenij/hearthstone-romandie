@@ -33,6 +33,10 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+b {
+	font-size: large;
+}
+
 a:link, a:visited, a {
 	color: #cd853f;
 	text-decoration: none;
@@ -40,6 +44,20 @@ a:link, a:visited, a {
 }
 
 a:hover {
+	color: #deb887;
+	vertical-align: 0px;
+}
+
+.boutons_texte {
+	color: #cd853f;
+	text-decoration: none;
+	vertical-align: 0px;
+	text-shadow: 1px 1px 0px rgba(0,0,0,1);
+    font-size: 13px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.boutons_texte:hover {
 	color: #deb887;
 	vertical-align: 0px;
 }
@@ -396,6 +414,10 @@ a:hover {
 	
 }
 
+.profil_change th {
+    text-align: right;
+}
+
 /* FOOTER */
 #footers {
 	position: relative;
@@ -478,8 +500,8 @@ a:hover {
 }
 
 .div_membres {
-    background-image: url('/static/images/backgrounds/table_membres.png');
-    height:874px;
+    background-image: url('/static/images/backgrounds/profil_collec.png');
+    background-repeat: no-repeat;
 }
 
 .recherche_avatar {
@@ -549,6 +571,14 @@ table#contacts_profil {
 	border: 1px solid rgba(230,184,138,0.6);	
 }
 
+.boite_profil_detail {
+	position: relative;
+	background-color: rgba(0,0,0,0.4);
+	border: 3px double rgba(139,69,19,1);
+	border-spacing: 0px;
+	width: 145px;
+	left: -1px;
+}
 
 /* END PROFIL */
 

@@ -1,10 +1,10 @@
 <form method="POST" action="/profil/settings" id="saveprofil">
 <div id="annoncesettings" style="width:100%;"></div>
 <input type="hidden" name="type" value="edit_profil" />
-<table>
+<center><table>
 {% csrf_token %}
 <tr>
-<th colspan="3">Alertes mails</th>
+<th colspan="3"><b>Alertes mails</b></th>
 </tr>
 <tr>
 <th></th><td>Suivi du forum</td><td><input type="checkbox" name="forum" {% if profil.alert_forum %}CHECKED{% endif %} /></td>
@@ -16,21 +16,24 @@
 <th></th><td>Invitations aux tournois</td><td><input type="checkbox" name="tournoi" {% if profil.alert_tournoi %}CHECKED{% endif %}/></td>
 </tr>
 <tr>
-<th colspan="3">Sons</th>
+<th colspan="3"><b>Sons</b></th>
 </tr>
 <tr>
 <td></td><td>Messages et notifications</td><td><input type="checkbox" name="sound" {% if profil.sound %}CHECKED{% endif %} /></td>
 </tr>
-</table>
-<table>
-<tr><th>
+</table></center><br />
+<table class="profil_change">
+<tr>
+<td colspan="3" style="text-align: center;"><b>Profil</b></td>
+</tr>
+<tr><th width="89px">
 Avatar
 </th>
 <td>
 <img src="{{profil.avatar}}" height="50" />
 </td>
 </tr><tr>
-<td>URL : </td>
+<th>URL </th>
 <td>
 <input name="avatar" value="{% if profil.avatar != "/static/images/avatars/avatar.png" %}{{profil.avatar}}{% else %}http://{% endif %}" />
 </td></tr>
@@ -39,7 +42,7 @@ Nom
 </th><td>
 <input name="nom" value="{{profil.nom}}" />
 </td>
-</tr><tr><td>Visible par </td><td>
+</tr><tr><th>Visible par </th><td>
 <select name="nom_privacy"><option value="0"{% if not profil.nom_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.nom_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.nom_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><th>
@@ -47,7 +50,7 @@ Prénom
 </th><td>
 <input name="prenom" value="{{profil.prenom}}" />
 </td>
-</tr><tr><td>Visible par </td><td>
+</tr><tr><th>Visible par </th><td>
 <select name="prenom_privacy"><option value="0"{% if not profil.prenom_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.prenom_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.prenom_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><th>
@@ -55,7 +58,7 @@ Email
 </th><td>
 {{profil.email}} <a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','send_email');">Changer</a>
 </td>
-</tr><tr><td>Visible par </td><td>
+</tr><tr><th>Visible par </th><td>
 <select name="email_privacy"><option value="0"{% if not profil.email_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.email_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.email_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><th>
@@ -63,7 +66,7 @@ Rue
 </th><td>
 <input name="rue" value="{{profil.rue}}" />
 </td>
-</tr><tr><td>Visible par </td><td>
+</tr><tr><th>Visible par </th><td>
 <select name="rue_privacy"><option value="0"{% if not profil.rue_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.rue_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.rue_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><th>
@@ -71,8 +74,8 @@ Localité
 </th><td>
 <select name="localite">{% for loc in localite %}<option value="{{loc.id }}"{% if profil.localite == loc %} SELECTED{% endif %}>{{loc.localite}}</option>{% endfor %}</select>
 </td>
-</tr><tr><td>
-Autre :</td><td>
+</tr><tr><th>
+Autre </th><td>
 <input name="localite_new" />
 </td></tr>
 <tr><th>
@@ -80,8 +83,8 @@ Ville proche
 </th><td>
 <select name="ville_proche">{% for ville in ville_proche %}<option value="{{ville.id }}"{% if profil.ville_proche == ville %} SELECTED{% endif %}>{{ville.ville_proche}}</option>{% endfor %}</select>
 </td>
-</tr><tr><td>
-Autre :</td><td>
+</tr><tr><th>
+Autre </th><td>
 <input name="ville_proche_new" />
 </td></tr>
 <tr><th>
@@ -89,8 +92,8 @@ Pays
 </th><td>
 <select name="pays">{% for p in pays %}<option value="{{p.id }}"{% if profil.pays == p %} SELECTED{% endif %}>{{p.pays}}</option>{% endfor %}</select>
 </td>
-</tr><tr><td>
-Autre :</td><td>
+</tr><tr><th>
+Autre </th><td>
 <input name="pays_new" />
 </td></tr>
 <tr><th>
@@ -98,7 +101,7 @@ BattleTag
 </th><td>
 <input name="battletag" value="{{profil.battletag}}" />
 </td>
-</tr><tr><td>Visible par </td><td>
+</tr><tr><th>Visible par </th><td>
 <select name="battletag_privacy"><option value="0"{% if not profil.battletag_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.battletag_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.battletag_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><th>
@@ -106,7 +109,7 @@ Téléphone
 </th><td>
 <input name="telephone" value="{{profil.telephone}}" />
 </td>
-</tr><tr><td>Visible par</td><td>
+</tr><tr><th>Visible par</th><td>
 <select name="telephone_privacy"><option value="0"{% if not profil.telephone_privacy %} SELECTED{% endif %}>Moi uniquement</option><option value="1"{% if profil.telephone_privacy == 1 %} SELECTED{% endif %}>Mes contacts</option><option value="2"{% if profil.telephone_privacy == 2 %} SELECTED{% endif %}>Public</option></select>
 </td></tr>
 <tr><td colspan="3" style="text-align: center;">
@@ -126,13 +129,13 @@ function SaveProfil(event){
         }
     });
 }
-</script>
-<a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','changepwd');">Changer de mot de passe</a>
+</script><center>
+<a href="JavaScript:void(0);" onclick="FeedNotif('/profil/','changepwd');">Changer de mot de passe</a></center>
 <br />
 <table>
 {% if contacts %}
-<tr><td coslpan="2">
-<b>Mes contacts</b>
+<tr><td coslpan="2"><center>
+<b>Mes contacts</b></center>
 </td></tr>
 {% for contact in contacts %}
 <td><a href="JavaScript:void(0);" onclick="ShowContact({{contact.contact.id}},event);">{{ contact.contact.pseudo }}</a></td>

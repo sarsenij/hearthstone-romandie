@@ -65,7 +65,7 @@
 {% set inter = inter %}
 </div>
 {% if match.col == 1 %}
-<div class="col" id="col0"><center><b>Finales</b> {{match.tournoi.get_finale_display}}</center>
+<div class="col" id="col0"><center><b>Finales {{match.tournoi.get_finale_display}}</b></center>
 {% elif match.col == 2 %}
 <div class="col" id="col2"><center><b>Demi-finales {{match.tournoi.get_match_display}}</b></center>
 {% elif match.col == 4 %}
@@ -99,8 +99,8 @@
 <div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
 {% endif %}
 {% if match.valide %}
-<div class="boutons"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
-<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+<div class="boutons"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="60%" /></div>
+<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="60%" /></div>
 {% endif %}
 </div>
 <div class="clear"></div>
