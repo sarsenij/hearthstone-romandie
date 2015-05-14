@@ -1,3 +1,4 @@
+
 html, body {margin:0;padding:0;}
 
 html, body {
@@ -261,10 +262,9 @@ a:hover {
 	border: 3px double rgba(139,69,19, 1);
 	position: relative;
 	top: 290px;
-	width: 54.6%;
-	min-width: 730px;
+    width:48%;
 	left: 50%;
-	margin-left: -28%;
+	margin-left: -24%;
 	margin-bottom: 0.5%;
 	padding: 0.5%;
 	z-index: 14;
@@ -652,3 +652,14 @@ div.boutons2 {
 .message_date {
 	color: #CDC0B0;
 }
+
+
+@media screen and (max-width: 1500px)
+{
+    #content {
+        width:630px;
+        margin-left: -355px;
+    }
+    
+}
+
