@@ -17,6 +17,8 @@ function getSelect(selectId,destId)
     {% elif tournoi.termine %}<center>Il n'y a pas de vainqueur pour ce tournoi</center><br />{%endif %}
     {% if request.user.is_active %}
     <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
+    {% else %}
+    <center><span style="color:red;">Il vous faut un compte pour vous inscrire à un tournoi</span></center>
     {% endif %}
     {% if request.user == tournoi.admin %}
     <p><a href="/tournoi/create/?id={{tournoi.id}}">Editer le tournoi</a></p>

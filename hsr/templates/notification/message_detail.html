@@ -1,11 +1,11 @@
-<b>{% for d in dest %}{{d.user}}{% endfor %}</b>
+<b>{% for d in dest %}<a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{d.user}}</a>{% endfor %}</b>
 <br />
-<div id="all_messages" style="height:75%;overflow:auto;">
+<div id="all_messages" style="height:73%;overflow:auto;">
 {% for message in messages %}
 {% if message.user == request.user %}
-<div id="message" style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;">
+<div id="message" style="background-color: rgba(230,184,138,0.1);width:95%;margin:2px;padding:5px;">
 {% else %}
-<div id="message" style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;">
+<div id="message" style="background-color: rgba(230,184,138,0.30);width:95%;margin:2px;padding:5px;">
 {% endif %}
 <b><a href="JavaScript:void(0);" onclick="ShowContact({{message.user.profil_set.all.0.id}},event);">{{message.user}}</a></b> <span class="message_date">{{message.date|date:"d/m/Y H:i" }}</span><br />
 {{message.message}}
@@ -13,8 +13,8 @@
 {% endfor %}
 </div>
 <form id="new_message" method="POST" action="/notification/new_message/">
-<input type="hidden" name="conv" value="{{conv}}" />
-<textarea name="message" id="msg" cols="30" rows="2"></textarea><br />
+<input type="hidden" name="conv" value="{{conv}}" /><br />
+<textarea name="message" id="msg" cols="35" rows="4"></textarea><br />
 <input type="submit" value="Envoyer" />
 {% csrf_token %}
 </form>

@@ -1,14 +1,15 @@
-<div style="background-image:url('/static/images/profil/mid.png'),linear-gradient(rgba(209,182,129,1),rgba(136,114,73,1));width:100%;z-index:2;">
-<div style="position:absolute;z-index:1;"><img src="/static/images/profil/top.png" width="199" /></div>
+<div style="background-image:url('/static/images/profil/profil_mid.png');width:100%;z-index:2;">
+<div style="position:absolute;z-index:1;"><img src="/static/images/profil/profil_top.png" width="200" /></div>
 <div style="position:relative;z-index:2;padding-top:25px;">
 <center>
 {{detail.pseudo}}<br />
 <img src="{{detail.avatar}}" width="40" />
 <br />
+<div class="boite_profil_detail">
 {% if not contact and request.user != detail.u and online %}
 <form method="POST" action="/profil/detail/{{detail.id}}/" id="add_contact{{detail.id}}">
 {% csrf_token %}
-<input type="submit" value="Ajouter à mes contacts" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');AddFriend(event);" />
+<input type="submit" value="Ajouter à mes contacts" class="boutons_texte" id="btn_add_ctct{{detail.id}}" onclick="$('#btn_add_ctct{{detail.id}}').val('Contact ajouté !');$('#btn_add_ctct{{detail.id}}').attr('disabled','disabled');AddFriend(event);" style="background:none; border:none; margin:0; padding:0; cursor:pointer;"/>
 </form>
 {% elif request.user != detail.u and online %}
 Un de vos contacts.
@@ -62,9 +63,9 @@ C'est vous !
 Dernière connexion :
 <br />
 {{detail.lastseen|date:"d/m - H:i"}}
-<br />
-<div style="position:absolute;z-index:1;"><img src="/static/images/profil/bot.png" width="200" /></div>
-<div style="position:relative;z-index:2;">
+<br /></div>
+<div style="position:absolute;z-index:1;"><img src="/static/images/profil/profil_bot.png" width="200" /></div>
+<div style="position:relative;z-index:2;bottom: -70px;">
 <a href="JavaScript:void(0);" onclick="iDiv=document.getElementById('showcontact');iDiv.parentNode.removeChild(iDiv);">Fermer</a></center>
 </div>
 </div>
