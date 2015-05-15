@@ -86,8 +86,6 @@
 	               <li><a href="http://achievementgen.com/hearthstone/" target="_blank">Générateur de cartes</a></li>
 			</ul>
 		</div>
-	
-		
 		
 		<div id="menu">
 		</div>
@@ -97,84 +95,68 @@
 		<a href="/profil/recherche/"><div id="menu_membres_h"></div></a>
 		<a href="/tournoi/"><div id="menu_tournoi_h"></div></a>
 		
-		<div id="gvg_pack"></div>
-		
-		<div id="gvg_cards">
-		
-		<!-- Les cartes doivent avoir la dimmension 145x104 ! -->
-		
-		<div id="gvg_cards_bientot"></div>
-	
-		</div>
-        <div id="menu_smartphone">
-		<a href="/">Actualités</a>
-		<a href="/forum/">Forum</a>
-		<a href="/profil/recherche/">Membres</a>
-		<a href="/tournoi/">Tournois</a>
-        </div>
-		
-		<div id="menu_droite">
-        {% if not request.user.is_active %}
-            <form METHOD="POST" ACTION="/profil/">
-            <table>
-            <tr><td><input type="hidden" value="{{request.path}}" name="url" />Identifiant</td><td><input size="14" name="username" /></td></tr><tr><td>Mot de passe</td><td><input size="14" name="password" type="password" /></td></tr><tr><td><a href="/profil/">Inscription</a></td><td>{% csrf_token %}<input type="submit" value="Login" /></td></tr>
-            <tr><td><a href="/profil/resetpwd/">Mot de passe oublié ?</a></td></tr>
-            </table>
-            </form>
-        {% endif %}
-	    <div id="menu_droite_in" style="width:100%;">	
-        {% include 'notification/indicateur.html' %} 
-		</div>
-        <div id="deroule">
-        <center><a href="JavaScript:void(0);" onclick="$('#se_deroule').toggle('slow');">V V V</a></center>
-        </div>
-        <div id="se_deroule">
-        <div style="height:85%;overflow:hidden;">
-        <div id="notif_feed" style="width:100%;overflow:auto;height:0%;display:none;">
-        {% if notif_profil_step %}
-        <script type="text/JavaScript">
-    $(document).ready(function(){
-    $("#se_deroule").show();
-    $("#waiting_notif").show();
-    document.getElementById("chat_droite").style.height = "95%";
-    $("#notif_feed").hide('slow');
-    document.getElementById("notif_feed").style.height = "0%";
-    document.getElementById("notif_feed").style.height = "70%";
-    $("#notif_feed").load('/profil/{{notif_profil_step}}',function(){
-        document.getElementById("feed_content").value = '{{notif_profil_step}}';
-        $("#notif_feed").show('slow',function(){
-            document.getElementById("chat_droite").style.height = "25%";
-            $("#waiting_notif").hide();
-        });
-    {% if notif_profil_step == "settings" %}
-    document.getElementById("annoncesettings").innerHTML = "Veuillez compléter votre profil une première fois";
-    {% endif %}
-    });
-    });
-        
-        </script>    
-        {% endif %}
-        </div>
-        <input id="feed_content" type="hidden" value="" />
-        <div id="waiting_notif" style="display:none;width:100%;"><center><img src="/static/images/icones/waiting.gif" /></center></div>
-        <hr />
-        <div style="width:100%;background-color:red;"><center><b>BETA</b></center></div>
-        <hr />
-        <div id="notif_matchs"></div>
-        <div id="chat_droite" style="width:100%;overflow:auto;height:95%;"></div>
-        </div>
-		{% if request.user.is_active %}			
-        <form action="/notification/indicator/" method="POST" id="chat"><table style="width: 100%;"><td>
-        {{request.user.profil_set.all.0.pseudo}}</td><td><input type="text" name="message" id="chat_message" style="width: 100%;" /></td>
-        <td><center><input type="submit" value="Chat" /></center></td></table>
-        {% csrf_token %}
-        </form>
-		{% endif %}
-        <div id="vusrecemment">
-        </div>
-        </div>
-		</div>
-	
+	<div id="menu_droite">
+	        {% if not request.user.is_active %}
+		        <form METHOD="POST" ACTION="/profil/">
+		        	<table>
+		           		<tr><td><input type="hidden" value="{{request.path}}" name="url" />Identifiant</td><td><input size="14" name="username" /></td></tr><tr><td>Mot de passe</td><td><input size="14" name="password" type="password" /></td></tr><tr><td><a href="/profil/">Inscription</a></td><td>{% csrf_token %}<input type="submit" value="Login" /></td></tr>
+		           		<tr><td><a href="/profil/resetpwd/">Mot de passe oublié ?</a></td></tr>
+		            </table>
+		        </form>
+	        {% endif %}
+	    	<div id="menu_droite_in" style="width:100%;">	
+        	{% include 'notification/indicateur.html' %} 
+			</div>
+        <!--<div id="se_deroule"></div>-->
+        <div id="fen_chat">
+	        <div id="notif_feed" style="width:100%;overflow:auto;height:0%;display:none;">
+		        {% if notif_profil_step %}
+			        <script type="text/JavaScript">
+			    		$(document).ready(function(){
+			    			$("#waiting_notif").show();
+			    			document.getElementById("chat_droite").style.height = "100%";
+			    			$("#notif_feed").hide('slow');
+			    			document.getElementById("notif_feed").style.height = "0%";
+			    			document.getElementById("notif_feed").style.height = "75%";
+			    			$("#notif_feed").load('/profil/{{notif_profil_step}}',function(){
+			        			document.getElementById("feed_content").value = '{{notif_profil_step}}';
+			       				$("#notif_feed").show('slow',function(){
+			            			document.getElementById("chat_droite").style.height = "25%";
+			            			$("#waiting_notif").hide();
+			        			});
+			    				{% if notif_profil_step == "settings" %}
+			    					document.getElementById("annoncesettings").innerHTML = "Veuillez compléter votre profil une première fois";
+			    				{% endif %}
+			    			});
+			    		});
+			        </script>    
+		        {% endif %}
+	        </div>
+	        
+	   		<input id="feed_content" type="hidden" value="" />
+	   		
+	        <div id="waiting_notif" style="display:none;width:100%;"><center><img src="/static/images/icones/waiting.gif" /></center></div>
+	       	
+	       	<div id="bandeau_beta"><hr /><center style="width:100%;background-color:red;"><b>BETA</b></center><hr /></div>
+	       	
+	       	<div id="notif_matchs"></div>
+	       	
+	       	<div id="titre_chat"><center><b>Chat</b></center></div>
+	       	
+	        <div id="vusrecemment"></div>
+	       	
+			{% if request.user.is_active %}
+			<div id="formulaire_chat">		
+	        	<form action="/notification/indicator/" method="POST" id="chat"><table style="width: 100%;"><td>
+	        		{{request.user.profil_set.all.0.pseudo}}</td><td><input type="text" name="message" id="chat_message" style="width: 100%;" /></td>
+	        		<td><center><input type="submit" value="Chat" /></center></td></table>
+	        		{% csrf_token %}
+	        	</form>
+	        </div>
+			{% endif %}
+		    <div id="chat_droite" style="width:100%; overflow: auto;"></div>
+	   	</div>
+    </div>
 	       
 		<div id="content">
             <noscript>

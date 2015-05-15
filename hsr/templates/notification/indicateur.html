@@ -1,113 +1,140 @@
 {% if request.user.is_active %}
-{% if notif_sound %}
-<audio id="notif_sound" style="display:none;">
-<source src="/static/sound/alert.ogg" type="audio/ogg">
-<source src="/static/sound/alert.mp3" type="audio/mpeg">
-Prout
-</audio>
-<script type="text/JavaScript">
-$(document).ready(function(){
-    var sample = document.getElementById("notif_sound");
-    sample.play();
-});
-</script>
+	{% if notif_sound %}
+		<audio id="notif_sound" style="display:none;">
+			<source src="/static/sound/alert.ogg" type="audio/ogg">
+			<source src="/static/sound/alert.mp3" type="audio/mpeg">
+			Prout
+		</audio>
+	<script type="text/JavaScript">
+	$(document).ready(function(){
+	    var sample = document.getElementById("notif_sound");
+	    sample.play();
+	});
+	</script>
+	{% endif %}
+	<script type="text/JavaScript">
+	$(document).ready(function(){
+	    var titre = document.title
+	    var value = {{notif_nombre|add:notif_messages}}
+	    if (value != 0)
+	    {   
+	        if (titre[0] == "(")
+	        {
+	            titre = "("+value+") "+titre.split(")")[1];
+	        } else {
+	            titre = "("+value+") "+titre;
+	        }
+	    }else{
+	        if (titre[0] == "(")
+	        {
+	            titre = titre.split(")")[1];
+	        }
+	    }
+	    document.title = titre;
+	});
+	</script>
+	<div id="notif_buttons">
+		<div id="bouton_profil" style="float:left;width:70px;"><!--PROFIL-->
+			<center>
+			<a href="javascript:void(0)" onclick="FeedNotif('/profil/','settings');">
+			<img src="{{request.user.profil_set.all.0.avatar}}" height="40px" />
+			<br />
+			{{request.user.profil_set.all.0.pseudo}}</a>
+			</center>
+		</div>
+		
+		<div id="bouton_messages" style="float:left;width:70px;"><!--MESSAGE-->
+			<script type="text/JavaScript">
+			function FeedNotif(url,choice) {
+				Deroule();
+			    $("#waiting_notif").show();
+			    document.getElementById("chat_droite").style.height = "100%";
+			    $("#notif_feed").hide('slow');
+			    document.getElementById("notif_feed").style.height = "0%";
+			    if (document.getElementById("feed_content").value == choice) { 
+			        $("#notif_feed").innerHTML = "";
+			        document.getElementById("feed_content").value = "";
+			                $("#waiting_notif").hide();
+			    }else{
+			        document.getElementById("notif_feed").style.height = "75%";
+			        $("#notif_feed").load(url+choice+'/',function(){
+			            $("#notif_feed").show('slow',function(){
+			                document.getElementById("chat_droite").style.height = "25%";
+			                $("#waiting_notif").hide();
+			            });
+			        });
+			        document.getElementById("feed_content").value = choice;
+			    }
+			}
+			
+			function Deroule() {
+				$("#fen_chat").slideToggle();
+			}
+					
+			</script>
+			<center>
+			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages');">
+			<img src="/static/images/icones/bulle_3points.png" height="40px" />
+			<br />
+			{% if notif_messages %}
+			<span style="background-color:red;">
+			{% else %}
+			<span>
+			{% endif %}
+			{{notif_messages}}
+			</span>
+			</a>
+			</center>
+		</div>
+		
+		<div id="bouton_notif" style="float:left;width:70px;"><!--NOTIF-->
+			<center>
+			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification');"">
+			<img src="/static/images/icones/quetes.png" height="40px" />
+			<br />
+			{% if notif_nombre %}
+			<span style="background-color:red;">
+			{% else %}
+			<span>
+			{% endif %}
+			{{notif_nombre}}
+			</span>
+			</a>
+			</center>
+		</div>
+		
+		<div id="menu_smartphone">
+			<a href="/"><div class="boutton_menu_smartphone"><b>Actualités</b></div></a>
+			<a href="/forum/"><div class="boutton_menu_smartphone" style="left: 136px;"><b>Forum</b></div></a>
+			<a href="/profil/recherche/"><div class="boutton_menu_smartphone" style="left: 272px;"><b>Membres</b></div></a>
+			<a href="/tournoi/"><div class="boutton_menu_smartphone" style="left: 408px;"><b>Tournois</b></div></a>
+		
+			<div id="deroule">
+				<a href="JavaScript:void(0);" onclick='Deroule()'><img src="/static/images/icones/arrow-down.png" /></a>
+			</div>
+			
+			<!--
+			<button id="testo" onclick="myFunction()">Try it</button>
+
+			<script>
+			var hh = document.getElementById("menu_droite").offsetHeight;
+			function myFunction() {
+			    alert(hh);
+			}
+			</script>
+			-->
+			
+		</div>
+			
+		<div id="boutton_deco"><!--DECO-->
+			<center>
+			<a href="/profil/deco/?url={{request.path}}"><img id="icone_quitter" src="/static/images/icones/quitter.png" height="25px" /></a>
+			</center>
+		</div>
+	</div>
 {% endif %}
 <script type="text/JavaScript">
-$(document).ready(function(){
-    var titre = document.title
-    var value = {{notif_nombre|add:notif_messages}}
-    if (value != 0)
-    {   
-        if (titre[0] == "(")
-        {
-            titre = "("+value+") "+titre.split(")")[1];
-        } else {
-            titre = "("+value+") "+titre;
-        }
-    }else{
-        if (titre[0] == "(")
-        {
-            titre = titre.split(")")[1];
-        }
-    }
-    document.title = titre;
-});
-</script>
-<div id="notif_buttons" style="width:100%;height:65px;">
-
-<div style="float:left;width:70px;"><!--PROFIL-->
-<center>
-<a href="javascript:void(0)" onclick="FeedNotif('/profil/','settings');">
-<img src="{{request.user.profil_set.all.0.avatar}}" height="40px" />
-<br />
-{{request.user.profil_set.all.0.pseudo}}</a></center>
-</div>
-
-<div style="float:left;width:70px;"><!--MESSAGE-->
-<script type="text/JavaScript">
-function FeedNotif(url,choice) {
-    $("#se_deroule").show();
-    $("#waiting_notif").show();
-    document.getElementById("chat_droite").style.height = "95%";
-    $("#notif_feed").hide('slow');
-    document.getElementById("notif_feed").style.height = "0%";
-    if (document.getElementById("feed_content").value == choice) { 
-        $("#notif_feed").innerHTML = "";
-        document.getElementById("feed_content").value = "";
-                $("#waiting_notif").hide();
-    }else{
-        document.getElementById("notif_feed").style.height = "70%";
-        $("#notif_feed").load(url+choice+'/',function(){
-            $("#notif_feed").show('slow',function(){
-                document.getElementById("chat_droite").style.height = "25%";
-                $("#waiting_notif").hide();
-            });
-        });
-        document.getElementById("feed_content").value = choice;
-    }
-}
-</script>
-<center>
-<a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages');">
-<img src="/static/images/icones/bulle_3points.png" height="40px" />
-<br />
-{% if notif_messages %}
-<span style="background-color:red;">
-{% else %}
-<span>
-{% endif %}
-{{notif_messages}}
-</span>
-</a>
-</center>
-</div>
-
-<div style="float:left;width:70px;"><!--NOTIF-->
-<center>
-<a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification');">
-<img src="/static/images/icones/quetes.png" height="40px" />
-<br />
-{% if notif_nombre %}
-<span style="background-color:red;">
-{% else %}
-<span>
-{% endif %}
-{{notif_nombre}}
-</span>
-</a>
-</center>
-</div>
-
-<div><!--DECO-->
-<center>
-<a href="/profil/deco/?url={{request.path}}"><img style="position: relative; top: -53px; right: -100px;" src="/static/images/icones/quitter.png" height="25px" /></a>
-</center>
-</div>
-
-</div>
-{% endif %}
-<script type="text/JavaScript">
-var chat = '<center><b>Chat</b></center><table width="100%">{% for c in notif_chat  %}<tr class="forum_row" style="background-color: rgba(230,184,138,0.1);"><td><center><a href="JavaScript:void(0);" onclick="ShowContact({{c.user.profil_set.all.0.id}},event);">{{c.user.profil_set.all.0.pseudo}}</a></center></td><td><center>{{c.created|date:"d/m" }}{% load bbcode_tags %} - {{c.created|date:"H:i" }}</center></td></tr><tr class="forum_row" style="background-color: rgba(230,184,138,0.15);"><td colspan="2" style="padding: 3px;">{% if forloop.counter|divisibleby:2 %}<span style="color: #F5DEB3;">{% else %}<span>{% endif %}{% bbcode c.message %}</span></td></tr>{% endfor %}</table>';
+var chat = '<table>{% for c in notif_chat  %}<tr class="forum_row" style="background-color: rgba(230,184,138,0.1);"><td><center><a href="JavaScript:void(0);" onclick="ShowContact({{c.user.profil_set.all.0.id}},event);">{{c.user.profil_set.all.0.pseudo}}</a></center></td><td><center>{{c.created|date:"d/m" }}{% load bbcode_tags %} - {{c.created|date:"H:i" }}</center></td></tr><tr class="forum_row" style="background-color: rgba(230,184,138,0.15);"><td colspan="2" style="padding: 3px;">{% if forloop.counter|divisibleby:2 %}<span style="color: #F5DEB3;">{% else %}<span>{% endif %}{% bbcode c.message %}</span></td></tr>{% endfor %}</table>';
 var vusrecemment = 'Vus récemment :{% for ls in notif_lastseen %} <a href="JavaScript:void(0);" onclick="ShowContact({{ls.id}},event);"{% if ls.u.is_superuser %} style="color:red;"{% else %}{% if ls.u.is_staff %} style="color:blue;"{% endif %}{% endif %}>{{ls.pseudo}}</a>{%endfor%}';
 var matchs = "{% for match in notif_matchs %}<a href='/tournoi/arbre/{{match.tournoi.id}}'><img src='/static/images/icones/tournoi.png' height='15px' style='float:left;' />Match en attente pour le tournoi {{match.tournoi.name}}</a><hr />{% endfor %}{% for match in notif_duels %}<img src='/static/images/icones/tournoi.png' height='15px' style='float:left; position: relative; top: 6px;' ' />&nbsp;Duel <img src='/static/images/icones/vs.png' height='20px' style='position: relative; top: 5px;' /> {% if match.first == request.user %}<a href='JavaScript:void(0);' onclick='ShowContact({{match.user.profil_set.all.0.id}},event);'>{{match.second.profil_set.all.0.pseudo}} ( {{match.second.profil_set.all.0.battletag}} )</a>{% else %}<a href='JavaScript:void(0);' onclick='ShowContact({{match.user.profil_set.all.0.id}},event);'>{{match.first.profil_set.all.0.pseudo}} ( {{match.first.profil_set.all.0.battletag}} )</a>{% endif %}<form action='/tournoi/duel/score/{{match.id}}' method='POST' id='score3{{match.id}}'><input type='hidden' name='win' value='3' />{% csrf_token %}</form><form action='/tournoi/duel/score/{{match.id}}' method='POST' id='score1{{match.id}}'><input type='hidden' name='win' value='1' />{% csrf_token %}</form><a href='JavaScript:void(0);' onclick='ScoreDuel(event,{% if request.user == match.first %}3{% else %}1{% endif %}{{match.id}});'>Win !</a> or <a href='JavaScript:void(0);' onclick='ScoreDuel(event,{% if request.user == match.first %}1{% else %}3{% endif %}{{match.id}});'>Lose...</a>{% if match.first_score or match.second_score %}{% if match.first_score and match.second_score and match.first_score != match.second_score %}<span style='color:red;'><br />Vainqueur différent</span>{% elif not match.second_score or not match.first_score %}<br />En attente de confirmation{% endif %}{% endif %}&nbsp;|&nbsp;<a href='JavaScript:void(0);' onclick='DenyDuel(event,{{match.id}});'>Décliner</a><form action='/tournoi/duel/deny/' method='POST' id='deny{{match.id}}'>{% csrf_token %}<input type='hidden' name='duel' value='{{match.id}}' /></form><hr />{% endfor %}";
 $(document).ready(function(){
