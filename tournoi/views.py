@@ -1,5 +1,5 @@
 # -*- encoding:utf-8 -*-
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from random import randint
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -60,6 +60,11 @@ def detail(request,tournoi_id):
         it = InviteTournoi.objects.get(pk=request.GET.get('seen'))
         it.seen = True
         it.save()
+    if request.GET.get('confirm') :
+        if request.GET['confirm'] == "Yes" :
+            inscrit = get_object_or_404(Inscrit,user=request.user,tournoi=tournoi)
+            inscrit.confirm = True
+            inscrit.save()
     if request.method == "POST" :
         if not request.user.is_active :
             return redirect('/tournoi/detail/%d'%tournoi.id)
@@ -79,6 +84,13 @@ def detail(request,tournoi_id):
     inscrop = False
     if tournoi.date > datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure > datetime.now().time()) :
         inscrop = True
+    confirm = 0
+    if datetime.combine(tournoi.date,tournoi.heure) <= datetime.now() + timedelta(minutes=30) :
+        confirm = 1
+        if Inscrit.objects.filter(user=request.user,tournoi=tournoi):
+            inscrit = Inscrit.objects.get(user=request.user,tournoi=tournoi)
+            if inscrit.confirm :
+                confirm = 2
     contacts = list()
     membres = list()
     invites = list()
@@ -92,7 +104,7 @@ def detail(request,tournoi_id):
             invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
         if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
             inscrit = True
-    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'attente':attente})
+    return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'attente':attente,'confirm':confirm,})
 
 def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False,poule=False,feed_blank=False):
     match = Match.objects.create(tournoi=tournoi,col=total,row=indice)
@@ -177,13 +189,19 @@ def arbre(request, tournoi_id):
     #Génération de l'arbre
     if not Match.objects.filter(tournoi=tournoi) and (tournoi.date < datetime.now().date() or (tournoi.date == datetime.now().date() and tournoi.heure <= datetime.now().time())) :
         #Génération de la liste des inscrits
-        inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
+        if tournoi.confirmation :
+            inscrits = Inscrit.objects.filter(tournoi=tournoi,confirm=True).order_by('date')[:tournoi.max_participants]
+        else :
+            inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('date')[:tournoi.max_participants]
         if tournoi.poules :
             inscrits=inscrits[0:len(inscrits)-(len(inscrits)%4)]
         for inscrit in inscrits :
             inscrit.order = randint(1,1000000)
             inscrit.save()
-        inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('-order')[:tournoi.max_participants]
+        if tournoi.confirmation :
+            inscrits = Inscrit.objects.filter(tournoi=tournoi,confirm=True).order_by('-order')[:tournoi.max_participants]
+        else :
+            inscrits = Inscrit.objects.filter(tournoi=tournoi).order_by('-order')[:tournoi.max_participants]
         if tournoi.poules :
             inscrits=inscrits[0:len(inscrits)-(len(inscrits)%4)]
         if len(inscrits) <= 1 :

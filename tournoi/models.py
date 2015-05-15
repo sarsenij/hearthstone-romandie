@@ -12,6 +12,7 @@ class Tournoi(models.Model):
     prive = models.BooleanField(verbose_name="Tournoi sur invitation",default=False)
     date = models.DateField(verbose_name="Date du tournoi",default=date.today)
     heure = models.TimeField(verbose_name="Heure du tournoi",null=True,default="00:00")
+    confirmation = models.BooleanField(verbose_name="Confirmation 1h avant",default=False)
     choices_part = (
     (4,"4"),
     (8,"8"),
@@ -53,13 +54,14 @@ class Invit(models.Model):
 class TournoiForm(ModelForm):
     class Meta:
         model = Tournoi
-        fields = ['name','descr','prive','date','heure','max_participants','match','finale','poules','conquest',]#,'poules','loser_bracket']
+        fields = ['name','descr','prive','date','heure','max_participants','match','finale','poules','conquest','confirmation',]#,'poules','loser_bracket']
 
 class Inscrit(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_inscrit")
     user = models.ForeignKey('auth.User')
     date = models.DateTimeField(default=datetime.now)
     order = models.IntegerField(default=0)
+    confirm = models.BooleanField(default=False)
 
 class Match(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_match",null=True,blank=True)
