@@ -146,6 +146,25 @@ def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_
 
 def arbre(request, tournoi_id):
     tournoi = get_object_or_404(Tournoi,pk=tournoi_id)
+    if request.method == "POST" :
+        match = get_object_or_404(Match,pk=request.POST['match'])
+        deck = request.POST['deck'] 
+        if match.poule :
+            manche = tournoi.poules
+        elif match.col == 1 :
+            manche = tournoi.finale
+        else :
+            manche = tournoi.match
+        if len(deck) != manche :
+            error_msg = "deck"
+        else :
+            if request.user == match.first :
+                match.first_deck = deck
+            elif request.user == match.second :
+                match.second_deck = deck
+            if match.first_deck and match.second_deck :
+                match.conquest_check = True
+            match.save()
     try :
         if request.GET['regenarbre'] == 'y' and request.user == tournoi.admin :
             for match in Match.objects.filter(tournoi=tournoi) :
@@ -290,12 +309,18 @@ def arbre(request, tournoi_id):
             next_match = Match.objects.get(tournoi=tournoi,second=request.user,valide=False)
         except :
             next_match = False
+    if next_match and tournoi.conquest and not next_match.conquest_check:
+        conquest = True
+    else :
+        conquest = False
     if request.GET.get('error') :
         error_msg = request.GET.get('error')
-    else :
+    try :
+        error_msg
+    except :
         error_msg = str()
     admin = list()
-    return render(request,'tournoi/arbre.html',{'arbre':arbre,'poules':poules,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg})
+    return render(request,'tournoi/arbre.html',{'arbre':arbre,'poules':poules,'tournoi':tournoi,'next_match':next_match,'error_msg':error_msg,'conquest':conquest})
 
 def feed_freewin(go,dego):
     while go or dego :
@@ -457,7 +482,9 @@ def update_score(request,match_id):
             ff = feed_freewin([],[match])
         except :
             score = str(request.POST['sc_f'])+str(request.POST['sc_s'])
-            if match.col == 1 :
+            if match.poule :
+                result = match.tournoi.poules
+            elif match.col == 1 :
                 result = match.tournoi.finale
             else :
                 result = match.tournoi.match

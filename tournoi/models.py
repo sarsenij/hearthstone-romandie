@@ -32,10 +32,15 @@ class Tournoi(models.Model):
     (3,"BO5"),
     (4,"BO7"),
     )
+    choice_conquest = (
+    (0,"Non"),
+    (1,"Oui, sans ban"),
+    )
     match = models.IntegerField(verbose_name="Format des matchs",choices=choices_open,default=3)
     finale = models.IntegerField(verbose_name="Format de la finale",choices=choices_open,default=3)
     poules = models.IntegerField(verbose_name="Format des poules",choices=choices_close,default=0)
     loser_bracket = models.IntegerField(verbose_name="Format du loser bracket",choices=choices_close,default=0)
+    conquest = models.IntegerField(verbose_name="Format conquest",choices=choice_conquest,default=0)
     termine = models.BooleanField(default=False)
     admin = models.ForeignKey('auth.User',null=True,related_name="tournoi_admin")
     inscrit = models.IntegerField(default=0)
@@ -48,7 +53,7 @@ class Invit(models.Model):
 class TournoiForm(ModelForm):
     class Meta:
         model = Tournoi
-        fields = ['name','descr','prive','date','heure','max_participants','match','finale','poules',]#,'poules','loser_bracket']
+        fields = ['name','descr','prive','date','heure','max_participants','match','finale','poules','conquest',]#,'poules','loser_bracket']
 
 class Inscrit(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_inscrit")
@@ -60,6 +65,9 @@ class Match(models.Model):
     tournoi = models.ForeignKey('Tournoi',related_name="tournoi_match",null=True,blank=True)
     first = models.ForeignKey('auth.User',related_name="first_match",null=True,blank=True)
     second = models.ForeignKey('auth.User',related_name="second_match",null=True,blank=True)
+    first_deck = models.CharField(max_length=20,default="",null=True,blank=True)
+    second_deck = models.CharField(max_length=20,default="",null=True,blank=True)
+    conquest_check = models.BooleanField(default=0)
     score = models.CharField(null=True,blank=True,max_length=2)
     score_first = models.CharField(null=True,blank=True,max_length=2)
     score_second = models.CharField(null=True,blank=True,max_length=2)

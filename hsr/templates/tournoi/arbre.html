@@ -6,7 +6,7 @@
 <h3>Tournoi {{tournoi.name}}</h3>
 <p><b><a href="/tournoi/detail/{{tournoi.id}}">Détails</a> - Arbre</b></p>
 {% if error_msg %}
-<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}<form action="/tournoi/inscription/{{tournoi.id}}" method="POST">Il vous faut un BattleTag pour participer aux tournois : <input name="battletag" /><input type="submit" value="Envoyer" />{% csrf_token %}</form>{% endif %}</p>
+<p style="color:red;">{% if error_msg == "invalide" %}Le score reporté ne correspond pas au format demandé{% elif error_msg == "dismatch" %}Le score rapporté par votre opposant est différent. Veuillez corriger votre score ou contacter un responsable du tournoi.{% elif error_msg == "battletag" %}<form action="/tournoi/inscription/{{tournoi.id}}" method="POST">Il vous faut un BattleTag pour participer aux tournois : <input name="battletag" /><input type="submit" value="Envoyer" />{% csrf_token %}</form>{% elif error_msg == "deck" %}Vous devez entrer un nombre de deck correspondant au format du match.{% endif %}</p>
 {% endif %}
 <center>
 {% if tournoi.termine %}
@@ -30,8 +30,70 @@
 <p>
 <b>Prochain match</b> :<br />
 <div class="match next_match{%if next_match.col == 1 and next_match.row == 0 %}finale{% endif %}" style="width:400px;">
+{% if next_match.conquest_check %}
+<div style="position:absolute; margin-top:13px;margin-left:25px;line-height:30px;">
+{% include "tournoi/img_class.html" with deck=next_match.first_deck %}
+<br />
+{% include "tournoi/img_class.html" with deck=next_match.second_deck %}
+</div>
+{% endif %}
 <div class="pseudo" style="line-height:15px;margin-top:6px;">{{next_match.first.profil_set.all.0.pseudo}}<br />({{next_match.first.profil_set.all.0.battletag}})</div><div class="pseudo" style="line-height:15px;">{% if next_match.second %}{{next_match.second.profil_set.all.0.pseudo}}<br />({{next_match.second.profil_set.all.0.battletag}}){% else %}<i>A déterminer</i>{% endif %}</div>
 {% if next_match.first and next_match.second %}
+{% if conquest %}
+<div class="resultat">
+{% if request.user == next_match.first and not next_match.first_deck or request.user == next_match.second and not next_match.second_deck %}
+<form action="" method="POST">
+{% csrf_token %}
+<input type="hidden" name="deck" id="deck" />
+<input type="hidden" name="match" value="{{next_match.id}}" />
+<table cellspacing="0" style="line-height:0px; margin-top:5px;">
+<tr>
+<td><img id="class_B" height="20px" src="/static/images/class/chaman.jpg" style="opacity: 0.4;" onclick="SelectClass('B');" /></td>
+<td><img id="class_C" height="20px" src="/static/images/class/chasseur.jpg" style="opacity: 0.4;" onclick="SelectClass('C');" /></td>
+<td><img id="class_D" height="20px" src="/static/images/class/demo.jpg" style="opacity: 0.4;" onclick="SelectClass('D');" /></td>
+</tr><tr>
+<td><img id="class_E" height="20px" src="/static/images/class/druide.jpg" style="opacity: 0.4;" onclick="SelectClass('E');" /></td>
+<td><img id="class_G" height="20px" src="/static/images/class/guerrier.jpg" style="opacity: 0.4;" onclick="SelectClass('G');" /></td>
+<td><img id="class_M" height="20px" src="/static/images/class/mage.jpg" style="opacity: 0.4;" onclick="SelectClass('M');" /></td>
+</tr><tr>
+<td><img id="class_P" height="20px" src="/static/images/class/paladin.jpg" style="opacity: 0.4;" onclick="SelectClass('P');" /></td>
+<td><img id="class_Q" height="20px" src="/static/images/class/pretre.jpg" style="opacity: 0.4;" onclick="SelectClass('Q');" /></td>
+<td><img id="class_V" height="20px" src="/static/images/class/voleur.jpg" style="opacity: 0.4;" onclick="SelectClass('V');" /></td>
+</tr>
+</table>
+<script type="text/JavaScript">
+function SelectClass(value) {
+    var old_value = $('#deck').val();
+    var img = $('#class_'+value);
+    var add = 1;
+    for (i=0; i < old_value.split('').length; i++) {
+        if (old_value.split('')[i] == value){
+            add = 0;
+            break;
+        }
+    } 
+    if (add == 1) {
+        img.css('opacity','1');
+        $('#deck').val(old_value+value);
+    } else {
+        img.css('opacity','0.4');
+        new_value = ""
+        for (i=0; i < old_value.split('').length; i++) {
+            if (old_value.split('')[i] != value) {
+                new_value = new_value+old_value.split('')[i];
+            }
+        }
+        $('#deck').val(new_value);
+    }
+}
+</script>
+{% else  %}
+<p style="line-height:12px;">En&nbsp;attente&nbsp;de l'adversaire
+{% if request.user == next_match.first %}{% include "tournoi/img_class.html" with deck=next_match.first_deck%}{% else %}{% include "tournoi/img_class.html" with deck=next_match.second_deck%}{% endif %}
+</p>
+{% endif %}
+</div>
+{% else %} 
 <form method="POST" action="/tournoi/update/{{next_match.id}}">
 <div class="resultat">{% csrf_token %}
 <input name="sc_f" size="1" value="{%if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slice:"0:1"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slice:"0:1"}}{% endif %}" />
@@ -39,12 +101,13 @@
 <div class="resultat resultat2">
 <input name="sc_s" size="1" value="{% if request.user == next_match.first and next_match.score_first%}{{next_match.score_first|slice:"1:2"}}{% elif request.user == next_match.second and next_match.score_second%}{{next_match.score_second|slice:"1:2"}}{% endif %}" />{% csrf_token %}
 </div>
+{% endif %}
 <div class="boutons boutons2">
 <input type="submit" value="OK" />
 </div>
 </form>
 <div class="boutons">
-{% if next_match.col == 1 %}{{next_match.tournoi.get_finale_display}}{% else %}{{next_match.tournoi.get_match_display}}{% endif %}
+{% if next_match.poule %}{{next_match.tournoi.get_poules_display}}{% elif next_match.col == 1 %}{{next_match.tournoi.get_finale_display}}{% else %}{{next_match.tournoi.get_match_display}}{% endif %}
 </div>
 </div>
 <p>
@@ -85,8 +148,8 @@
 <div class="resultat">{% if match.score %}{{match.score|slice:"0:1"}}{% endif %}</div><div class="resultat resultat2">{% if match.score %}{{match.score|slice:"1:2"}}{% endif %}</div>
 {% endif %}
 {% if match.valide %}
-<div class="boutons"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
-<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+<div class="boutons"><img src="/static/images/tournoi/{% if match.poule %}{% if match.score.0|add:"0" == match.tournoi.poules or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% elif match.col == 1 %}{% if match.score.0|add:"0" == match.tournoi.finale or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.0|add:"0" == match.tournoi.match or match.freewin and match.first and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
+<div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.poule %}{% if match.score.1|add:"0" == match.tournoi.poules or match.freewin and moatch.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% elif match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
 {% endif %}
 </div>
 
