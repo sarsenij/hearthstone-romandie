@@ -350,7 +350,7 @@ def feed_freewin(go,dego):
                 tournoi.termine = True
                 tournoi.save()
             
-            if let.col == 1 and let.row == 0 :
+            if let.col == 1 and let.row == 0 and not let.poule:
                 tournoi.vainqueur = let1
                 tournoi.save()
                 cote = Profil.objects.get(u=let1)
@@ -406,7 +406,7 @@ def u_s(match,score):
     else :
         vainqueur = match.second
         perdant = match.first
-    if match.col == 1 and match.row == 0 :
+    if match.col == 1 and match.row == 0 and not match.poule:
         tournoi = match.tournoi
         tournoi.vainqueur = vainqueur
         tournoi.save()
@@ -492,10 +492,12 @@ def update_score(request,match_id):
                 int(score)
             except :
                 score = ""
-            if match.col == 1 :
+            if match.col == 1 and not match.poule:
                 attendu = match.tournoi.finale
-            else :
+            elif not match.poule :
                 attendu = match.tournoi.match
+            else :
+                attendu = match.tournoi.poules
             if len(score) != 2 or (score[0] == score[1] or (int(score[0]) !=  result and int(score[1]) != result)) or int(score[0]) > attendu or int(score[1]) > attendu :
                 error_msg = "invalide"
             else :
