@@ -87,7 +87,7 @@ def detail(request,tournoi_id):
     confirm = 0
     if datetime.combine(tournoi.date,tournoi.heure) <= datetime.now() + timedelta(minutes=30) :
         confirm = 1
-        if Inscrit.objects.filter(user=request.user,tournoi=tournoi):
+        if request.user.is_active and Inscrit.objects.filter(user=request.user,tournoi=tournoi):
             inscrit = Inscrit.objects.get(user=request.user,tournoi=tournoi)
             if inscrit.confirm :
                 confirm = 2

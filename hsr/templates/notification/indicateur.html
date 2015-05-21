@@ -36,7 +36,7 @@
 	<div id="notif_buttons">
 		<div id="bouton_profil" style="float:left;width:70px;"><!--PROFIL-->
 			<center>
-			<a href="javascript:void(0)" onclick="FeedNotif('/profil/','settings','smartphone');">
+			<a href="javascript:void(0)" onclick="FeedNotif('/profil/','settings');">
 			<img src="{{request.user.profil_set.all.0.avatar}}" height="40px" />
 			<br />
 			{{request.user.profil_set.all.0.pseudo}}</a>
@@ -45,8 +45,8 @@
 		
 		<div id="bouton_messages" style="float:left;width:70px;"><!--MESSAGE-->
 			<script type="text/JavaScript">
-			function FeedNotif(url,choice,format) {
-				if ($(window).width() < "982") {
+			function FeedNotif(url,choice) {
+				if ($(window).width() < "982" && $("#menu_droite").height() < "300") {
 					Deroule();
 				}
 			    $("#waiting_notif").show();
@@ -75,7 +75,7 @@
 					
 			</script>
 			<center>
-			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages','smartphone');">
+			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','messages');">
 			<img src="/static/images/icones/bulle_3points.png" height="40px" />
 			<br />
 			{% if notif_messages %}
@@ -91,7 +91,7 @@
 		
 		<div id="bouton_notif" style="float:left;width:70px;"><!--NOTIF-->
 			<center>
-			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification','smartphone');"">
+			<a href="javascript:void(0)" onclick="FeedNotif('/notification/','notification');"">
 			<img src="/static/images/icones/quetes.png" height="40px" />
 			<br />
 			{% if notif_nombre %}
