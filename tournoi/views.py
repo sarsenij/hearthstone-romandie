@@ -63,8 +63,15 @@ def detail(request,tournoi_id):
     if request.GET.get('confirm') :
         if request.GET['confirm'] == "Yes" :
             inscrit = get_object_or_404(Inscrit,user=request.user,tournoi=tournoi)
-            inscrit.confirm = True
-            inscrit.save()
+            if tournoi.confirmation == 1 :
+                inscrit.confirm = True
+                inscrit.save()
+        elif request.user == tournoi.admin : 
+            inscrit = get_object_or_404(Inscrit,user__username=request.GET['confirm'],tournoi=tournoi)
+            if tournoi.confirmation == 2 :
+                inscrit.confirm = True
+                inscrit.date = datetime.now()
+                inscrit.save()
     if request.method == "POST" :
         if not request.user.is_active :
             return redirect('/tournoi/detail/%d'%tournoi.id)
@@ -103,7 +110,7 @@ def detail(request,tournoi_id):
             membres = Profil.objects.filter(u__is_active=True).order_by('pseudo')
             invites = Invit.objects.filter(tournoi=tournoi).order_by('invite__username')
         if Inscrit.objects.filter(tournoi=tournoi,user=request.user):
-            inscrit = True
+            inscrit = Inscrit.objects.get(tournoi=tournoi,user=request.user)
     return render(request,'tournoi/detail.html',{'inscrits':inscrits,'inscrop':inscrop,'inscrit':inscrit,'tournoi':tournoi,'contacts':contacts,'membres':membres,'invites':invites,'attente':attente,'confirm':confirm,})
 
 def feed_match(tournoi,inscrits=list(),indice=0,total=1,next_gagnant=False,next_perdant=False,poule=False,feed_blank=False):

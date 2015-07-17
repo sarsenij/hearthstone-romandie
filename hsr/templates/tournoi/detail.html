@@ -16,7 +16,7 @@ function getSelect(selectId,destId)
     {% if tournoi.vainqueur %}<center><b>Le vainqueur est {{tournoi.vainqueur.profil_set.all.0.pseudo}}</b></center><br />
     {% elif tournoi.termine %}<center>Il n'y a pas de vainqueur pour ce tournoi</center><br />{%endif %}
     {% if request.user.is_active %}
-    <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}{% if tournoi.confirmation %} Vous devrez confirmer l'inscription une demi-heure avant. {% if confirm == 1 %}<a href="?confirm=Yes">Confirmer</a>{% elif confirm == 2 %}Vous avez confirmé !{% endif %}{% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
+    <center>{% if inscrit %}<span style="color:green;">Vous êtes inscrit à ce tournoi{% if inscrop %} (<a href="/tournoi/desinscription/{{tournoi.id}}">Se désinscrire</a>){% endif %}{% if tournoi.confirmation == 1 %} Vous devrez confirmer l'inscription une demi-heure avant. {% if confirm == 1 %}<a href="?confirm=Yes">Confirmer</a>{% elif confirm == 2 %}Vous avez confirmé !{% endif %}{% elif tournoi.confirmation == 2 %}{% if inscrit.confirm %} Votre inscription a été confirmée.{% else %} Le staff du tournoi doit confirmer votre inscription.{% endif %}{% endif %}</span>{% else %}{% if inscrop %}<a href="/tournoi/inscription/{{tournoi.id}}">S'inscrire au tournoi</a>{% endif %}{% endif %}</center>
     {% else %}
     <center><span style="color:red;">Il vous faut un compte pour vous inscrire à un tournoi</span></center>
     {% endif %}
@@ -89,7 +89,7 @@ function getSelect(selectId,destId)
 <h3>Inscrits</h3>
 <ul>
 {% for i in inscrits %}
-<li><a href="JavaScript:void(0);" onclick="ShowContact({{i.user.profil_set.all.0.id}},event);">{{i.user.profil_set.all.0.pseudo}}</a>{% if i.confirm %}*{% endif %}</li>
+<li><a href="JavaScript:void(0);" onclick="ShowContact({{i.user.profil_set.all.0.id}},event);">{{i.user.profil_set.all.0.pseudo}}</a>{% if i.confirm %}*{% elif tournoi.confirmation == 2 and request.user == tournoi.admin %}<a href="?confirm={{i.user.username}}">Confirmer</a>{% endif %}</li>
 {% endfor %}
 </ul>
 {% if attente %}

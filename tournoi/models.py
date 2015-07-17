@@ -12,7 +12,12 @@ class Tournoi(models.Model):
     prive = models.BooleanField(verbose_name="Tournoi sur invitation",default=False)
     date = models.DateField(verbose_name="Date du tournoi",default=date.today)
     heure = models.TimeField(verbose_name="Heure du tournoi",null=True,default="00:00")
-    confirmation = models.BooleanField(verbose_name="Confirmation 1h avant",default=False)
+    choices_conf = (
+    (0,"Non"),
+    (1,"30 min avant"),
+    (2,"Par un administrateur"),
+    )
+    confirmation = models.IntegerField(verbose_name="Confirmation de l'inscription",choices=choices_conf,default=0)
     choices_part = (
     (4,"4"),
     (8,"8"),
