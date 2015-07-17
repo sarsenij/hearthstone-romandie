@@ -420,7 +420,7 @@ a:hover {
 }
 
 #chat_droite {
-	height: 84%;
+	height: 85%;
 }
 
 #fen_chat {
@@ -712,6 +712,12 @@ div.boutons2 {
     display:none;
 }
 
+#table_chat {
+	width: 280px;
+	word-wrap: break-word;
+	table-layout: fixed;
+}
+
 @media screen and (max-width: 1500px)
 {
     #content {
@@ -805,6 +811,9 @@ div.boutons2 {
 		background: rgba(0,0,0, 1) url('/static/images/backgrounds/repeat/Diago_transp_50opacity.png');
     }
 
+	#table_chat {
+		width: 800px;
+	}
 	#chat_droite {
 		height: 100%;
 	}
