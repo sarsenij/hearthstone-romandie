@@ -326,7 +326,17 @@ def arbre(request, tournoi_id):
 
 
     arbre = Match.objects.filter(tournoi=tournoi,poule=0,loser_bracket=False).order_by('-col','row')
-    poules = Match.objects.filter(tournoi=tournoi,loser_bracket=False).exclude(poule=0).order_by('poule','-col','row')
+    poules = []
+    if tournoi.poules :
+        error = False
+        incr = 0
+        while not error :
+            incr += 1
+            matchs = Match.objects.filter(tournoi=tournoi,loser_bracket=False,poule=incr).order_by('-col','row')
+            if matchs :
+                poules.append(matchs)
+            else :
+                error = True
     try :
         next_match = Match.objects.get(tournoi=tournoi,first=request.user,valide=False)
     except :

@@ -31,7 +31,7 @@
 <b>Prochain match</b> :<br />
 <div class="match next_match{%if next_match.col == 1 and next_match.row == 0 %}finale{% endif %}" style="width:400px;">
 {% if next_match.conquest_check %}
-<div style="position:absolute; margin-top:13px;margin-left:25px;line-height:30px;">
+<div style="position:absolute; margin-top:13px;margin-left:25px;line-height:30px;z-index:-1;opacity:0.6;">
 {% include "tournoi/img_class.html" with deck=next_match.first_deck %}
 <br />
 {% include "tournoi/img_class.html" with deck=next_match.second_deck %}
@@ -118,17 +118,22 @@ function SelectClass(value) {
 {% endif %}
 {% endif %}
 <hr />
-<table id="poules" style="width:100%;">
-<tr>
-<td>
-{% for match in poules %}
-{% if forloop.counter|add:"4"|divisibleby:5 %}
-</td>
-{% if match.poule == 5 %}</tr><tr><td></td>{% endif %}
-<td>
-<center><b>Groupe {{match.poule}}</b></center>
-{% endif %}
+
+{% for matchs in poules %}
+<div style="width:100%;float:left;">
+<div style="witdh:100%"><b>Groupe {{forloop.counter}}</b></div>
+{% for match in matchs %}
+{% if forloop.counter == 1 %}<div style="width:32%;float:left;">{% endif %}
+{% if forloop.counter == 3 %}<div style="width:32%;float:left;"><div class="inter1"></div><div class="inter1"></div>{% endif %}
+{% if forloop.counter == 5 %}<div style="width:32%;float:left;"><div class="inter2"></div><div class="inter1"></div>{% endif %}
 <div class="{% if next_match == match %}next_match{% endif %} match">
+{% if match.conquest_check %}
+<div id="classes{{match.id}}" style="position:absolute; margin-top:13px;margin-left:25px;line-height:30px;z-index:-1;opacity:0.6;">
+{% include "tournoi/img_class.html" with deck=match.first_deck %}
+<br />
+{% include "tournoi/img_class.html" with deck=match.second_deck %}
+</div>
+{% endif %}
 <div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
 {% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
 </div>
@@ -152,11 +157,16 @@ function SelectClass(value) {
 <div class="boutons boutons2"><img src="/static/images/tournoi/{% if match.poule %}{% if match.score.1|add:"0" == match.tournoi.poules or match.freewin and moatch.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% elif match.col == 1 %}{% if match.score.1|add:"0" == match.tournoi.finale or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% else %}{% if match.score.1|add:"0" == match.tournoi.match or match.freewin and match.second and match.score != "00" %}victoire{% else %}defaite{% endif %}{% endif %}.png" height="80%" /></div>
 {% endif %}
 </div>
-
+{% if forloop.counter == 1 %}<div class="inter1"></div><div class="inter1"></div>{% endif %}
+{% if forloop.counter == 2 %}</div>{% endif %}
+{% if forloop.counter == 3 %}<div class="inter1"></div><div class="inter1"></div>{% endif %}
+{% if forloop.counter == 4 %}</div>{% endif %}
+{% if forloop.counter == 5 %}</div><div style="width:25%;"></div>{% endif %}
 {% endfor %}
-</tr>
-</table>
+</div>
+{% endfor %}
 
+<hr />
 <div id="arbre">
 <div>
 <div>
@@ -181,6 +191,13 @@ function SelectClass(value) {
 {% endif %}
 {% if match.col == 1 and match.row == 1 %}<div>{% else %}<div class="inter{{inter}}">{% endif %}</div>
 <div class="{% if next_match == match %}next_match{% if match.row == 0 and match.col == 1 %}finale{% endif %}{% endif %} match{% if match.row == 0 and match.col == 1 %} finale{% endif %}">
+{% if match.conquest_check %}
+<div id="classes{{match.id}}" style="position:absolute; margin-top:13px;margin-left:55%;line-height:30px;z-index:-1;opacity:0.6;">
+{% include "tournoi/img_class.html" with deck=match.first_deck %}
+<br />
+{% include "tournoi/img_class.html" with deck=match.second_deck %}
+</div>
+{% endif %}
 <div class="pseudo id{{match.first.id}}"{% if match.first %} onmouseover="OnIn('id{{match.first.id}}');" onmouseout="OnOut('id{{match.first.id}}');"{% endif %}>
 {% if match.freewin and match.valide %}{% if not match.first %}<i>Freewin</i>{% endif %}{% elif not match.first %}<i>Inconnu</i>{% endif %}{{match.first.profil_set.all.0.pseudo|slice:"0:12"}}
 </div>
